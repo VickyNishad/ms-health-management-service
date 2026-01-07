@@ -1,0 +1,46 @@
+package com.healthcare.models.request;
+
+import java.util.List;
+
+public class DoctorAvailabilityRequest {
+
+    private String profileId;
+    private String addressId;
+    private int repeatWeekly;
+    private List<WeeklySchedule> weeklySchedule;
+
+    // Getters and Setters
+   
+
+    public int getRepeatWeekly() {
+        return repeatWeekly;
+    }
+
+    public String getProfileId() {
+		return profileId;
+	}
+
+	public void setProfileId(String profileId) {
+		this.profileId = profileId;
+	}
+
+	public String getAddressId() {
+		return addressId;
+	}
+
+	public void setAddressId(String addressId) {
+		this.addressId = addressId;
+	}
+
+	public void setRepeatWeekly(int repeatWeekly) {
+        this.repeatWeekly = repeatWeekly;
+    }
+
+    public List<WeeklySchedule> getWeeklySchedule() {
+        return weeklySchedule;
+    }
+
+    public void setWeeklySchedule(List<WeeklySchedule> weeklySchedule) {
+        this.weeklySchedule = weeklySchedule;
+    }
+}

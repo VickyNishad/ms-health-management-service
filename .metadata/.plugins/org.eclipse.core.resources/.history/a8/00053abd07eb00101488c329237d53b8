@@ -1,0 +1,108 @@
+/**
+ * 
+ */
+package com.medicque.adapter.out.persistence.jpa;
+
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.medicque.adapter.out.persistence.entity.EmployeeMaster;
+import com.medicque.adapter.out.persistence.entity.RoleMaster;
+import com.medicque.adapter.out.persistence.entity.UserRegistration;
+
+/**
+ * 
+ */
+@Repository
+public interface JPAEmployeeMasterRepository extends JpaRepository<EmployeeMaster, Long> {
+	/*
+	 * ========================= BASIC =========================
+	 */
+
+	Optional<EmployeeMaster> findByEmpCode(String empCode);
+
+	Optional<EmployeeMaster> findByUser(UserRegistration user);
+
+	boolean existsByEmpCode(String empCode);
+
+	boolean existsByUser(UserRegistration user);
+
+	/*
+	 * ========================= ROLE BASED =========================
+	 */
+
+	List<EmployeeMaster> findByRole(RoleMaster role);
+
+	List<EmployeeMaster> findByRole_RoleId(Long roleId);
+
+//	List<EmployeeMaster> findByRole_RoleCode(String roleCode);
+
+//	List<EmployeeMaster> findByRole_RoleCodeAndIsActiveTrue(String roleCode);
+
+	/*
+	 * ========================= REPORTING / HIERARCHY =========================
+	 */
+
+	// All staff under a doctor/admin
+	List<EmployeeMaster> findByReportingTo(EmployeeMaster reportingTo);
+
+	List<EmployeeMaster> findByReportingTo_EmpId(Long empId);
+
+	List<EmployeeMaster> findByReportingTo_EmpCode(String empCode);
+
+	List<EmployeeMaster> findByReportingToAndIsActiveTrue(EmployeeMaster reportingTo);
+
+	// Doctors without reporting manager
+	List<EmployeeMaster> findByReportingToIsNull();
+
+	/*
+	 * ========================= DEPARTMENT =========================
+	 */
+
+	List<EmployeeMaster> findByDepartment(String department);
+
+	List<EmployeeMaster> findByDepartmentAndIsActiveTrue(String department);
+
+	/*
+	 * ========================= STATUS =========================
+	 */
+
+	List<EmployeeMaster> findByIsActive(Boolean isActive);
+
+	/*
+	 * ========================= REAL-WORLD COMBINATIONS =========================
+	 */
+
+	// Staff of a specific doctor by role
+//	List<EmployeeMaster> findByReportingTo_EmpCodeAndRole_RoleCode(String empCode, String roleCode);
+
+	// Active staff of doctor
+	List<EmployeeMaster> findByReportingTo_EmpCodeAndIsActiveTrue(String empCode);
+
+	// Role + department
+//	List<EmployeeMaster> findByRole_RoleCodeAndDepartment(String roleCode, String department);
+
+	// Role + reporting + active
+//	List<EmployeeMaster> findByRole_RoleCodeAndReportingTo_EmpIdAndIsActiveTrue(String roleCode, Long reportingEmpId);
+
+	/*
+	 * ========================= SEARCH =========================
+	 */
+
+	List<EmployeeMaster> findByEmpCodeContainingIgnoreCase(String empCode);
+
+	List<EmployeeMaster> findByDepartmentContainingIgnoreCase(String department);
+
+	/*
+	 * ========================= COUNT / EXISTS =========================
+	 */
+
+//	long countByRole_RoleCode(String roleCode);
+
+	long countByReportingTo_EmpId(Long empId);
+
+	boolean existsByUser_UserId(Long userId);
+}

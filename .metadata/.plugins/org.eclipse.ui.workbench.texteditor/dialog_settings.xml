@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<section name="Workbench">
+	<item key="hasShownOverlayPopupBefore" value="true"/>
+	<section name="java.lang.Class">
+		<item key="replaceBarOpen" value="false"/>
+		<list key="findhistory">
+			<item value="CANNOT_CONTAIN_SPECIAL_CHARACTERS"/>
+			<item value="CANNOT_BE_NULL_OR_EMPTY"/>
+			<item value="SHOULD_BE_NUMERIC_VALUE"/>
+			<item value="CHARACTERS_LONG"/>
+			<item value="SHOULD_BE_BETWEEN"/>
+			<item value="SHOULD_BE_EXACTLY"/>
+			<item value="ARE_NOT_ALLOWED"/>
+			<item value="SHOULD_BE_ALFA_NUMERIC_OR_CHARACTERS"/>
+			<item value="findByDoctor_DoctorIdOrderByDateAscStartTimeAsc"/>
+			<item value="findByDoctorAndClinicAndDay"/>
+			<item value="GET_DOCTORAVAILABILITY"/>
+			<item value="INSERT_ADDRESS_DETAILS"/>
+			<item value="getDoctorAvailabilityUseCase"/>
+			<item value="INSERT_SUPPORT_QUERY"/>
+			<item value="PATIENTCONSULTATIONSTATUS"/>
+		</list>
+	</section>
+</section>

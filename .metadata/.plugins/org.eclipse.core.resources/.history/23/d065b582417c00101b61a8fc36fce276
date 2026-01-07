@@ -1,0 +1,48 @@
+package com.document.models.request;
+
+import org.springframework.web.multipart.MultipartFile;
+
+public class DocumentRequest {
+	
+	private String referenceType;
+	private String referenceId;
+	private String fileName;
+	private MultipartFile multipartFile;
+	
+	
+
+	// Getters and Setters
+
+	public MultipartFile getMultipartFile() {
+		return multipartFile;
+	}
+
+	public void setMultipartFile(MultipartFile multipartFile) {
+		this.multipartFile = multipartFile;
+	}
+
+	public String getReferenceType() {
+		return referenceType;
+	}
+
+	public void setReferenceType(String referenceType) {
+		this.referenceType = referenceType;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+}

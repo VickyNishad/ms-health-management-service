@@ -1,0 +1,81 @@
+/**
+ * 
+ */
+package com.auth.service;
+
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.auth.constant.TConstants;
+import com.auth.exception.DataNotFoundException;
+import com.auth.exception.DatabaseException;
+import com.auth.exception.TException;
+import com.auth.interfaces.TAbstractUseCase;
+import com.auth.interfaces.TRepository;
+import com.auth.interfaces.usecase.TestUseCase;
+import com.auth.models.GenericModel;
+import com.auth.models.request.DBProcedureRequest;
+import com.auth.models.request.TestRequest;
+import com.auth.utils.TConvertors;
+import com.auth.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Service
+public class TestServiceImpl extends TAbstractUseCase<TestRequest, DBProcedureRequest, ResponseEntity<?>> implements TestUseCase {
+	
+	private TRepository tRepository;
+	
+	public TestServiceImpl(TRepository tRepository) {
+		this.tRepository = tRepository;
+	}
+
+	@Override
+	protected ResponseEntity<?> validateInput(GenericModel<TestRequest> model) {
+		// TODO Auto-generated method stub
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@Override
+	protected DBProcedureRequest buildDatabaseRequest(GenericModel<TestRequest> model) {
+		// TODO Auto-generated method stub
+		DBProcedureRequest dbProcedureRequest = new DBProcedureRequest();
+		dbProcedureRequest.setTokenId(model.getToken());
+		dbProcedureRequest.setParam_Process(TConstants.ParamProcess.GET_DOCUMENT);
+		
+		// convert request to JSON
+		String json = TConvertors.convertObjectToString(model.getRequest());
+		dbProcedureRequest.setParam_JSON(json);
+		return dbProcedureRequest;
+	}
+
+	@Override
+	protected ResponseEntity<?> execute(GenericModel<TestRequest> model, DBProcedureRequest dbRequest) {
+		// TODO Auto-generated method stub
+		try {
+			Map<String, Object> response = tRepository.execute(dbRequest);
+			if(TValidatiors.isNullOrEmpty(response) || !response.containsKey(TConstants.ResultSet.RESULT_SET_1)) {
+				throw new RuntimeException(TConstants.Error.RESULT_SET_NOT_FOUND);
+			}
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+		
+	}
+
+	@Override
+	protected ResponseEntity<?> buildFinalResponse(GenericModel<TestRequest> model, ResponseEntity<?> result) {
+		// TODO Auto-generated method stub
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+}

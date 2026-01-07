@@ -1,0 +1,70 @@
+package com.health.adapter.in.rest.dto;
+
+public class AvailabilityResponse {
+
+	private Long availabilityId;
+	private Long clinicId;
+	private String startTime;
+	private String endTime;
+	private String dayOfWeek;
+	private Integer slotDuration;
+
+	public AvailabilityResponse(Long availabilityId, Long clinicId, String startTime, String endTime, String dayOfWeek,
+			Integer slotDuration) {
+		super();
+		this.availabilityId = availabilityId;
+		this.clinicId = clinicId;
+		this.startTime = startTime;
+		this.endTime = endTime;
+		this.dayOfWeek = dayOfWeek;
+		this.slotDuration = slotDuration;
+	}
+
+	public String getDayOfWeek() {
+		return dayOfWeek;
+	}
+
+	public void setDayOfWeek(String dayOfWeek) {
+		this.dayOfWeek = dayOfWeek;
+	}
+
+	public Integer getSlotDuration() {
+		return slotDuration;
+	}
+
+	public void setSlotDuration(Integer slotDuration) {
+		this.slotDuration = slotDuration;
+	}
+
+	public void setAvailabilityId(Long availabilityId) {
+		this.availabilityId = availabilityId;
+	}
+
+	public void setClinicId(Long clinicId) {
+		this.clinicId = clinicId;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public Long getAvailabilityId() {
+		return availabilityId;
+	}
+
+	public Long getClinicId() {
+		return clinicId;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+}

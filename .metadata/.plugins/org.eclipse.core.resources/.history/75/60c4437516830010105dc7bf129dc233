@@ -1,0 +1,23 @@
+package com.healthcare.interfaces;
+
+import org.springframework.http.ResponseEntity;
+
+import com.document.models.GenericModel;
+
+public abstract class AbstractUseCase<T, DBReq, Response> implements UseCase<T> {
+
+    @Override
+    public ResponseEntity<?> handle(GenericModel<T> model) {
+        ResponseEntity<?> validation = validateInput(model);
+        if (!validation.getStatusCode().is2xxSuccessful()) return validation;
+
+        DBReq dbRequest = buildDatabaseRequest(model);
+        Response dbResult = execute(model, dbRequest);
+        return buildFinalResponse(model, dbResult);
+    }
+
+    protected abstract ResponseEntity<?> validateInput(GenericModel<T> model);
+    protected abstract DBReq buildDatabaseRequest(GenericModel<T> model);
+    protected abstract Response execute(GenericModel<T> model, DBReq dbRequest);
+    protected abstract ResponseEntity<?> buildFinalResponse(GenericModel<T> model, Response result);
+}

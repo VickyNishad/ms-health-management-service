@@ -1,0 +1,49 @@
+/**
+ * 
+ */
+package com.health.utility;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+/**
+ * 
+ */
+public class CommonUtils {
+	
+    private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+    
+    
+	public static String getRandomPassword(String s1, String s2) {
+		String prefix = "";
+		String sufix = "";
+		if (s1.length() == 1 || s1.length() == 2 || s1.length() == 3) {
+			prefix = s1;
+		}
+
+		if (s1.length() > 3) {
+			prefix = s1.substring(0, 3);
+		}
+
+		if (s2.length() == 1 || s2.length() == 2 || s2.length() == 3 || s2.length() == 4) {
+			sufix = s2;
+		}
+
+		if (s2.length() > 4) {
+			sufix = s2.substring(s2.length()-4);
+		}
+		
+		return prefix.toUpperCase()+"@"+sufix.toUpperCase();
+
+	}
+
+    // ✅ Method 1: Encrypt password
+    public static String encryptPassword(String password) {
+        return bCryptPasswordEncoder.encode(password);
+    }
+
+    // ✅ Method 2: Verify raw password with hashed password
+    public static boolean matchPassword(String rawPassword, String encodedPassword) {
+        return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
+    }
+
+}

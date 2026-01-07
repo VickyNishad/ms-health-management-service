@@ -1,0 +1,51 @@
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    fetch-registry: true
+    register-with-eureka: true
+    service-url:
+      defaultZone: http://51.21.209.119:8761/eureka
+
+
+server:
+  port: 9091
+spring:
+  application:
+    name: ms-health-care-service
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+          
+
+  datasource:
+    url: jdbc:mysql://free-db.cpcsmuqugjqz.eu-north-1.rds.amazonaws.com:3306/MasterDB
+    username: admin
+    password: Welcome#2025
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000 # 30 seconds
+      idle-timeout: 120000 # 2 minutes
+      max-lifetime: 1800000 # 30 minutes
+      connection-test-query: SELECT 1
+      validation-timeout: 5000
+  web:
+    resources:
+      add-mappings: false
+
+
+springdoc:
+  packages-to-scan: com.document.controller
+  paths-to-match: "/**"
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /docs
+
+
+

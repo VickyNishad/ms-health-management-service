@@ -1,0 +1,303 @@
+/**
+ * 
+ */
+package com.health.service.impl;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.common.models.ApiResponse;
+import com.common.utility.ApiExecutionUtils;
+import com.health.dto.MessageResponse;
+import com.health.dto.SlotDTO;
+import com.health.dto.SlotSummaryDTO;
+import com.health.model.DoctorAvailability;
+import com.health.model.DoctorLeave;
+import com.health.model.DoctorSlot;
+import com.health.repository.DoctorAvailabilityRepository;
+import com.health.repository.DoctorLeaveRepository;
+import com.health.repository.jpa.JPADoctorSlotRepository;
+import com.health.service.SlotService;
+
+import jakarta.transaction.Transactional;
+
+/**
+ * 
+ */
+@Service
+@Transactional
+public class SlotServiceImpl implements SlotService {
+
+	@Autowired
+	private DoctorLeaveRepository doctorLeaveRepository;
+
+	@Autowired
+	public DoctorAvailabilityRepository doctorAvailabilityRepository;
+
+	@Autowired
+	public JPADoctorSlotRepository japDoctorSlotRepository;
+
+	@Override
+	public ResponseEntity<ApiResponse<MessageResponse>> generateNext7DaysSlots(Long doctorId, Long clinicId) {
+		// TODO Auto-generated method stub
+
+		ApiResponse<MessageResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+			if (doctorId == null || clinicId == null) {
+				throw new RuntimeException("Doctor ID and Clinic ID are required");
+			}
+			
+		}, () -> {
+
+			LocalDate today = LocalDate.now();
+
+			// ========== 1. Delete only free future slots ==========
+			japDoctorSlotRepository.deleteOnlyFreeFutureSlots(doctorId, clinicId, today);
+
+			int limit = 7;
+
+			for (int i = 0; i < limit; i++) {
+
+				LocalDate date = today.plusDays(i);
+				String day = date.getDayOfWeek().name();
+
+				// ========== 2. Availability Check ==========
+				List<DoctorAvailability> availList = doctorAvailabilityRepository.findByDoctorClinicAndDay(doctorId,
+						clinicId, day);
+
+				if (availList.isEmpty())
+					continue;
+
+				// ========== 3. Leave / Break / Lunch ==========
+				List<DoctorLeave> leaves = doctorLeaveRepository.findByDoctorAndDate(doctorId, date);
+
+				// Get next token AFTER booked appointments
+				int token = Optional.ofNullable(japDoctorSlotRepository.getMaxTokenForDate(doctorId, clinicId, date))
+						.orElse(0) + 1;
+
+				// Generate slots for each availability window
+				for (DoctorAvailability av : availList) {
+
+					LocalTime slotStart = LocalTime.parse(av.getStartTime());
+					LocalTime end = LocalTime.parse(av.getEndTime());
+					int duration = av.getSlotDuration();
+
+					while (!slotStart.plusMinutes(duration).isAfter(end)) {
+
+						LocalTime nextStart = slotStart.plusMinutes(duration);
+						String status = "AVAILABLE";
+
+						// FULL DAY LEAVE
+						if (leaves.stream().anyMatch(l -> "FULL_DAY".equalsIgnoreCase(l.getLeaveType()))) {
+							status = "LEAVE";
+						} else {
+							// Time-based leave handling
+							for (DoctorLeave leave : leaves) {
+								boolean inRange = !slotStart.isBefore(leave.getStartTime())
+										&& slotStart.isBefore(leave.getEndTime());
+
+								if (inRange) {
+									switch (leave.getLeaveType().toUpperCase()) {
+									case "BREAK":
+										status = "BREAK";
+										break;
+									case "LUNCH":
+										status = "LUNCH";
+										break;
+									default:
+										status = "LEAVE";
+									}
+								}
+							}
+						}
+
+						// Save Slot
+						DoctorSlot slot = new DoctorSlot();
+						slot.setDoctorId(doctorId);
+						slot.setClinicId(clinicId);
+						slot.setSlotDate(date);
+						slot.setSlotTime(slotStart);
+						slot.setToken(token++);
+						slot.setStatus(status);
+						slot.setIsBooked(false);
+						slot.setCreatedAt(LocalDateTime.now());
+						slot.setCreatedBy(doctorId.toString());
+						japDoctorSlotRepository.save(slot);
+
+						slotStart = nextStart;
+					}
+				}
+			}
+			return new MessageResponse("Slots generated successfully");
+		}, ApiResponse::success);
+
+		return new ResponseEntity<ApiResponse<MessageResponse>>(success, HttpStatus.OK);
+	}
+
+	@Override
+	public void getSlots(Long doctorId, Long clinicId, LocalDate date) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<SlotSummaryDTO>>> getSlotSummary(Long doctorId, Long clinicId) {
+		// TODO Auto-generated method stub
+
+		ApiResponse<List<SlotSummaryDTO>> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+		}, () -> {
+			List<DoctorSlot> slots = japDoctorSlotRepository.findByDoctorAndClinic(doctorId, clinicId);
+
+			Map<LocalDate, List<DoctorSlot>> groupedByDate = slots.stream()
+					.collect(Collectors.groupingBy(DoctorSlot::getSlotDate));
+
+			List<SlotSummaryDTO> summaryList = new ArrayList<>();
+
+			for (Map.Entry<LocalDate, List<DoctorSlot>> entry : groupedByDate.entrySet()) {
+				LocalDate date = entry.getKey();
+				List<DoctorSlot> daySlots = entry.getValue();
+
+				long total = daySlots.size();
+				long available = daySlots.stream().filter(s -> "AVAILABLE".equalsIgnoreCase(s.getStatus())).count();
+				long leave = daySlots.stream().filter(s -> "LEAVE".equalsIgnoreCase(s.getStatus())).count();
+
+				summaryList.add(new SlotSummaryDTO(date, total, available, leave));
+			}
+
+			// Sort by date ascending
+			summaryList.sort(Comparator.comparing(SlotSummaryDTO::getSlotDate));
+			return summaryList;
+		}, ApiResponse::success);
+
+		return new ResponseEntity<ApiResponse<List<SlotSummaryDTO>>>(success, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<SlotDTO>>> getSlotsByDoctorClinicAndDate(Long doctorId, Long clinicId,
+			LocalDate date) {
+		// TODO Auto-generated method stub
+
+		ApiResponse<List<SlotDTO>> success = ApiExecutionUtils.ApiExecutor.processRequest(null, null, () -> {
+			try {
+				updateSlotsForSameDayChanges(doctorId, clinicId, date);
+			} catch (Exception e) {
+				// TODO: handle exception
+			}
+			List<DoctorSlot> slots = japDoctorSlotRepository.findSlotsByDoctorClinicAndDate(doctorId, clinicId, date);
+
+			return slots.stream().map(s -> new SlotDTO(s.getSlotId(),s.getSlotTime(), s.getToken(), s.getStatus(), s.getIsBooked()))
+					.collect(Collectors.toList());
+		}, ApiResponse::success);
+
+		return new ResponseEntity<ApiResponse<List<SlotDTO>>>(success, HttpStatus.OK);
+	}
+	
+	
+	
+	@Transactional
+	public void updateSlotsForSameDayChanges(Long doctorId, Long clinicId, LocalDate date) {
+
+	    if (doctorId == null || clinicId == null) {
+	        throw new RuntimeException("Doctor ID and Clinic ID are required.");
+	    }
+
+	    if (date == null) {
+	        throw new RuntimeException("Date is mandatory to update slot status.");
+	    }
+
+	    // 1. Fetch slots
+	    List<DoctorSlot> slots =
+	            japDoctorSlotRepository.findByDoctorIdAndClinicIdAndSlotDate(doctorId, clinicId, date);
+
+	    if (slots.isEmpty()) {
+	        throw new RuntimeException("No slots found for the selected doctor, clinic and date.");
+	    }
+
+	    // 2. Fetch break/lunch/leave records
+	    List<DoctorLeave> leaves =
+	            doctorLeaveRepository.findByDoctorAndDate(doctorId, date);
+
+	    if (leaves == null || leaves.isEmpty()) {
+	        // Nothing to update → leave existing slots untouched
+	        return;
+	    }
+
+	    // 3. FULL DAY LEAVE → set all non-booked slots to LEAVE
+	    boolean fullDayLeave = leaves.stream()
+	            .anyMatch(l -> "FULL_DAY".equalsIgnoreCase(l.getLeaveType()));
+
+	    if (fullDayLeave) {
+
+	        for (DoctorSlot slot : slots) {
+	            if (!slot.getIsBooked()) {
+	                slot.setStatus("LEAVE");
+	            }
+	        }
+
+	        japDoctorSlotRepository.saveAll(slots);
+	        return;
+	    }
+
+	    // 4. Time-based break/lunch/partial leave
+	    for (DoctorSlot slot : slots) {
+
+	        if (slot.getIsBooked()) {
+	            continue;  // NEVER touch booked slots
+	        }
+
+	        String finalStatus = "AVAILABLE";
+
+	        for (DoctorLeave leave : leaves) {
+
+	            // Validation: START / END required for time-based leave
+	            if ("BREAK".equalsIgnoreCase(leave.getLeaveType()) ||
+	                "LUNCH".equalsIgnoreCase(leave.getLeaveType()) ||
+	                "LEAVE".equalsIgnoreCase(leave.getLeaveType())) {
+
+	                if (leave.getStartTime() == null || leave.getEndTime() == null) {
+	                    throw new RuntimeException("Start time and end time are mandatory for "
+	                            + leave.getLeaveType() + " on " + date);
+	                }
+
+	                if (!leave.getStartTime().isBefore(leave.getEndTime())) {
+	                    throw new RuntimeException("Invalid time range for "
+	                            + leave.getLeaveType() + " on " + date);
+	                }
+	            }
+
+	            // Apply logic only if slot inside the time range
+	            boolean inRange =
+	                    leave.getStartTime() != null &&
+	                    leave.getEndTime() != null &&
+	                    !slot.getSlotTime().isBefore(leave.getStartTime()) &&
+	                     slot.getSlotTime().isBefore(leave.getEndTime());
+
+	            if (inRange) {
+	                finalStatus = switch (leave.getLeaveType().toUpperCase()) {
+	                    case "BREAK" -> "BREAK";
+	                    case "LUNCH" -> "LUNCH";
+	                    default -> "LEAVE";
+	                };
+	            }
+	        }
+
+	        slot.setUpdatedAt(LocalDateTime.now());
+	        slot.setUpdatedBy(doctorId.toString());
+	        slot.setStatus(finalStatus);
+	    }
+
+	    japDoctorSlotRepository.saveAll(slots);
+	}
+
+}

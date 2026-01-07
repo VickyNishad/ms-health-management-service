@@ -1,0 +1,42 @@
+/**
+ * 
+ */
+package com.health.adapter.in.rest;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.common.models.ApiResponse;
+import com.health.adapter.in.rest.dto.AppointmentBookingRequest;
+import com.health.adapter.in.rest.dto.MessageResponse;
+import com.health.adapter.out.persistence.entity.Appointment;
+import com.health.application.port.in.AppointmentUseCase;
+
+/**
+ * 
+ */
+@RestController
+@RequestMapping("/medecque/appointment")
+public class AppointmentContoller {
+
+	@Autowired
+	private AppointmentUseCase appointmentUseCase;
+	
+	
+	@PostMapping("/book/appointment/{userId}")
+	public ResponseEntity<ApiResponse<MessageResponse>> bookAppointment(@PathVariable(name = "userId") Long userId ,AppointmentBookingRequest request){
+		return appointmentUseCase.bookAppointment(userId,request);
+	}
+	
+	@GetMapping("/all/{userId}")
+	public ResponseEntity<ApiResponse<List<Appointment>>> findAllAppointmentsByUser(@PathVariable(name = "userId") Long userId) {
+		return appointmentUseCase.findAllAppointmentsByUser(userId);
+	}
+}

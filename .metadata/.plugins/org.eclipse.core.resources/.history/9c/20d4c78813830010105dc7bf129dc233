@@ -1,0 +1,66 @@
+/**
+ * 
+ */
+package com.healthcare.utils;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import com.healthcare.dto.ProcedureResponseDto;
+
+/**
+ * 
+ */
+public class TMappers {
+	
+	@SuppressWarnings("unchecked")
+	public static Map<String, List<?>> mapResultsToPojo( Map<String, Object> rawResults, Map<String, Class<?>> resultSetMappings) {
+
+        Map<String, List<?>> mappedResults = new HashMap<>();
+
+        for (Map.Entry<String, Class<?>> entry : resultSetMappings.entrySet()) {
+            String rsName = entry.getKey();
+            Class<?> pojoClass = entry.getValue();
+
+            List<Map<String, Object>> rawRows = (List<Map<String, Object>>) rawResults.get(rsName);
+
+            if (rawRows != null) {
+                List<?> pojoList = rawRows.stream()
+                        .map(row -> TConvertors.convertObjectToPojo(row, pojoClass))
+                        .collect(Collectors.toList());
+
+                mappedResults.put(rsName, pojoList);
+            }
+        }
+
+        return mappedResults;
+    }
+	
+	
+	public static <T> List<T> mapResultSet(Map<String, Object> rawResults,String resultSetName,Class<T> pojoClass) {
+		
+        List<Map<String, Object>> rawRows = (List<Map<String, Object>>) rawResults.get(resultSetName);
+        if (rawRows == null) {
+            return Collections.emptyList();
+        }
+        return rawRows.stream()
+                .map(row -> TConvertors.convertObjectToPojo(row, pojoClass))
+                .collect(Collectors.toList());
+    }
+	
+	
+	public static ProcedureResponseDto getResultSet(List<Map<String, Object>> list) {
+		ProcedureResponseDto resultSetResponeDto = new ProcedureResponseDto();
+		if(list.size() > 0) {
+			for(Map<String, Object> item : list) {
+				resultSetResponeDto = TConvertors.convertObjectToPojo(item, ProcedureResponseDto.class);
+				break;
+			}	
+		}
+		return resultSetResponeDto;
+	}
+	
+}

@@ -1,0 +1,100 @@
+package com.health.model;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+@Entity
+@Table(name = "doctor_leaves")
+public class DoctorLeave extends BaseEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long leave_id;
+
+	@ManyToOne
+	@JoinColumn(name = "doctor_id", nullable = false)
+	private Doctor doctor;
+
+	@Column(nullable = false)
+	private LocalDate startDate;
+
+	@Column(nullable = false)
+	private LocalDate endDate;
+
+	@Column(nullable = false)
+	private LocalTime startTime; // full day leave => 00:00
+
+	@Column(nullable = false)
+	private LocalTime endTime; // full day leave => 23:59
+
+	@Column(nullable = false)
+	private String leaveType; // FULL_DAY, BREAK, LUNCH, HALF_DAY
+
+	private String reason;
+
+	public Long getLeave_id() {
+		return leave_id;
+	}
+
+	public void setLeave_id(Long leave_id) {
+		this.leave_id = leave_id;
+	}
+
+	public Doctor getDoctor() {
+		return doctor;
+	}
+
+	public void setDoctor(Doctor doctor) {
+		this.doctor = doctor;
+	}
+
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+
+	public LocalTime getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(LocalTime startTime) {
+		this.startTime = startTime;
+	}
+
+	public LocalTime getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(LocalTime endTime) {
+		this.endTime = endTime;
+	}
+
+	public String getLeaveType() {
+		return leaveType;
+	}
+
+	public void setLeaveType(String leaveType) {
+		this.leaveType = leaveType;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+}

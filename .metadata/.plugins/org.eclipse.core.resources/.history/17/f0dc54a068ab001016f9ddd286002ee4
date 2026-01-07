@@ -1,0 +1,153 @@
+/**
+ * 
+ */
+package com.healthcare.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.dto.DocumentInfo;
+import com.healthcare.dto.UploadDocument;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.exception.TException;
+import com.healthcare.interfaces.TAbstractUseCase;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.interfaces.usecase.InsertDocumentUploadUseCase;
+import com.healthcare.interfaces.usecase.UploadDocumentUseCase;
+import com.healthcare.models.GenericModel;
+import com.healthcare.models.request.DBProcedureRequest;
+import com.healthcare.models.request.DocumentUploadRequest;
+import com.healthcare.models.request.InsertDocumentRequest;
+import com.healthcare.models.response.AuthTokenResponse;
+import com.healthcare.models.response.ResponseModel;
+import com.healthcare.utils.TConvertors;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Service
+public class UploadDocumentServiceImpl extends TAbstractUseCase<DocumentUploadRequest, DBProcedureRequest, Map<String, Object>> implements UploadDocumentUseCase {
+
+	private TRepository tRepository;
+	private InsertDocumentUploadUseCase insertDocumentUploadUseCase;
+
+	public UploadDocumentServiceImpl(TRepository tRepository, InsertDocumentUploadUseCase insertDocumentUploadUseCase) {
+		this.tRepository = tRepository;
+		this.insertDocumentUploadUseCase = insertDocumentUploadUseCase;
+	}
+	
+	@Override
+	protected ResponseEntity<?> validateInput(GenericModel<DocumentUploadRequest> model) {
+		// TODO Auto-generated method stub
+		
+		DocumentUploadRequest documentUploadRequest = model.getRequest();
+		MultipartFile file = documentUploadRequest.getFile();
+		if(TValidatiors.isNullOrEmpty(file)) {
+			TValidatiors.validateRequestedField("file", null, true, false, false, false, null, 0, 0, true);
+		}
+		AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+		TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, false, false, false, null, 0, 0, true);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@Override
+	protected DBProcedureRequest buildDatabaseRequest(GenericModel<DocumentUploadRequest> model) {
+		// TODO Auto-generated method stub
+		AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+		DocumentUploadRequest documentUploadRequest = model.getRequest();
+		UploadDocument uploadDocument = new UploadDocument();
+		MultipartFile file = documentUploadRequest.getFile();
+		
+		if(!TValidatiors.isNullOrEmpty(file)) {
+			try {
+				InsertDocumentRequest insertDocumentRequest = new InsertDocumentRequest();
+				insertDocumentRequest.setFileName(file.getOriginalFilename());
+				insertDocumentRequest.setFileType(documentUploadRequest.getFileType());
+				insertDocumentRequest.setReferenceId(TUtils.getStringValue(authTokenResponse.getProfileId()));
+				insertDocumentRequest.setReferenceType(documentUploadRequest.getReferenceType());
+				insertDocumentRequest.setMultipartFile(file);
+				
+				GenericModel<InsertDocumentRequest> insGenericModel = new GenericModel<InsertDocumentRequest>();
+				insGenericModel.setRequest(insertDocumentRequest);
+				
+				ResponseEntity<?> responseEntity = insertDocumentUploadUseCase.handle(insGenericModel);
+				ResponseModel responseModel = (ResponseModel) responseEntity.getBody();
+				Map<String, Object> successData = TConvertors.convertObjectToMap(responseModel.getData());
+				
+				DocumentInfo documentInfo = TConvertors.convertObjectToPojo(successData.get("success"), DocumentInfo.class);
+				
+				uploadDocument.setUrl(documentInfo.getFilePath());
+				uploadDocument.setEntityId(documentInfo.getId());
+			} catch (Exception e) {
+				// TODO: handle exception
+				e.printStackTrace();
+			}
+		}
+		
+		uploadDocument.setProfileId(TUtils.getIntValue(authTokenResponse.getProfileId()));
+		uploadDocument.setAddressId(TUtils.getIntValue(documentUploadRequest.getAddressId()));
+		uploadDocument.setDocumentType(documentUploadRequest.getDocumentType().getValue());
+		DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,uploadDocument, TConstants.ParamProcess.UPLOAD_DOCUMENT);
+
+		return dbProcedureRequest;
+	}
+
+	@Override
+	protected Map<String, Object> execute(GenericModel<DocumentUploadRequest> model,
+			DBProcedureRequest dbRequest) {
+		// TODO Auto-generated method stub
+		try {
+			Map<String, Object> response = tRepository.execute(dbRequest);
+			if(TValidatiors.isNullOrEmpty(response) || !response.containsKey(TConstants.ResultSet.RESULT_SET_1)) {
+				throw new RuntimeException(TConstants.Error.RESULT_SET_NOT_FOUND);
+			}
+			String message = "";
+			List<Map<String, Object>> lists =  (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			
+			if(TValidatiors.isNullOrEmpty(lists)) {
+				throw new DataNotFoundException(TConstants.Error.RESULT_SET_NOT_FOUND);
+			}
+			
+			if(TUtils.getStringValue(lists.get(0).get(TConstants.Keys.RESULT)).equalsIgnoreCase(TConstants.Keys.ERROR)) {
+				message = TUtils.getStringValue(lists.get(0).get(TConstants.Keys.MESSAGE));
+				throw new RuntimeException(message);
+			}
+			return response;
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@Override
+	protected ResponseEntity<?> buildFinalResponse(GenericModel<DocumentUploadRequest> model,Map<String, Object> result) {
+		// TODO Auto-generated method stub
+		try {
+			ResponseModel responseModel = null;
+			List<Map<String, Object>> lists =  (List<Map<String, Object>>) result.get(TConstants.ResultSet.RESULT_SET_1);
+			
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(lists.get(0)));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+		} catch (DataNotFoundException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new TException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+}

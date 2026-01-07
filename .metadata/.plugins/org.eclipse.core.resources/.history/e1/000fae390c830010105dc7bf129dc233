@@ -1,0 +1,13 @@
+/**
+ * 
+ */
+package com.document.interfaces.usecase;
+
+import com.healthcare.interfaces.UseCase;
+
+/**
+ * 
+ */
+public interface GetDocumentFileUseCase extends UseCase<String> {
+
+}

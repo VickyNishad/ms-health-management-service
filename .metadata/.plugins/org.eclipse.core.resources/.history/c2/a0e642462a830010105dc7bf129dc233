@@ -1,0 +1,11 @@
+/**
+ * 
+ */
+package com.auth.models.response;
+
+/**
+ * 
+ */
+public class AuthTokenResponse {
+
+}

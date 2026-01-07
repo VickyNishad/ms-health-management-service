@@ -1,0 +1,11 @@
+/**
+ * 
+ */
+package com.health.enums;
+
+/**
+ * 
+ */
+public enum MyEum {
+
+}

@@ -1,0 +1,11 @@
+/**
+ * 
+ */
+package com.medicque.adapter.out.persistence.jpa;
+
+/**
+ * 
+ */
+public interface JPAEmployeeMasterRepository {
+
+}

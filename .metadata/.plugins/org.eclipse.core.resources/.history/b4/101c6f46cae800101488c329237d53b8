@@ -1,0 +1,108 @@
+package com.healthcare.dto;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class GoogleInfo {
+
+    @JsonProperty("federatedId")
+    private String federatedId;
+    @JsonProperty("providerId")
+    private String providerId;
+    @JsonProperty("email")
+    private String email;
+    @JsonProperty("emailVerified")
+    private boolean emailVerified;
+    @JsonProperty("firstName")
+    private String firstName;
+    @JsonProperty("fullName")
+    private String fullName;
+    @JsonProperty("lastName")
+    private String lastName;
+    @JsonProperty("photoUrl")
+    private String photoUrl;
+    @JsonProperty("localId")
+    private String localId;
+    @JsonProperty("displayName")
+    private String displayName;
+    @JsonProperty("idToken")
+    private String idToken;
+    @JsonProperty("context")
+    private String context;
+    @JsonProperty("oauthAccessToken")
+    private String oauthAccessToken;
+    @JsonProperty("oauthExpireIn")
+    private int oauthExpireIn;
+    @JsonProperty("refreshToken")
+    private String refreshToken;
+    @JsonProperty("expiresIn")
+    private String expiresIn;
+    @JsonProperty("oauthIdToken")
+    private String oauthIdToken;
+    @JsonProperty("rawUserInfo")
+    private String rawUserInfo;
+    @JsonProperty("kind")
+    private String kind;
+
+    // Default constructor is required for some frameworks like Jackson
+    public GoogleInfo() {}
+
+    // Getters and Setters for all fields
+    // (Lombok can be used to generate these automatically)
+    public String getFederatedId() { return federatedId; }
+    public void setFederatedId(String federatedId) { this.federatedId = federatedId; }
+
+    public String getProviderId() { return providerId; }
+    public void setProviderId(String providerId) { this.providerId = providerId; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public boolean isEmailVerified() { return emailVerified; }
+    public void setEmailVerified(boolean emailVerified) { this.emailVerified = emailVerified; }
+
+    public String getFirstName() { return firstName; }
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+
+    public String getLastName() { return lastName; }
+    public void setLastName(String lastName) { this.lastName = lastName; }
+
+    public String getPhotoUrl() { return photoUrl; }
+    public void setPhotoUrl(String photoUrl) { this.photoUrl = photoUrl; }
+
+    public String getLocalId() { return localId; }
+    public void setLocalId(String localId) { this.localId = localId; }
+
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
+
+    public String getIdToken() { return idToken; }
+    public void setIdToken(String idToken) { this.idToken = idToken; }
+
+    public String getContext() { return context; }
+    public void setContext(String context) { this.context = context; }
+
+    public String getOauthAccessToken() { return oauthAccessToken; }
+    public void setOauthAccessToken(String oauthAccessToken) { this.oauthAccessToken = oauthAccessToken; }
+
+    public int getOauthExpireIn() { return oauthExpireIn; }
+    public void setOauthExpireIn(int oauthExpireIn) { this.oauthExpireIn = oauthExpireIn; }
+
+    public String getRefreshToken() { return refreshToken; }
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
+
+    public String getExpiresIn() { return expiresIn; }
+    public void setExpiresIn(String expiresIn) { this.expiresIn = expiresIn; }
+
+    public String getOauthIdToken() { return oauthIdToken; }
+    public void setOauthIdToken(String oauthIdToken) { this.oauthIdToken = oauthIdToken; }
+
+    public String getRawUserInfo() { return rawUserInfo; }
+    public void setRawUserInfo(String rawUserInfo) { this.rawUserInfo = rawUserInfo; }
+
+    public String getKind() { return kind; }
+    public void setKind(String kind) { this.kind = kind; }
+}

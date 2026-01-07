@@ -1,0 +1,84 @@
+/**
+ * 
+ */
+package com.medicque.adapter.out.persistence;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.medicque.adapter.out.persistence.entity.Appointment;
+import com.medicque.adapter.out.persistence.entity.Doctor;
+import com.medicque.adapter.out.persistence.entity.DoctorSlot;
+import com.medicque.adapter.out.persistence.entity.Patient;
+import com.medicque.adapter.out.persistence.jpa.JPAAppointmentRepository;
+import com.medicque.application.port.out.AppointmentRepositoryPort;
+
+/**
+ * 
+ */
+@Component
+public class AppointmentRepositoryAdapter implements AppointmentRepositoryPort {
+	
+	@Autowired
+	private JPAAppointmentRepository jpaAppointmentRepository;
+
+	@Override
+	public Appointment findExistingAppointment(Doctor doctor, LocalDate date, LocalTime time) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Appointment findByDoctorSlot(DoctorSlot doctorSlot) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Appointment> findByDoctorAndAppointmentDate(Doctor doctor, LocalDate date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Appointment lockAppointment(Long appointmentId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Appointment> findActivePatientAppointmentsOnDate(Patient patient, LocalDate date) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Appointment> findUpcomingAppointments(Doctor doctor, LocalDate startDate, LocalDate endDate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Appointment> findAllAppointmentsByUser(Long userId) {
+		// TODO Auto-generated method stub
+		return jpaAppointmentRepository.findAllAppointmentsByUser(userId);
+	}
+
+	@Override
+	public Appointment save(Appointment appointment) {
+		// TODO Auto-generated method stub
+		return jpaAppointmentRepository.save(appointment);
+	}
+
+	@Override
+	public Optional<Appointment> findbyId(Long id) {
+		// TODO Auto-generated method stub
+		return jpaAppointmentRepository.findById(id);
+	}
+
+}

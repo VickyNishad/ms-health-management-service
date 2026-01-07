@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.medicque.application.port.out;
+
+import com.medicque.adapter.out.persistence.entity.DoctorQualification;
+
+/**
+ * 
+ */
+public interface DoctorQualificationRepositoryPort {
+
+	public DoctorQualification save(DoctorQualification doctorQualification);
+}

@@ -1,0 +1,16 @@
+/**
+ * 
+ */
+package com.health.service;
+
+import com.health.adapter.in.rest.dto.TokenResponse;
+import com.health.domain.model.TokenModel;
+
+/**
+ * 
+ */
+public interface JwtUseCase {
+
+	TokenResponse generateToken(TokenModel model);
+	TokenResponse refereshToken(String refereshToken);
+}

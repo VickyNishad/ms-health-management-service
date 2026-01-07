@@ -1,0 +1,12 @@
+package com.healthcare.dto;
+import java.util.List;
+
+public class DoctorAvailabilityRequest {
+
+    private String doctorId;
+    private String clinicId;
+    private boolean repeatWeekly;
+    private List<DayAvailability> availability;
+
+    // getters & setters
+}

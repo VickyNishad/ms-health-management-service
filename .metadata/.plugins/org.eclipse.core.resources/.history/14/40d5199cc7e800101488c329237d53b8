@@ -1,0 +1,10 @@
+import java.util.List;
+
+public class DayAvailability {
+
+    private String day;          // Monday, Tuesday, etc.
+    private boolean isEnabled;
+    private List<TimeSlot> slots;
+
+    // getters & setters
+}

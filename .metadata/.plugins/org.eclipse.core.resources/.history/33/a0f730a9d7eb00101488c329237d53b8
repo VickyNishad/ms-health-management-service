@@ -1,0 +1,27 @@
+/**
+ * 
+ */
+package com.medicque.application.port.in;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
+import com.common.models.ApiResponse;
+import com.health.adapter.in.rest.dto.AvailabilityResponse;
+import com.health.adapter.in.rest.dto.DoctorAvailabilityRequest;
+import com.health.adapter.in.rest.dto.DoctorAvailabilityUpdateRequest;
+import com.health.adapter.in.rest.dto.MessageResponse;
+
+/**
+ * 
+ */
+public interface AvailabilityUseCase {
+
+	public ResponseEntity<ApiResponse<MessageResponse>> insertDoctorAvailability(Long doctorId, Long clinicId,DoctorAvailabilityRequest doctorAvailabilityRequest);
+	public ResponseEntity<ApiResponse<MessageResponse>> updateDoctorAvailability(Long doctorId,DoctorAvailabilityUpdateRequest doctorAvailabilityUpdateRequest);
+
+	public ResponseEntity<ApiResponse<List<AvailabilityResponse>>> getDoctorAvailability(Long doctorId);
+	
+	public ResponseEntity<ApiResponse<MessageResponse>> deleteAvailability(Long doctorId, Long availabilityId);
+}

@@ -1,0 +1,95 @@
+1767797110220	Delete element
+1767797159282	Rename compilation unit 'MsMedicqueSeviceApplication.java'
+1767797194227	Rename package 'com.medicque'
+1767798826607	Copy compilation units
+1767798854712	Copy compilation units
+1767798865985	Copy compilation units
+1767798882573	Copy compilation units
+1767798905125	Copy compilation units
+1767798934224	Copy compilation units
+1767798995264	Copy compilation units
+1767799002897	Delete elements
+1767799017238	Copy compilation units
+1767799034362	Copy compilation units
+1767799075534	Copy compilation units
+1767799231415	Delete element
+1767799237090	Delete element
+1767799246521	Delete element
+1767799381329	Delete element
+1767801430472	Delete element
+1767802668540	Delete element
+1767802842750	Delete element
+1767802849883	Delete element
+1767802860779	Delete element
+1767802873221	Delete element
+1767802891228	Delete element
+1767802924147	Delete element
+1767802948278	Delete element
+1767802953710	Delete element
+1767802975145	Delete element
+1767802992811	Delete element
+1767803020533	Rename type 'AppointmentUseCase'
+1767803052782	Rename type 'AppointmentService'
+1767803148148	Rename type 'DoctorService'
+1767803158624	Rename type 'JwtService'
+1767803170333	Rename type 'LoginService'
+1767803180452	Rename type 'PatientService'
+1767803190891	Rename type 'SignUpService'
+1767803200213	Rename type 'SlotService'
+1767803209356	Rename type 'UserRegistrationService'
+1767803282210	Rename type 'EmpCodeGeneratorService'
+1767803307336	Rename type 'AvailabilityUseCase'
+1767803321944	Rename type 'DoctorUseCase'
+1767803343957	Rename type 'JwtUseCase'
+1767803358422	Rename type 'LoginUseCase'
+1767803372865	Rename type 'PatientUseCase'
+1767803386643	Rename type 'SignUpUseCase'
+1767803401310	Rename type 'SlotUseCase'
+1767803435883	Rename type 'UnAvailabilityUseCase'
+1767803476612	Rename type 'UserRegistrationUseCase'
+1767803533511	Rename type 'AppointmentRepositoryAdapter'
+1767803544683	Rename type 'ClinicRepositoryAdapter'
+1767803557306	Rename type 'DoctorAvailabilityRepositoryAdapter'
+1767803569613	Rename type 'DoctorClinicRepositoryAdapter'
+1767803582191	Rename type 'DoctorLeaveRepositoryAdapter'
+1767803595272	Rename type 'DoctorQualificationRepositoryAdapter'
+1767803606438	Rename type 'DoctorRepositoryAdapter'
+1767803617745	Rename type 'DoctorSpecializationRepositoryAdapter'
+1767803628875	Rename type 'PatientRepositoryAdapter'
+1767803638745	Rename type 'QualificationMasterRepositoryAdpter'
+1767803649862	Rename type 'RoleMasterRepositoryAdapter'
+1767803661876	Rename type 'SalesDoctorAssignmentRepositoryAdapter'
+1767803673098	Rename type 'SpecializationMasterRepositoryAdapter'
+1767803684458	Rename type 'UserRegistrationRepositoryAdapter'
+1767803718175	Delete element
+1767803791111	Rename type 'UserRegistrationRepositoryPort'
+1767803804298	Rename type 'SpecializationMasterRepositoryPort'
+1767803869369	Rename type 'SalesDoctorAssignmentRepositoryPort'
+1767803880999	Rename type 'RoleMasterRepositoryPort'
+1767803895451	Rename type 'QualificationMasterRepositoryPort'
+1767803909780	Rename type 'PatientRepositoryPort'
+1767803932752	Rename type 'DoctorSpecializationRepositoryPort'
+1767803946700	Rename type 'DoctorRepositoryPort'
+1767803960475	Rename type 'DoctorQualificationRepositoryPort'
+1767803974440	Rename type 'DoctorLeaveRepositoryPort'
+1767803986689	Rename type 'DoctorClinicRepositoryPort'
+1767803999982	Rename type 'DoctorAvailabilityRepositoryPort'
+1767804012964	Rename type 'ClinicRepositoryPort'
+1767804027207	Rename type 'AppointmentRepositoryPort'
+1767804216494	Rename type 'AppointmentRepositoryService'
+1767804226674	Rename type 'ClinicRepositoryService'
+1767804237066	Rename type 'DoctorAvailabilityRepositoryService'
+1767804247985	Rename type 'DoctorClinicRepositoryService'
+1767804258649	Rename type 'DoctorLeaveRepositoryService'
+1767804276998	Rename type 'DoctorQualificationRepositoryService'
+1767804292005	Rename type 'DoctorRepositoryService'
+1767804303432	Rename type 'DoctorSpecializationRepositoryService'
+1767804318028	Rename type 'PatientRepositoryService'
+1767804329393	Rename type 'QualificationMasterRepositoryService'
+1767804339451	Rename type 'RoleMasterRepositoryService'
+1767804350129	Rename type 'SalesDoctorAssignmentRepositoryService'
+1767804362716	Rename type 'SpecializationMasterRepositoryService'
+1767804373083	Rename type 'UserRegistrationRepositoryService'
+1767806074625	Delete element
+1767806169308	Delete element
+1767806504273	Delete element

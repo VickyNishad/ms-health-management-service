@@ -1,0 +1,38 @@
+/**
+ * 
+ */
+package com.medicque.adapter.out.persistence;
+
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.health.adapter.out.persistence.entity.RoleMaster;
+import com.health.adapter.out.persistence.jpa.JPARoleMasterRepository;
+import com.health.application.port.out.RoleMasterRepositoryPort;
+
+/**
+ * 
+ */
+@Component
+public class RoleMasterRepositoryAdapter implements RoleMasterRepositoryPort {
+	
+	@Autowired
+	private JPARoleMasterRepository roleMasterRepository;
+
+	@Override
+	public Optional<RoleMaster> findById(Long id) {
+		// TODO Auto-generated method stub
+		Optional<RoleMaster> roleMaster = roleMasterRepository.findById(id);
+		return roleMaster;
+	}
+
+	@Override
+	public Optional<RoleMaster> findByRoleName(String roleName) {
+		// TODO Auto-generated method stub
+		Optional<RoleMaster> roleMaster = roleMasterRepository.findByRoleName(roleName);
+		return roleMaster;
+	}
+
+}

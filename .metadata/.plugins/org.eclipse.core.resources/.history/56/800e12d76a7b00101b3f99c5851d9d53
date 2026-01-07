@@ -1,0 +1,18 @@
+/**
+ * 
+ */
+package com.document.service;
+
+import org.springframework.http.ResponseEntity;
+
+import com.document.interfaces.AbstractUseCase;
+import com.document.interfaces.usecase.TestUseCase;
+import com.document.models.request.DBProcedureRequest;
+import com.document.models.request.IsRegisterUserRequest;
+
+/**
+ * 
+ */
+public class TestServiceImpl extends AbstractUseCase<IsRegisterUserRequest, DBProcedureRequest, ResponseEntity<?>> implements TestUseCase {
+
+}

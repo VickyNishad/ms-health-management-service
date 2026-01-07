@@ -1,0 +1,19 @@
+/**
+ * 
+ */
+package com.healthcare.service;
+
+import com.healthcare.interfaces.TRepository;
+
+/**
+ * 
+ */
+public class AvailabilityService {
+
+	
+	private TRepository repository;
+
+	public AvailabilityService(TRepository repository) {
+		this.repository = repository;
+	}
+}

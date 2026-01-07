@@ -1,0 +1,74 @@
+/**
+ * 
+ */
+package com.document.controller;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.document.interfaces.usecase.GetDocumentFileUseCase;
+import com.document.interfaces.usecase.InsertDocumentUploadUseCase;
+import com.document.interfaces.usecase.UpdateDocumentUseCase;
+import com.document.models.GenericModel;
+import com.document.models.request.DocumentRequest;
+import com.document.models.request.UpdateDocumentRequest;
+
+/**
+ * 
+ */
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
+@RequestMapping(DocumentController.BASE_URL)
+public class DocumentController {
+	
+	public static final String BASE_URL = "api/v1/document";
+	
+	private InsertDocumentUploadUseCase insertDocumentUploadUseCase;
+	private GetDocumentFileUseCase getDocumentFileUseCase;
+	private UpdateDocumentUseCase updateDocumentUseCase;
+	
+	public DocumentController(
+			
+			InsertDocumentUploadUseCase insertDocumentUploadUseCase, GetDocumentFileUseCase getDocumentFileUseCase,
+			UpdateDocumentUseCase updateDocumentUseCase
+			) {
+		
+		this.insertDocumentUploadUseCase = insertDocumentUploadUseCase;
+		this.getDocumentFileUseCase = getDocumentFileUseCase;
+		this.updateDocumentUseCase = updateDocumentUseCase;
+	}
+
+	@GetMapping("/test")
+	public ResponseEntity<String> getString(){
+		return new ResponseEntity<String>("Document Service running....", HttpStatus.OK);
+	}
+	
+	@PostMapping(value = "/upload", consumes = "multipart/form-data")
+	public ResponseEntity<?> uploadDocument(@ModelAttribute DocumentRequest documentRequest) {
+		GenericModel<DocumentRequest> genericModel = new GenericModel<DocumentRequest>();
+		genericModel.setPayload(documentRequest);		
+		return insertDocumentUploadUseCase.handle(genericModel);
+	}
+	
+	@PostMapping(value = "/update", consumes = "multipart/form-data")
+	public ResponseEntity<?> uploadDocument(@ModelAttribute UpdateDocumentRequest updateDocumentRequest) {
+		GenericModel<UpdateDocumentRequest> genericModel = new GenericModel<UpdateDocumentRequest>();
+		genericModel.setPayload(updateDocumentRequest);		
+		return updateDocumentUseCase.handle(genericModel);
+	}
+	
+	@GetMapping("/{id}")
+	public ResponseEntity<?> getDocumentFile(@PathVariable String id) {
+		GenericModel<String> genericModel = new GenericModel<String>();
+		genericModel.setPayload(id);		
+		return getDocumentFileUseCase.handle(genericModel);
+	}
+
+}

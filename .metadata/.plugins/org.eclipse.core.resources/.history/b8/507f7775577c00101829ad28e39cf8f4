@@ -1,0 +1,114 @@
+/**
+ * 
+ */
+package com.document.service;
+
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.document.config.S3BucketPro;
+import com.document.constant.BConstants;
+import com.document.dto.DocumentFileDto;
+import com.document.interfaces.AbstractUseCase;
+import com.document.interfaces.DocumentRepository;
+import com.document.interfaces.usecase.InsertDocumentUploadUseCase;
+import com.document.interfaces.usecase.S3BucketUseCase;
+import com.document.models.GenericModel;
+import com.document.models.request.DBProcedureRequest;
+import com.document.models.request.DocumentRequest;
+import com.document.models.request.S3BucketRequest;
+import com.document.utils.BConvertors;
+import com.document.utils.BUtils;
+
+/**
+ * 
+ */
+@Service
+public class InsertDocumetUploadServiceImpl extends AbstractUseCase<DocumentRequest, DBProcedureRequest, ResponseEntity<?>> implements  InsertDocumentUploadUseCase {
+
+	private final S3BucketPro s3BucketPro;
+	private S3BucketUseCase s3BucketUseCase;
+	private DocumentRepository documentRepository;
+	
+	public InsertDocumetUploadServiceImpl (
+			S3BucketUseCase s3BucketUseCase , S3BucketPro s3BucketPro,
+			DocumentRepository documentRepository
+			) {
+		
+		this.s3BucketUseCase = s3BucketUseCase;
+		this.s3BucketPro = s3BucketPro;
+		this.documentRepository = documentRepository;
+	}
+	
+	@Override
+	protected ResponseEntity<?> validateInput(GenericModel<DocumentRequest> model) {
+		// TODO Auto-generated method stub
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@Override
+	protected DBProcedureRequest buildDatabaseRequest(GenericModel<DocumentRequest> model) {
+		// TODO Auto-generated method stub
+		DBProcedureRequest dbProcedureRequest = new DBProcedureRequest();
+		DocumentRequest documentRequest = model.getPayload();
+		MultipartFile file = documentRequest.getMultipartFile();
+		
+		String key = "file/" + documentRequest.getReferenceId() + "/"+ BUtils.getFileName(documentRequest.getFileName(), file);
+		S3BucketRequest s3BucketRequest = new S3BucketRequest();
+		s3BucketRequest.setKey(key);
+		s3BucketRequest.setMultipartFile(file);
+		
+		GenericModel<S3BucketRequest> genericModel = new GenericModel<S3BucketRequest>();
+		genericModel.setPayload(s3BucketRequest);
+		
+		ResponseEntity<?> responseEntity = s3BucketUseCase.handle(genericModel);
+		if(responseEntity.getStatusCode().is2xxSuccessful()) {
+			
+			DocumentFileDto documentFileDto = new DocumentFileDto();
+			
+			String fileSize = String.format("%.2f KB", (double) file.getSize() / 1024);
+			
+			documentFileDto.setContentType(file.getContentType());		
+			documentFileDto.setFileName(BUtils.getFileName(documentRequest.getFileName(), file));
+			documentFileDto.setFilePath(key);
+			documentFileDto.setFileSize(fileSize);
+			documentFileDto.setFileType(documentRequest.getFileType());
+			documentFileDto.setReferenceType(documentRequest.getReferenceType());
+			documentFileDto.setReferenceId(documentRequest.getReferenceId());
+			documentFileDto.setS3BucketKey(s3BucketPro.getAccessKey());
+			documentFileDto.setS3BucketName(s3BucketPro.getBucketName());
+			
+			
+			String json = BConvertors.convertObjectToString(documentFileDto);
+			dbProcedureRequest.setParam_JSON(json);
+			dbProcedureRequest.setParam_Process(BConstants.ParamProcess.INSERT_DOCUMENT);
+			dbProcedureRequest.setTokenId(key);
+			
+			return dbProcedureRequest;
+		}
+		
+		return null;
+	}
+
+	@Override
+	protected ResponseEntity<?> execute(GenericModel<DocumentRequest> model, DBProcedureRequest dbRequest) {
+		// TODO Auto-generated method stub
+		Map<String, Object> response = documentRepository.execute(dbRequest);
+		
+		return new ResponseEntity<>(response,HttpStatus.OK);
+	}
+
+	@Override
+	protected ResponseEntity<?> buildFinalResponse(GenericModel<DocumentRequest> model, ResponseEntity<?> result) {
+		// TODO Auto-generated method stub
+		
+		
+
+		return null;
+	}
+
+}

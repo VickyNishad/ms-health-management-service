@@ -1,0 +1,41 @@
+package com.health.adapter.in.rest.dto;
+
+public class DoctorAvailabilityRequest {
+	private String dayOfWeek; // MONDAY
+	private String startTime; // HH:mm
+	private String endTime; // HH:mm
+	private Integer slotDuration; // minutes
+
+	public String getDayOfWeek() {
+		return dayOfWeek;
+	}
+
+	public void setDayOfWeek(String dayOfWeek) {
+		this.dayOfWeek = dayOfWeek;
+	}
+
+	public String getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+
+	public String getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	public Integer getSlotDuration() {
+		return slotDuration;
+	}
+
+	public void setSlotDuration(Integer slotDuration) {
+		this.slotDuration = slotDuration;
+	}
+
+}

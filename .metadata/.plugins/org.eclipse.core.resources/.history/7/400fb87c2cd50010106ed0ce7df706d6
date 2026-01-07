@@ -1,0 +1,68 @@
+/**
+ * 
+ */
+package com.healthcare.controller;
+import com.healthcare.utils.TUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.healthcare.interfaces.AppointmentUseCase;
+import com.healthcare.interfaces.usecase.BookAppointmentUseCase;
+import com.healthcare.interfaces.usecase.MyAppointmentUseCase;
+import com.healthcare.interfaces.usecase.UpdateAppointmentUseCase;
+import com.healthcare.models.request.AppointmentRequest;
+import com.healthcare.models.request.MyAppointmentRequest;
+import com.healthcare.models.request.UpdateAppointmentRequest;
+
+/**
+ * 
+ */
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
+@RequestMapping(AuthController.BASE_URL+AppointmentController.BASE_URL)
+public class AppointmentController {
+
+	public static final String BASE_URL = "/appointment";
+
+	private BookAppointmentUseCase bookAppointmentUseCase;
+	private UpdateAppointmentUseCase updateAppointmentUseCase;
+	private MyAppointmentUseCase myAppointmentUseCase;
+	
+	@Autowired
+	private AppointmentUseCase appointmentUseCase;
+
+	private AppointmentController(BookAppointmentUseCase bookAppointmentUseCase,
+			UpdateAppointmentUseCase updateAppointmentUseCase, MyAppointmentUseCase myAppointmentUseCase) {
+		this.bookAppointmentUseCase = bookAppointmentUseCase;
+		this.updateAppointmentUseCase = updateAppointmentUseCase;
+		this.myAppointmentUseCase = myAppointmentUseCase;
+	}
+
+	@PostMapping("/book")
+	public ResponseEntity<?> bookAppointment(@ParameterObject AppointmentRequest appointmentRequest, HttpServletRequest request){
+//		return bookAppointmentUseCase.handle(TUtils.getObjectFromRequest(appointmentRequest,request));
+		return appointmentUseCase.bookAppointment(TUtils.getObjectFromRequest(appointmentRequest,request));
+	}
+	
+	@PostMapping("/update")
+	public ResponseEntity<?> updateAppointment(@ParameterObject UpdateAppointmentRequest updateAppointmentRequest, HttpServletRequest request){
+//		return updateAppointmentUseCase.handle(TUtils.getObjectFromRequest(updateAppointmentRequest,request));
+		return appointmentUseCase.modifyAppointment(TUtils.getObjectFromRequest(updateAppointmentRequest,request));
+	}
+	
+	
+	@GetMapping("/my-appointments")
+	public ResponseEntity<?> getMyAppointment(@ParameterObject MyAppointmentRequest myAppointmentRequest, HttpServletRequest request){
+//		return myAppointmentUseCase.handle(TUtils.getObjectFromRequest(myAppointmentRequest,request));
+		return appointmentUseCase.getAppointment(TUtils.getObjectFromRequest(myAppointmentRequest,request));
+	}
+}

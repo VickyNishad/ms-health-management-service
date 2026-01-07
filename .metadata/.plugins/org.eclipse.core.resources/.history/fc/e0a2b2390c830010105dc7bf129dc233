@@ -1,0 +1,8 @@
+package com.document.interfaces.usecase;
+
+import com.healthcare.interfaces.UseCase;
+import com.healthcare.models.request.UpdateDocumentRequest;
+
+public interface UpdateDocumentUseCase extends UseCase<UpdateDocumentRequest> {
+
+}

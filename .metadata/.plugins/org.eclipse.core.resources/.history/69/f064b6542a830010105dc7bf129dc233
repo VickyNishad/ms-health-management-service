@@ -1,0 +1,16 @@
+/**
+ * 
+ */
+package com.auth.models.response;
+
+/**
+ * 
+ */
+public class AuthTokenResponse {
+	
+	private String accessToken;
+	private String refereshToken;
+	private String accessTokenExpiresAt;
+	private String refreshTokenExpiresAt;
+
+}

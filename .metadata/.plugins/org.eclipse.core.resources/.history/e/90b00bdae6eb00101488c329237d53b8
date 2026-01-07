@@ -1,0 +1,11 @@
+/**
+ * 
+ */
+package com.health.repository.jpa;
+
+/**
+ * 
+ */
+public interface MyJPA {
+
+}

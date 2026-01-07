@@ -1,0 +1,35 @@
+/**
+ * 
+ */
+package com.healthcare.interfaces;
+
+import org.springframework.http.ResponseEntity;
+import com.healthcare.models.GenericModel;
+import com.healthcare.models.GenericRequestModel;
+import com.healthcare.models.request.AddressRegistration;
+import com.healthcare.models.request.DoctorAvailabilityFilter;
+import com.healthcare.models.request.DoctorAvailabilityRequest;
+import com.healthcare.models.request.DoctorRegistration;
+import com.healthcare.models.request.FilterRequest;
+import com.healthcare.models.request.UpdateAddressRequest;
+
+/**
+ * 
+ */
+public interface ManageDoctorUseCase {
+	
+	public ResponseEntity<?> insertDoctorProfile(GenericModel<DoctorRegistration> model);
+	public ResponseEntity<?> getDoctorProfile(GenericModel<String> model);
+	public ResponseEntity<?> insertDoctorClinic(GenericModel<GenericRequestModel<AddressRegistration>> model);
+	public ResponseEntity<?> updateDoctorClinic(GenericModel<GenericRequestModel<UpdateAddressRequest>> model);
+	public ResponseEntity<?> getDoctorClinics(GenericModel<String> model);
+	public ResponseEntity<?> getDashboard(GenericModel<FilterRequest> model);
+	public ResponseEntity<?> getAppointments(GenericModel<FilterRequest> model);
+	public ResponseEntity<?> getClinics(GenericModel<String> model);
+	public ResponseEntity<?> getRecommendedDoctor(GenericModel<String> model);
+	public ResponseEntity<?> getMediqueProducts(GenericModel<String> model);
+	public ResponseEntity<?> getTodaysAppointment(GenericModel<String> model);
+	
+	public ResponseEntity<?> insertDoctorAvailability(DoctorAvailabilityRequest doctorAvailabilityRequest);
+	public ResponseEntity<?> getDoctorAvailability(DoctorAvailabilityFilter doctorAvailabilityFilter);
+}

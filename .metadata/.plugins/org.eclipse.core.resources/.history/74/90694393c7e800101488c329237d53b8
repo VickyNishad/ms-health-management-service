@@ -1,0 +1,8 @@
+public class TimeSlot {
+
+    private String startTime;    // 09:00
+    private String endTime;      // 13:00
+    private String slotDuration; // 10 Min
+
+    // getters & setters
+}

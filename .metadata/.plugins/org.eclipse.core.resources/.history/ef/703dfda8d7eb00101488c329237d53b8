@@ -1,0 +1,50 @@
+package com.medicque.adapter.out.persistence.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "sales_doctor_assignments")
+public class SalesDoctorAssignment extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "assignment_id")
+    private Long assignmentId;
+
+    // Salesperson who onboarded the doctor
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserRegistration salesUser;
+
+    // Doctor onboarded by the salesperson
+    @ManyToOne
+    @JoinColumn(name = "doctor_id", nullable = false)
+    private Doctor doctor;
+
+    // Getters & Setters
+ 
+    public UserRegistration getSalesUser() {
+        return salesUser;
+    }
+
+    public Long getAssignmentId() {
+		return assignmentId;
+	}
+
+	public void setAssignmentId(Long assignmentId) {
+		this.assignmentId = assignmentId;
+	}
+
+	public void setSalesUser(UserRegistration salesUser) {
+        this.salesUser = salesUser;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
+}

@@ -1,0 +1,26 @@
+1762542755526	Move compilation unit
+1762544681724	Rename type 'ClinicRepository'
+1762544692637	Rename type 'DoctorClinicRepository'
+1762544702356	Rename type 'FamilyMemberRepository'
+1762544713525	Rename type 'DoctorRepository'
+1762544724148	Rename type 'PatientRepository'
+1762544733497	Rename type 'RoleMasterRepository'
+1762544743285	Rename type 'UserRegistrationRepository'
+1762544995419	Rename type 'JPAFamilyMemberRepositoryAdapter'
+1762545005947	Rename type 'JPAPatientRepositoryAdapter'
+1762545015547	Rename type 'JPARoleMasterRepositoryAdapter'
+1762545026192	Rename type 'JPAUserRegistrationRepositoryAdapter'
+1762545728030	Rename package 'com.medicque.adapter.in.web'
+1762548925616	Rename type 'UserRegistraionUseCase'
+1762551174477	Move compilation unit
+1762551634604	Delete element
+1762551642530	Delete element
+1762551650158	Delete element
+1762551656408	Delete element
+1762551666237	Delete element
+1762551672504	Delete element
+1762551679754	Delete element
+1762576260230	Move compilation unit
+1762578376056	Copy compilation unit
+1762578387765	Rename type 'DoctorSignUpRequest2'
+1762606873608	Delete element

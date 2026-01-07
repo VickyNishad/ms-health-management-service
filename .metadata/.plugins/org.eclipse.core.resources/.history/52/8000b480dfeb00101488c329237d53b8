@@ -1,0 +1,114 @@
+/**
+ * 
+ */
+package com.health.repository.jpa;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+
+import com.health.adapter.out.persistence.entity.Appointment;
+import com.health.adapter.out.persistence.entity.Doctor;
+import com.health.adapter.out.persistence.entity.DoctorSlot;
+
+import jakarta.persistence.LockModeType;
+
+/**
+ * 
+ */
+@Repository
+public interface JPAAppointmentRepository extends JpaRepository<Appointment, Long> {
+
+	
+	
+	  // --------------------------
+    // 1️⃣ Check if already booked
+    // --------------------------
+    @Query("""
+        SELECT a FROM Appointment a 
+        WHERE a.doctor = :doctor 
+          AND a.appointmentDate = :date 
+          AND a.appointmentTime = :time
+    """)
+    Appointment findExistingAppointment(Doctor doctor, LocalDate date, LocalTime time);
+
+
+    // --------------------------------------------
+    // 2️⃣ Check if a slot is already booked
+    // (Slot is unique, so this prevents duplicates)
+    // --------------------------------------------
+    Appointment findByDoctorSlot(DoctorSlot doctorSlot);
+
+
+    // ---------------------------------
+    // 3️⃣ Get all appointments for a day
+    // ---------------------------------
+    List<Appointment> findByDoctorAndAppointmentDate(Doctor doctor, LocalDate date);
+
+
+    // ----------------------------------------------------
+    // 4️⃣ Lock appointment for safe cancellation/update
+    // ----------------------------------------------------
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT a FROM Appointment a WHERE a.appointmentId = :appointmentId")
+    Appointment lockAppointment(Long appointmentId);
+
+
+    // ----------------------------------------
+    // 5️⃣ Check if patient has booking same day
+    // ----------------------------------------
+    @Query("""
+        SELECT a FROM Appointment a
+        WHERE a.patient = :patient
+        AND a.appointmentDate = :date 
+        AND a.appointmentStatus = 'ACTIVE'
+    """)
+    List<Appointment> findActivePatientAppointmentsOnDate(
+            com.health.adapter.out.persistence.entity.Patient patient,
+            LocalDate date);
+
+
+    // --------------------------------------------------
+    // 6️⃣ Check if family member has appointment same day
+    // --------------------------------------------------
+//    @Query("""
+//        SELECT a FROM Appointment a
+//        WHERE a.familyMember = :familyMember
+//        AND a.appointmentDate = :date
+//        AND a.appointmentStatus = 'ACTIVE'
+//    """)
+//    List<Appointment> findActiveFamilyAppointmentsOnDate(
+//            com.health.adapter.out.persistence.entity.FamilyMember familyMember,
+//            LocalDate date);
+
+
+    // ----------------------------------------------
+    // 7️⃣ Get appointments for a doctor for next 7 days
+    // ----------------------------------------------
+    @Query("""
+        SELECT a FROM Appointment a
+        WHERE a.doctor = :doctor
+        AND a.appointmentDate BETWEEN :startDate AND :endDate
+        ORDER BY a.appointmentDate, a.appointmentTime
+    """)
+    List<Appointment> findUpcomingAppointments(
+            Doctor doctor,
+            LocalDate startDate,
+            LocalDate endDate);
+
+
+    // ---------------------------------------
+    // 8️⃣ Fetch all appointments of a patient
+    // ---------------------------------------
+    @Query("""
+        SELECT a FROM Appointment a
+        WHERE a.user.userId = :userId
+        ORDER BY a.appointmentDate DESC, a.appointmentTime DESC
+    """)
+    List<Appointment> findAllAppointmentsByUser(Long userId);
+}

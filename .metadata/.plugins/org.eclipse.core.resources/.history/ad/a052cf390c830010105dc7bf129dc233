@@ -1,0 +1,111 @@
+package com.document.models.response;
+
+public class DocumentInfo {
+	private int id;
+	private String referenceType;
+	private String referenceId;
+	private String fileName;
+	private String filePath;
+	private String fileSize;
+	private String contentType;
+	private String fileType;
+	private boolean isActive;
+
+	// Constructors
+	public DocumentInfo() {
+	}
+
+	public DocumentInfo(int id, String referenceType, String referenceId, String fileName, String filePath,
+			String fileSize, String contentType, String fileType, boolean isActive) {
+		this.id = id;
+		this.referenceType = referenceType;
+		this.referenceId = referenceId;
+		this.fileName = fileName;
+		this.filePath = filePath;
+		this.fileSize = fileSize;
+		this.contentType = contentType;
+		this.fileType = fileType;
+		this.isActive = isActive;
+	}
+
+	// Getters and setters
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	public String getReferenceType() {
+		return referenceType;
+	}
+
+	public void setReferenceType(String referenceType) {
+		this.referenceType = referenceType;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	public String getFilePath() {
+		return filePath;
+	}
+
+	public void setFilePath(String filePath) {
+		this.filePath = filePath;
+	}
+
+	public String getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(String fileSize) {
+		this.fileSize = fileSize;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getFileType() {
+		return fileType;
+	}
+
+	public void setFileType(String fileType) {
+		this.fileType = fileType;
+	}
+
+	public boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	@Override
+	public String toString() {
+		return "DocumentInfo {" + "id=" + id + ", referenceType='" + referenceType + '\'' + ", referenceId='"
+				+ referenceId + '\'' + ", fileName='" + fileName + '\'' + ", filePath='" + filePath + '\''
+				+ ", fileSize=" + fileSize + ", contentType='" + contentType + '\'' + ", fileType='" + fileType + '\''
+				+ ", isActive=" + isActive + '}';
+	}
+}

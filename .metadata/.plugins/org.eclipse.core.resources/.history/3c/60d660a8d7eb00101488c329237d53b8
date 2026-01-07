@@ -1,0 +1,13 @@
+/**
+ * 
+ */
+package com.medicque.application.port.out;
+
+import com.medicque.adapter.out.persistence.entity.DoctorSpecialization;
+
+/**
+ * 
+ */
+public interface DoctorSpecializationRepositoryPort {
+	public DoctorSpecialization save(DoctorSpecialization doctorSpecialization);
+}

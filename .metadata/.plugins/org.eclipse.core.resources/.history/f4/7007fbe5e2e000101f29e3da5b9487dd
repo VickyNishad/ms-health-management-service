@@ -1,0 +1,26 @@
+/**
+ * 
+ */
+package com.medicque.application.port.in;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
+import com.common.models.ApiResponse;
+import com.medicque.adapter.in.rest.dto.AddPatientRequest;
+import com.medicque.adapter.in.rest.dto.FamilyMemberRequest;
+import com.medicque.adapter.in.rest.dto.MessageResponse;
+import com.medicque.adapter.out.persistence.entity.Patient;
+
+/**
+ * 
+ */
+public interface PatientUseCase {
+
+	public ResponseEntity<ApiResponse<Patient>> addPatient(Long userId,AddPatientRequest addPatientRequest);
+	public ResponseEntity<ApiResponse<List<Patient>>> getPatient(Long userId );
+	public ResponseEntity<ApiResponse<Patient>> modifyPatient(Long userId,Long patientId ,AddPatientRequest addPatientRequest);
+	public ResponseEntity<ApiResponse<MessageResponse>> removePatient(Long userId ,Long patientId);
+	
+}

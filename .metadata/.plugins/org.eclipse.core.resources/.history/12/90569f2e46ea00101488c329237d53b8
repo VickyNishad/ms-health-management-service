@@ -1,0 +1,360 @@
+/**
+ * 
+ */
+package com.healthcare.service;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.exception.TException;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.models.GenericModel;
+import com.healthcare.models.request.DBProcedureRequest;
+import com.healthcare.models.request.DoctorAvailabilityFilter;
+import com.healthcare.models.request.DoctorAvailabilityRequest;
+import com.healthcare.models.request.WeeklySchedule;
+import com.healthcare.models.response.AuthTokenResponse;
+import com.healthcare.models.response.ResponseModel;
+import com.healthcare.schedular.JobSchedular;
+import com.healthcare.utils.TConvertors;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Service
+public class DoctorAvailabilityServiceImpl {
+
+
+	private TRepository tRepository;
+	
+	private JobSchedular jobSchedular;
+
+	public DoctorAvailabilityServiceImpl(TRepository tRepository, JobSchedular jobSchedular) {
+		this.tRepository = tRepository;
+		this.jobSchedular = jobSchedular;
+	}
+
+	public ResponseEntity<?> insert(GenericModel<DoctorAvailabilityRequest> model) {
+		ResponseModel responseModel = null;
+		//Validate Request
+		try {
+			DoctorAvailabilityRequest doctorAvailabilityRequest = model.getRequest();
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			
+			TValidatiors.validateRequestedField("profileId",authTokenResponse.getProfileId() , true, false, false, false, null, 0, 0, true);
+			TValidatiors.validateRequestedField("addressId",doctorAvailabilityRequest.getAddressId() , true, false, false, false, null, 0, 0, true);
+			List<WeeklySchedule> weeklySchedules = doctorAvailabilityRequest.getWeeklySchedule();
+			if(weeklySchedules.size() == 0) {
+				TValidatiors.validateRequestedField("weeklySchedule",null, true, false, false, false, null, 0, 0, true);
+			}
+			
+			for(WeeklySchedule weeklySchedule : weeklySchedules) {
+				DayOfWeek dayOfWeek = weeklySchedule.getDayOfWeek();
+				if(TValidatiors.isNullOrEmpty(dayOfWeek)) {
+					TValidatiors.validateRequestedField("dayOfWeek",null, true, false, false, false, null, 0, 0, true);
+				}
+				
+				if(TValidatiors.isNullOrEmpty(weeklySchedule.getDuration())) {
+					TValidatiors.validateRequestedField("duration",null, true, false, false, false, null, 0, 0, true);
+				}
+				
+				if(TValidatiors.isNullOrEmpty(weeklySchedule.getAfternoon())) {
+					TValidatiors.validateRequestedField("afternoon shift",null, true, false, false, false, null, 0, 0, true);
+				}
+//				
+//				if(TValidatiors.isNullOrEmpty(weeklySchedule.getEvening())) {
+//					TValidatiors.validateRequestedField("evening shift",null, true, false, false, false, null, 0, 0, true);
+//				}
+//				
+//				if(TValidatiors.isNullOrEmpty(weeklySchedule.getMorning())) {
+//					TValidatiors.validateRequestedField("morning shift",null, true, false, false, false, null, 0, 0, true);
+//				}
+			}
+
+			// get availability 
+			DoctorAvailabilityFilter filter = new DoctorAvailabilityFilter();
+			filter.setProfileId(authTokenResponse.getProfileId());
+			
+			List<Map<String, Object>> availbilty = getAvailability(filter);
+
+			doctorAvailabilityRequest.setProfileId(authTokenResponse.getProfileId());
+			
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(doctorAvailabilityRequest, TConstants.ParamProcess.INSERT_DOCTORAVAILABILITY);
+			
+			Map<String, Object> response = new HashMap<>();
+			
+			if(availbilty.size()==0) {
+				response = tRepository.execute(dbProcedureRequest);
+				
+				// generate slot instants
+				
+				List<Map<String, Object>> avail = getAvailability(filter);
+				for(Map<String, Object> a : avail) {
+					String day = TUtils.getStringValue(a.get("dayOfWeek"));
+					
+					System.out.println(day);
+					
+					String pId = TUtils.getStringValue(a.get("ProfileId"));
+					String aId = TUtils.getStringValue(a.get("AddressId"));									
+					LocalDate next = TUtils.getNextOrSameFor(day);
+					try {
+						String message = jobSchedular.generateSlot(pId, aId, next.toString());
+						System.out.println(message);
+					} catch (Exception e) {
+						// TODO: handle exception
+					}
+				}
+				
+				if (TValidatiors.isNullOrEmpty(response)) {
+					throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+				}
+				
+				List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+				if(list1.size()==0) {
+					responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+					return new ResponseEntity<>(responseModel,HttpStatus.OK);
+				}
+				
+				responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+				return new ResponseEntity<>(responseModel,HttpStatus.OK);
+				
+			}
+			
+			for(Map<String, Object> availability : availbilty) {
+				
+				for(WeeklySchedule weeklySchedule : weeklySchedules) {
+					
+					 String day = TUtils.getStringValue(availability.get("dayOfWeek"));
+				     DayOfWeek dayOfWeek = DayOfWeek.valueOf(day.toUpperCase());
+				     
+					if(weeklySchedule.getDayOfWeek().name().equalsIgnoreCase(day)) {
+    
+				        if (!TUtils.getStringValue(availability.get("AddressId")).equals(doctorAvailabilityRequest.getAddressId())) {
+				            throw new RuntimeException( "Doctor already has availability on " + dayOfWeek.name() + " for Clinic ID: " + TUtils.getStringValue(availability.get("AddressId")));
+				        }
+
+//				        LocalTime morningStart  = toTime(TUtils.getStringValue(availability.get("morningSlotStartTime")));
+//				        LocalTime morningEnd    = toTime(TUtils.getStringValue(availability.get("morningSlotEndTime")));
+//
+//				        LocalTime afternoonStart = toTime(TUtils.getStringValue(availability.get("afternoonSlotStartTime")));
+//				        LocalTime afternoonEnd   = toTime(TUtils.getStringValue(availability.get("afternoonSlotEndTime")));
+//
+//				        LocalTime eveningStart   = toTime(TUtils.getStringValue(availability.get("eveningSlotStartTime")));
+//				        LocalTime eveningEnd     = toTime(TUtils.getStringValue(availability.get("eveningSlotEndTime")));
+//
+//				        validateAvailability( morningStart, morningEnd, afternoonStart, afternoonEnd, eveningStart, eveningEnd);				    
+					}
+				}			
+			}
+			
+			response = tRepository.execute(dbProcedureRequest);
+			
+			List<Map<String, Object>> avail = getAvailability(filter);
+			for(Map<String, Object> a : avail) {
+				String day = TUtils.getStringValue(a.get("dayOfWeek"));
+				
+				System.out.println(day);
+				
+				String pId = TUtils.getStringValue(a.get("ProfileId"));
+				String aId = TUtils.getStringValue(a.get("AddressId"));
+				String today = LocalDate.now().toString();
+				
+				
+				LocalDate next = TUtils.getNextOrSameFor(day);
+				try {
+				
+					String message = jobSchedular.generateSlot(pId, aId, next.toString());
+					System.out.println(message);
+				} catch (Exception e) {
+					// TODO: handle exception
+				}
+			}
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+				return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			}
+			
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+		} catch (DataNotFoundException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new TException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+
+	}
+
+	public ResponseEntity<?> get(GenericModel<DoctorAvailabilityFilter> model) {
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			TValidatiors.validateRequestedField("profileId",authTokenResponse.getProfileId(), true, false, false, false, null, 0, 0, true);
+			
+			DoctorAvailabilityFilter doctorAvailabilityFilter = model.getRequest();
+
+			doctorAvailabilityFilter.setProfileId(authTokenResponse.getProfileId());
+			DBProcedureRequest dbProcedureRequest = new DBProcedureRequest(); 
+			dbProcedureRequest.setParam_JSON(TConvertors.convertObjectToString(doctorAvailabilityFilter));
+			dbProcedureRequest.setParam_Process(TConstants.ParamProcess.GET_DOCTORAVAILABILITY);
+			dbProcedureRequest.setTokenId(null);
+			
+			Map<String, Object> response = tRepository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+				return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			}
+			
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DataNotFoundException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new TException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+	
+	
+	
+	public ResponseEntity<?> remove(GenericModel<String> model,String availabilityId) {
+		ResponseModel responseModel = null;
+	
+			try {
+				AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+				String role =  authTokenResponse.getRole();
+				
+				TValidatiors.validateRequestedField("role", role, true, false, false, false, null, 0, 0, true);
+
+				if(!role.equalsIgnoreCase("nurse") && !role.equalsIgnoreCase("doctor")){
+					throw new TException("Only doctor has permission to remove staff.");
+				}
+				TValidatiors.validateRequestedField("id", availabilityId, true, true, false, false, null, 0, 0, true);
+				
+				/*
+				 * 
+				 */
+				Map<String, Object> request = new HashMap<>();
+				request.put("Id", availabilityId);
+				
+				DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,request, "REMOVE_DOCTORAVAILABILITY");
+				/**
+				 * 
+				 */
+				Map<String, Object> req = TConvertors.convertObjectToMap(dbProcedureRequest); 
+				Map<String, Object> response = tRepository.execute(req,"REMOVE_DOCTORAVAILABILITY","USP_DoctorAvailability");
+				
+				if (TValidatiors.isNullOrEmpty(response)) {
+					throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+				}
+				
+				@SuppressWarnings("unchecked")
+				List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+				if(list1.size()==0) {
+					throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+				}
+				String message = null;
+				if (TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.RESULT)).equalsIgnoreCase(TConstants.Keys.ERROR)) {
+					message = TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.MESSAGE));
+					throw new RuntimeException(message);
+				}
+			
+				responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1.get(0)));
+				return new ResponseEntity<>(responseModel,HttpStatus.OK);
+				
+			} catch (DatabaseException e) {
+				throw new DatabaseException(e.getMessage());
+			} catch (RuntimeException e) {
+				throw new DataNotFoundException(e.getMessage());
+			} catch (Exception e) {
+				throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+	}
+	
+
+	public ResponseEntity<?> update(GenericModel<DoctorAvailabilityRequest> model) {
+		return null;
+	}
+	
+	private List<Map<String, Object>> getAvailability(DoctorAvailabilityFilter filter){
+		
+		DBProcedureRequest dbProcedureRequest = new DBProcedureRequest(); 
+		dbProcedureRequest.setParam_JSON(TConvertors.convertObjectToString(filter));
+		dbProcedureRequest.setParam_Process(TConstants.ParamProcess.GET_DOCTORAVAILABILITY);
+		dbProcedureRequest.setTokenId(null);
+		
+		Map<String, Object> response = tRepository.execute(dbProcedureRequest);
+		
+		List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+		if(list1.size()==0) {
+			return new ArrayList<>();
+		}
+		return list1;
+	}
+	
+	
+	private LocalTime toTime(String t) {
+	    return (t == null || t.isEmpty()) ? null : LocalTime.parse(t);
+	}
+
+	
+	
+	private void validateAvailability(
+	        LocalTime mStart, LocalTime mEnd,
+	        LocalTime aStart, LocalTime aEnd,
+	        LocalTime eStart, LocalTime eEnd
+	) {
+	    if (mStart != null && mEnd != null && mEnd.isBefore(mStart)) {
+	        throw new RuntimeException("Morning end time cannot be before start time");
+	    }
+	    if (aStart != null && aEnd != null && aEnd.isBefore(aStart)) {
+	        throw new RuntimeException("Afternoon end time cannot be before start time");
+	    }
+	    if (eStart != null && eEnd != null && eEnd.isBefore(eStart)) {
+	        throw new RuntimeException("Evening end time cannot be before start time");
+	    }
+
+	    // Overlap checks
+	    checkOverlap(mStart, mEnd, aStart, aEnd);
+	    checkOverlap(mStart, mEnd, eStart, eEnd);
+	    checkOverlap(aStart, aEnd, eStart, eEnd);
+	}
+
+	private void checkOverlap(LocalTime s1, LocalTime e1, LocalTime s2, LocalTime e2) {
+	    if (s1 == null || e1 == null || s2 == null || e2 == null) return;
+
+	    if (!e1.isBefore(s2) && !e2.isBefore(s1)) {
+	        throw new RuntimeException("Time ranges cannot overlap");
+	    }
+	}
+
+}

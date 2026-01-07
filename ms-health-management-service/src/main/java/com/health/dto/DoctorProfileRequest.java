@@ -1,0 +1,79 @@
+package com.health.dto;
+
+import java.util.List;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Min;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
+@Schema(description = "Request DTO to create or update a doctor's profile")
+public class DoctorProfileRequest {
+
+    @NotNull(message = "UserId is required")
+    @Schema(description = "Unique identifier of the user", example = "123")
+    private Long userId;
+
+    @NotBlank(message = "Full name is required")
+    @Schema(description = "Full name of the doctor", example = "Dr. John Doe")
+    private String fullName;
+
+    @Schema(description = "Nickname of the doctor", example = "Johnny")
+    private String neekName;
+
+    @NotBlank(message = "Contact number is required")
+    @Pattern(regexp = "^[6-9]\\d{9}$", message = "Contact number must be a valid 10-digit Indian mobile number")
+    @Schema(description = "Contact number of the doctor", example = "9876543210")
+    private String contactNumber;
+
+    @NotBlank(message = "Email is required")
+    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$", message = "Email should be valid")
+    @Schema(description = "Email address of the doctor", example = "doctor@example.com")
+    private String emailId;
+
+    @NotNull(message = "Experience years is required")
+    @Min(value = 0, message = "Experience years cannot be negative")
+    @Schema(description = "Years of experience", example = "5")
+    private Integer experienceYears;
+
+    @NotBlank(message = "Registration number is required")
+    @Schema(description = "Medical registration number of the doctor", example = "REG12345")
+    private String registrationNumber;
+
+    @NotEmpty(message = "At least one qualification must be provided")
+    @Schema(description = "List of qualification IDs", example = "[1,2,3]")
+    private List<Long> qualificationsId;
+
+    @NotEmpty(message = "At least one specialization must be provided")
+    @Schema(description = "List of specialization IDs", example = "[1,2]")
+    private List<Long> specializtionsId;
+
+    @NotEmpty(message = "At least one clinic must be provided")
+    @Schema(description = "List of clinics associated with the doctor")
+    private List<ClinicRequest> clinics;
+
+    // Getters & Setters
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+    public String getFullName() { return fullName; }
+    public void setFullName(String fullName) { this.fullName = fullName; }
+    public String getNeekName() { return neekName; }
+    public void setNeekName(String neekName) { this.neekName = neekName; }
+    public String getContactNumber() { return contactNumber; }
+    public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+    public String getEmailId() { return emailId; }
+    public void setEmailId(String emailId) { this.emailId = emailId; }
+    public Integer getExperienceYears() { return experienceYears; }
+    public void setExperienceYears(Integer experienceYears) { this.experienceYears = experienceYears; }
+    public String getRegistrationNumber() { return registrationNumber; }
+    public void setRegistrationNumber(String registrationNumber) { this.registrationNumber = registrationNumber; }
+    public List<Long> getQualificationsId() { return qualificationsId; }
+    public void setQualificationsId(List<Long> qualificationsId) { this.qualificationsId = qualificationsId; }
+    public List<Long> getSpecializtionsId() { return specializtionsId; }
+    public void setSpecializtionsId(List<Long> specializtionsId) { this.specializtionsId = specializtionsId; }
+    public List<ClinicRequest> getClinics() { return clinics; }
+    public void setClinics(List<ClinicRequest> clinics) { this.clinics = clinics; }
+}

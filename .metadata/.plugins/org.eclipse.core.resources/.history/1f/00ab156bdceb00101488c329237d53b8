@@ -1,0 +1,43 @@
+package com.health.adapter.in.rest.dto;
+
+public class AppointmentBookingRequest {
+
+	private Long doctorId;
+	private Long clinicId;
+	private Long patientId;
+	private Long slotId;
+
+	public Long getDoctorId() {
+		return doctorId;
+	}
+
+	public void setDoctorId(Long doctorId) {
+		this.doctorId = doctorId;
+	}
+
+	
+	public Long getClinicId() {
+		return clinicId;
+	}
+
+	public void setClinicId(Long clinicId) {
+		this.clinicId = clinicId;
+	}
+
+	public Long getPatientId() {
+		return patientId;
+	}
+
+	public void setPatientId(Long patientId) {
+		this.patientId = patientId;
+	}
+
+	public Long getSlotId() {
+		return slotId;
+	}
+
+	public void setSlotId(Long slotId) {
+		this.slotId = slotId;
+	}
+
+}

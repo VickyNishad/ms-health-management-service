@@ -1,0 +1,11 @@
+/**
+ * 
+ */
+package com.healthcare.interfaces.usecase;
+
+/**
+ * 
+ */
+public interface H {
+
+}

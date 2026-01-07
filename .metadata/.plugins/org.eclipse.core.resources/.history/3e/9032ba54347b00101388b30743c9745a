@@ -1,0 +1,55 @@
+package com.document.service;
+
+import org.springframework.http.ResponseEntity;
+
+@Service
+public class IsRegisterUserService extends AbstractUseCase<IsRegisterUserRequest, DBProcedureRequest, Map<String, Object>> 
+        implements IsRegisterUserUseCase {
+
+    private final BittyBrainRepository repository;
+
+    public IsRegisterUserService(BittyBrainRepository repository) {
+        this.repository = repository;
+    }
+
+    @Override
+    protected ResponseEntity<?> validateInput(GenericModel<IsRegisterUserRequest> model) {
+        IsRegisterUserRequest request = model.getPayload();
+        if (request == null || request.getEmail() == null || request.getEmail().isEmpty()) {
+            return ResponseEntity.badRequest().body("Email is required.");
+        }
+        if (!request.getEmail().contains("@")) {
+            return ResponseEntity.badRequest().body("Email is invalid.");
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    protected DBProcedureRequest buildDatabaseRequest(GenericModel<IsRegisterUserRequest> model) {
+        DBProcedureRequest request = new DBProcedureRequest();
+        request.setTokenId(model.getToken());
+        request.setParam_Process("IS_USER_REGISTERED");
+//        request.setParam_JSON(new Gson().toJson(model.getPayload()));
+        return request;
+    }
+
+    @Override
+    protected Map<String, Object> execute(GenericModel<IsRegisterUserRequest> model, DBProcedureRequest request) {
+        ResponseEntity<?> result = repository.execute(request);
+        return (Map<String, Object>) result.getBody();
+    }
+
+    @Override
+    protected ResponseEntity<?> buildFinalResponse(GenericModel<IsRegisterUserRequest> model, Map<String, Object> response) {
+        List<Map<String, Object>> resultset1 = (List<Map<String, Object>>) response.get("resultSet1");
+
+        if (resultset1 != null && !resultset1.isEmpty()) {
+            String emailStatus = (String) resultset1.get(0).get("emailStatus");
+            if ("NOT_EXISTS".equalsIgnoreCase(emailStatus)) {
+                return ResponseEntity.ok(Map.of("success", false, "message", "Email not registered"));
+            }
+        }
+
+        return ResponseEntity.ok(Map.of("success", true, "message", "Email is registered"));
+    }
+}

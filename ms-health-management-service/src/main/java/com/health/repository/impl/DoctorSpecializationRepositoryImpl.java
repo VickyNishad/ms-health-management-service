@@ -1,0 +1,28 @@
+/**
+ * 
+ */
+package com.health.repository.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.health.model.DoctorSpecialization;
+import com.health.repository.DoctorSpecializationRepository;
+import com.health.repository.jpa.JPADoctorSpecializationRepository;
+
+/**
+ * 
+ */
+@Component
+public class DoctorSpecializationRepositoryImpl implements DoctorSpecializationRepository {
+	
+	@Autowired
+	private JPADoctorSpecializationRepository doctorSpecializationRepository;
+
+	@Override
+	public DoctorSpecialization save(DoctorSpecialization doctorSpecialization) {
+		// TODO Auto-generated method stub		
+		doctorSpecializationRepository.save(doctorSpecialization);
+		return doctorSpecialization;
+	}
+}

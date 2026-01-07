@@ -1,0 +1,13 @@
+/**
+ * 
+ */
+package com.healthcare.interfaces.usecase;
+
+import com.healthcare.models.request.SlotRequest;
+
+/**
+ * 
+ */
+public interface GetSlotUseCase extends TUseCase<SlotRequest> {
+
+}

@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.document.interfaces.usecase;
+
+import com.document.interfaces.UseCase;
+import com.document.models.request.DocumentRequest;
+
+/**
+ * 
+ */
+public interface InsertDocumentUploadUseCase extends UseCase<DocumentRequest> {
+
+}

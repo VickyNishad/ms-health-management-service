@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.document.interfaces.usecase;
+
+import com.document.interfaces.UseCase;
+import com.document.models.request.S3BucketRequest;
+
+/**
+ * 
+ */
+public interface S3BucketUseCase extends UseCase<S3BucketRequest> {
+
+}

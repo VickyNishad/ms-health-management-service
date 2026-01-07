@@ -1,0 +1,552 @@
+/**
+ * 
+ */
+package com.healthcare.service;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.dto.StaffRequestDto;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.exception.TException;
+import com.healthcare.interfaces.ManageAdminUseCase;
+import com.healthcare.interfaces.ManageStaffUseCase;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.interfaces.usecase.AuthLoginUseCase;
+import com.healthcare.models.GenericModel;
+import com.healthcare.models.KycStatus;
+import com.healthcare.models.PortalType;
+import com.healthcare.models.request.DBProcedureRequest;
+import com.healthcare.models.request.FilterRequest;
+import com.healthcare.models.request.StaffRequest;
+import com.healthcare.models.request.UpdateStaffByCreatorRequest;
+import com.healthcare.models.request.UserRole;
+import com.healthcare.models.response.AuthTokenResponse;
+import com.healthcare.models.response.ResponseModel;
+import com.healthcare.utils.TConvertors;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Service
+public class ManageAdminServiceImpl implements ManageAdminUseCase,ManageStaffUseCase {
+	
+	private TRepository repository;
+
+	public ManageAdminServiceImpl(TRepository repository) {
+		this.repository = repository;
+	}
+
+	@Override
+	public ResponseEntity<?> getDashboard(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<?> getAppointments(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<?> getPendingDoctorOrClinics(GenericModel<FilterRequest> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			String role =  authTokenResponse.getRole();
+			
+			TValidatiors.validateRequestedField("role", role, true, false, false, false, null, 0, 0, true);
+
+			if(!role.equalsIgnoreCase("admin")){
+				throw new TException("Only admin has permission to get all pending doctors.");
+			}
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+//			
+			/*
+			 * 
+			 */
+
+			FilterRequest filterRequest = model.getRequest();
+			filterRequest.setProfileId(authTokenResponse.getProfileId());
+			
+			/*
+			 * 
+			 */
+	
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,filterRequest, TConstants.ParamProcess.GET_PENDING_DOCTORS);
+			/**
+			 * 
+			 */
+			
+			Map<String, Object> response = repository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+	        list1.sort((map1, map2) -> {
+	            String name1 = TUtils.getStringValue(map1.get("fullName"));
+	            String name2 = TUtils.getStringValue(map2.get("fullName"));
+	            return name1.compareToIgnoreCase(name2);
+	        });
+
+	        String previousDoctorId = "";
+	        Map<String, Object> success = new HashMap<>();
+	        List<Map<String, Object>> successList = new ArrayList<>();
+	        for(Map<String, Object> res : list1) {
+	        	success = new HashMap<>();
+	        	String doctorId = TUtils.getStringValue(res.get("doctorId"));
+	        	if (!previousDoctorId.equalsIgnoreCase(doctorId)) {
+	        	success.put("doctorId", doctorId);
+	        	success.put("KYCStatus", TUtils.getStringValue(res.get("KYCStatus")));
+	        	success.put("name", TUtils.getStringValue(res.get("FullName")));
+	        	success.put("profileImage", getProfileImage(list1, doctorId));
+	        	success.put("gender", TUtils.getStringValue(res.get("Gender")));
+	        	success.put("age", TUtils.getStringValue(res.get("Age")));
+	        	success.put("experience", TUtils.getStringValue(res.get("ExperienceYears")));
+	        	success.put("registrationNumber", TUtils.getStringValue(res.get("RegistrationNumber")));
+	        	success.put("phone", TUtils.getStringValue(res.get("MobileNumber")));
+	        	success.put("email", TUtils.getStringValue(res.get("Email")));
+	        	success.put("profileDescription", TUtils.getStringValue(res.get("ProfileDescription")));
+	        	success.put("specialization", TUtils.getStringValue(res.get("specializations")));	   
+	        	success.put("createdBy", TUtils.getStringValue(res.get("CreatedBy")));
+	        	success.put("createdOn", TUtils.getStringValue(res.get("CreatedOn")));
+	        	success.put("updatedBy", TUtils.getStringValue(res.get("UpdatedBy")));
+	        	success.put("updatedOn", TUtils.getStringValue(res.get("UpdatedOn")));
+	        	
+	        	success.put("clinicImages", new ArrayList<>());
+	        	
+				List<Map<String, Object>> addresses = getAddress(list1, doctorId);
+				addresses.sort((a1, a2) -> {
+					Integer h1 = TUtils.getIntValue(a1.get("addressId"));
+					Integer h2 = TUtils.getIntValue(a2.get("addressId"));
+
+					if (h1 == null)
+						h1 = 0;
+					if (h2 == null)
+						h2 = 0;
+
+					return h1.compareTo(h2); // ✔ correct for Integer
+				});
+				success.put("clinics", addresses);
+				success.put("documents", getDocuments(list1, doctorId));
+				successList.add(success);
+				previousDoctorId = doctorId;
+			}
+	        }
+
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(successList));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+	
+	private List<Map<String, Object>> getAddress(List<Map<String, Object>> list1, String profileId) {
+		Map<String, Object> address = new HashMap<>();
+		List<Map<String, Object>> addresss = new ArrayList<>();
+		Set<String> addressIds = new HashSet<>();
+		for (Map<String, Object> res : list1) {
+
+			if (TUtils.getStringValue(res.get("adprofileId")).equalsIgnoreCase(profileId)) {
+				String addressId = TUtils.getStringValue(res.get("AddressId"));
+				if (!addressIds.contains(addressId)) {
+					address = new HashMap<>();
+					address.put("addressId", TUtils.getStringValue(res.get("AddressId")));
+					address.put("clinicName", TUtils.getStringValue(res.get("ClinicName")));
+					address.put("hospitalName", TUtils.getStringValue(res.get("FospitalName")));
+					address.put("address", TUtils.getStringValue(res.get("CompleteAddress")));
+					address.put("pinCode", TUtils.getStringValue(res.get("ConsultationFee")));
+					address.put("consultationFee", TUtils.getStringValue(res.get("ConsultationFee")));
+					addresss.add(address);
+					addressIds.add(addressId); 
+				}
+			}
+		}
+		return addresss;
+	}
+	
+	private String getProfileImage(List<Map<String, Object>> list1, String profileId) {
+		for (Map<String, Object> res : list1) {
+
+			if (TUtils.getStringValue(res.get("dmProfileId")).equalsIgnoreCase(profileId) && TUtils.getStringValue(res.get("docType")).equalsIgnoreCase("ProfilePhoto")) {
+				return  TUtils.getStringValue(res.get("docUrl"));
+			}
+		}
+		return "";
+	}
+	
+	private List<Map<String, Object>> getDocuments(List<Map<String, Object>> list1, String profileId) {
+		Map<String, Object> document = new HashMap<>();
+		List<Map<String, Object>> documents = new ArrayList<>();
+		Set<String> docTypes = new HashSet<>();
+		for (Map<String, Object> res : list1) {
+
+			if (TUtils.getStringValue(res.get("dmProfileId")).equalsIgnoreCase(profileId)) {
+				String docType = TUtils.getStringValue(res.get("docType"));
+				if (!docTypes.contains(docType)) {
+					document = new HashMap<>();
+					document.put("id", TUtils.getStringValue(res.get("DocId")));
+					document.put("docType", TUtils.getStringValue(res.get("docType")));
+					document.put("isUploaded", TUtils.getBoolValue(res.get("isUploaded")));
+					document.put("url", TUtils.getStringValue(res.get("docUrl")));
+					documents.add(document);
+					docTypes.add(docType); 
+				}
+			}
+		}
+		return documents;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ResponseEntity<?> addSatff(GenericModel<StaffRequest> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			String role =  authTokenResponse.getRole();
+			
+			StaffRequest staffRequest = model.getRequest();
+			
+			TValidatiors.validateRequestedField("admin/doctor role", role, true, false, false, false, null, 0, 0, true);
+
+			if(!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("doctor")){
+				throw new TException("Only admin/doctor has permission to add new staff.");
+			}
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			TValidatiors.validateRequestedField("addressId", staffRequest.getAddressId(), true, true, false, false, null, 0, 0, true);
+			if(staffRequest.getHasAccessTo().length==0) {
+				TValidatiors.validateRequestedField("hasAccessTo", null, true, true, false, false, null, 0, 0, true);
+			}
+			UserRole role1 = staffRequest.getRole(); 
+			
+			TValidatiors.validateRequestedField("fullName", staffRequest.getFullName(), true, false, false, false, null,
+					0, 0, true);
+
+			TValidatiors.validateRequestedField("mobileNumber", staffRequest.getMobile(), true, true, false, true, null,
+					10, 10, true);
+			TValidatiors.validateRequestedField("password", staffRequest.getPassword(), true, false, false, true, null,
+					4, 16, true);
+
+			if (role.equalsIgnoreCase("admin")) {
+				switch (role1.name().trim()) {
+
+				case "SALES":
+				case "SUPPORT":
+				case "STAFF":
+					break;
+				default:
+					throw new RuntimeException("You cannot add staff with the role: "+role1.name());
+				}
+			}else {
+				switch (role1.name().trim()) {
+
+				case "NURSE":
+				case "STAFF":
+					break;
+				default:
+					throw new RuntimeException("You cannot add staff with the role: "+role1.name());
+				}
+			}
+			
+			StaffRequestDto staffRequestDto = new StaffRequestDto();
+			staffRequestDto.setAddedByStaffId(TUtils.getIntValue(authTokenResponse.getProfileId()));
+			staffRequestDto.setClinicId(0);
+			staffRequestDto.setDateOfBirth(staffRequest.getDateOfBirth());
+			staffRequestDto.setEmail(staffRequest.getEmail());
+			staffRequestDto.setFullName(staffRequest.getFullName());
+			staffRequestDto.setMobile(staffRequest.getMobile());
+			staffRequestDto.setPassword(TUtils.encryptPassword(staffRequest.getPassword()));
+			staffRequestDto.setPortalType(staffRequest.getPortalType().name());
+			staffRequestDto.setQualifications(staffRequest.getQualifications());
+			staffRequestDto.setRole(role1.name());
+			String joined = Arrays.stream(staffRequest.getHasAccessTo())
+                    .collect(Collectors.joining(","));
+			staffRequestDto.setHasAccessTo(joined);
+			staffRequestDto.setStatus("Active");
+			
+			
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,staffRequestDto, "INSERT");
+			/**
+			 * 
+			 */
+			Map<String, Object> req = TConvertors.convertObjectToMap(dbProcedureRequest); 
+			Map<String, Object> response = repository.execute(req,"INSERT","USP_ManageStaff");
+			System.out.println("response: "+response);
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			String message = null;
+			if (TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.RESULT)).equalsIgnoreCase(TConstants.Keys.ERROR)) {
+				message = TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.MESSAGE));
+				throw new RuntimeException(message);
+			}
+			Map<String, Object> res = list1.getFirst();
+			res.remove(TConstants.Keys.RESULT);
+			responseModel = new ResponseModel(TConstants.Keys.SUCCESS, TUtils.getSuccess(res));
+			return new ResponseEntity<>(responseModel, HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public ResponseEntity<?> getSatff(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			String role =  authTokenResponse.getRole();
+			
+			TValidatiors.validateRequestedField("role", role, true, false, false, false, null, 0, 0, true);
+
+			if(!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("doctor")){
+				throw new TException("Only admin/doctor has permission to get all staff.");
+			}
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			/*
+			 * 
+			 */
+			Map<String, Object> request = new HashMap<>();
+			request.put("addedByStaffId", authTokenResponse.getProfileId());
+			
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,request, "GET_BY_ADDEDBY");
+			/**
+			 * 
+			 */
+			Map<String, Object> req = TConvertors.convertObjectToMap(dbProcedureRequest); 
+			Map<String, Object> response = repository.execute(req,"GET_BY_ADDEDBY","USP_ManageStaff");
+			System.out.println("response: "+response);
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			String message = null;
+			if (TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.RESULT)).equalsIgnoreCase(TConstants.Keys.ERROR)) {
+				message = TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.MESSAGE));
+				throw new RuntimeException(message);
+			}
+		
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public ResponseEntity<?> getSatffDetails(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			String role =  authTokenResponse.getRole();
+			
+			TValidatiors.validateRequestedField("role", role, true, false, false, false, null, 0, 0, true);
+
+
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			/*
+			 * 
+			 */
+			Map<String, Object> request = new HashMap<>();
+			request.put("profileId", authTokenResponse.getProfileId());
+			
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,request, "GET_BY_ADDEDBY");
+			/**
+			 * 
+			 */
+			Map<String, Object> req = TConvertors.convertObjectToMap(dbProcedureRequest); 
+			Map<String, Object> response = repository.execute(req,"GET_BY_ADDEDBY","USP_ManageStaff");
+			System.out.println("response: "+response);
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			String message = null;
+			if (TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.RESULT)).equalsIgnoreCase(TConstants.Keys.ERROR)) {
+				message = TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.MESSAGE));
+				throw new RuntimeException(message);
+			}
+		
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> updateSatffByCreator(GenericModel<UpdateStaffByCreatorRequest> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			String role =  authTokenResponse.getRole();
+			UpdateStaffByCreatorRequest updateStaffByCreatorRequest = model.getRequest();
+			
+			TValidatiors.validateRequestedField("role", role, true, false, false, false, null, 0, 0, true);
+			
+			if(!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("doctor")){
+				throw new TException("Only admin/doctor has permission to get all staff.");
+			}
+
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			if(updateStaffByCreatorRequest.getHasAccessTo().length==0) {
+				TValidatiors.validateRequestedField("hasAccessTo", null, true, true, false, false, null, 0, 0, true);
+			}
+
+			String joined = Arrays.stream(updateStaffByCreatorRequest.getHasAccessTo())
+                    .collect(Collectors.joining(","));
+			updateStaffByCreatorRequest.setProfileId(authTokenResponse.getProfileId());
+			
+			Map<String, Object> request = new HashMap<>();
+			request.put("profileId", authTokenResponse.getProfileId());
+			request.put("hasAccessTo", joined);
+			request.put("portalType", updateStaffByCreatorRequest.getPortalType());
+			request.put("status", updateStaffByCreatorRequest.getStatus());
+			
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,request, "UPDATE_BY_ADDEDBY");
+			/**
+			 * 
+			 */
+			Map<String, Object> req = TConvertors.convertObjectToMap(dbProcedureRequest); 
+			Map<String, Object> response = repository.execute(req,"UPDATE_BY_ADDEDBY","USP_ManageStaff");
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			String message = null;
+			if (TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.RESULT)).equalsIgnoreCase(TConstants.Keys.ERROR)) {
+				message = TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.MESSAGE));
+				throw new RuntimeException(message);
+			}
+		
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> updateSatffBySelf(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			String role =  authTokenResponse.getRole();
+			
+			TValidatiors.validateRequestedField("role", role, true, false, false, false, null, 0, 0, true);
+
+
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			/*
+			 * 
+			 */
+			Map<String, Object> request = new HashMap<>();
+			request.put("profileId", authTokenResponse.getProfileId());
+			
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,request, "GET_BY_ADDEDBY");
+			/**
+			 * 
+			 */
+			Map<String, Object> req = TConvertors.convertObjectToMap(dbProcedureRequest); 
+			Map<String, Object> response = repository.execute(req,"GET_BY_ADDEDBY","USP_ManageStaff");
+			System.out.println("response: "+response);
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			@SuppressWarnings("unchecked")
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			String message = null;
+			if (TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.RESULT)).equalsIgnoreCase(TConstants.Keys.ERROR)) {
+				message = TUtils.getStringValue(list1.getFirst().get(TConstants.Keys.MESSAGE));
+				throw new RuntimeException(message);
+			}
+		
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+}

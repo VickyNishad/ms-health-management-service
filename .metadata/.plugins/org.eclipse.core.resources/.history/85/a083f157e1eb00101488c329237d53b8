@@ -1,0 +1,536 @@
+/**
+ * 
+ */
+package com.health.service.impl;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.common.models.ApiResponse;
+import com.common.utility.ApiExecutionUtils;
+
+import com.health.domain.model.DoctorAvailabilityModel;
+import com.health.domain.model.DoctorLeaveModel;
+import com.health.domain.model.DoctorModel;
+import com.health.dto.AvailabilityResponse;
+import com.health.dto.ClinicRequest;
+import com.health.dto.DoctorAvailabilityRequest;
+import com.health.dto.DoctorAvailabilityUpdateRequest;
+import com.health.dto.DoctorLeaveRequest;
+import com.health.dto.DoctorLeaveResponse;
+import com.health.dto.DoctorProfileRequest;
+import com.health.dto.DoctorProfileResponse;
+import com.health.dto.MessageResponse;
+import com.health.model.Clinic;
+import com.health.model.Doctor;
+import com.health.model.DoctorAvailability;
+import com.health.model.DoctorLeave;
+import com.health.model.DoctorQualification;
+import com.health.model.DoctorSpecialization;
+import com.health.model.QualificationMaster;
+import com.health.model.SpecializationMaster;
+import com.health.model.UserRegistration;
+import com.health.repository.ClinicRepositoryPort;
+import com.health.repository.DoctorAvailabilityRepositoryPort;
+import com.health.repository.DoctorClinicRepositoryPort;
+import com.health.repository.DoctorLeaveRepositoryPort;
+import com.health.repository.DoctorQualificationRepositoryPort;
+import com.health.repository.DoctorRepositoryPort;
+import com.health.repository.DoctorSpecializationRepositoryPort;
+import com.health.repository.QualificationMasterRepositoryPort;
+import com.health.repository.SpecializationMasterRepositoryPort;
+import com.health.repository.UserRegistrationRepositoryPort;
+import com.health.service.DoctorUseCase;
+
+/**
+ * 
+ */
+@Service
+public class DoctorService implements DoctorUseCase {
+
+	@Autowired
+	private UserRegistrationRepositoryPort useRepositoryPort;
+
+	@Autowired
+	private DoctorRepositoryPort doctorRepositoryPort;
+
+	@Autowired
+	private SpecializationMasterRepositoryPort specializationMasterRepositoryPort;
+
+	@Autowired
+	private DoctorSpecializationRepositoryPort doctorSpecializationRepositoryPort;
+
+	@Autowired
+	private QualificationMasterRepositoryPort qualificationMasterRepositoryPort;
+
+	@Autowired
+	private DoctorQualificationRepositoryPort doctorQualificationRepositoryPort;
+
+	@Autowired
+	private ClinicRepositoryPort clinicRepositoryPort;
+
+	@Autowired
+	private DoctorClinicRepositoryPort doctorClinicRepositoryPort;
+	
+	@Autowired
+	private DoctorLeaveRepositoryPort doctorLeaveRepositoryPort;
+	
+	@Autowired
+	public DoctorAvailabilityRepositoryPort doctorAvailabilityRepositoryPort;
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public ResponseEntity<ApiResponse<MessageResponse>> saveProfile(DoctorProfileRequest doctorProfileRequest) {
+		// TODO Auto-generated method stub
+
+		// Step 1: Get UserRegistration
+		ApiResponse<MessageResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(doctorProfileRequest,
+				req -> {
+				}, () -> {
+					Optional<UserRegistration> user = useRepositoryPort.findById(doctorProfileRequest.getUserId());
+					if (!user.isPresent()) {
+						// return message
+						throw new RuntimeException("User not found. Please create an account to proceed.");
+					}
+
+					// Step 2: Save Doctor
+					DoctorModel doctorModel = new DoctorModel();
+					doctorModel.setDoctorId(null);
+					doctorModel.setExperienceYears(doctorProfileRequest.getExperienceYears());
+					doctorModel.setRegistrationNumber(doctorProfileRequest.getRegistrationNumber());
+					doctorModel.setUpdatedBy(null);
+					doctorModel.setCreatedBy(null);
+					doctorModel.setUser(user.get());
+
+					Doctor doctor = doctorRepositoryPort.save(doctorModel);
+
+					if (doctorProfileRequest.getSpecializtionsId() != null) {
+						List<SpecializationMaster> specs = specializationMasterRepositoryPort
+								.findAllById(doctorProfileRequest.getSpecializtionsId());
+						for (SpecializationMaster s : specs) {
+							DoctorSpecialization ds = new DoctorSpecialization();
+							ds.setDoctor(doctor);
+							ds.setSpecialization(s);
+							ds.setCreatedBy(null);
+							ds.setIsActive(true);
+							doctorSpecializationRepositoryPort.save(ds);
+						}
+					}
+
+					// Step 5: Save DoctorQualifications
+					if (doctorProfileRequest.getQualificationsId() != null) {
+						List<QualificationMaster> quals = qualificationMasterRepositoryPort
+								.findAllById(doctorProfileRequest.getQualificationsId());
+						for (QualificationMaster q : quals) {
+							DoctorQualification dq = new DoctorQualification();
+							dq.setDoctor(doctor);
+							dq.setQualification(q);
+							dq.setCreatedBy(null);
+							dq.setIsActive(true);
+							doctorQualificationRepositoryPort.save(dq);
+						}
+					}
+
+					// Step 6: Handle Clinics
+
+					for (ClinicRequest clinicReq : doctorProfileRequest.getClinics()) {
+
+						Clinic clinic = new Clinic();
+						clinic.setClinicName(clinicReq.getClinicName());
+						clinic.setAddress(clinicReq.getAddress());
+						clinic.setContactNumber(clinicReq.getContactNumber());
+						clinic.setCreatedBy(null);
+						clinic.setIsActive(true);
+						clinicRepositoryPort.save(clinic);
+
+						// Create DoctorClinic mapping
+						DoctorClinic mapping = new DoctorClinic();
+						mapping.setDoctor(doctor);
+						mapping.setClinic(clinic);
+						mapping.setCreatedBy(null);
+						mapping.setIsActive(true);
+						doctorClinicRepositoryPort.save(mapping);
+
+					}
+					return new MessageResponse("Doctor onboarded successfully.");
+				}, ApiResponse::success);
+		return new ResponseEntity<ApiResponse<MessageResponse>>(success, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<DoctorProfileResponse>> getProfile(Long doctorId) {
+
+		ApiResponse<DoctorProfileResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(doctorId, req -> {
+		}, () -> {
+			Optional<Doctor> optional = doctorRepositoryPort.findById(doctorId);
+			if(optional==null || optional.isEmpty()) {
+				throw new RuntimeException("Doctor not found.");
+			}
+			Doctor doctor = optional.get();
+			DoctorProfileResponse response = new DoctorProfileResponse();
+			response.setDoctorId(doctor.getDoctorId());
+			response.setFullName(doctor.getUser().getFullName());
+			response.setRegistrationNumber(doctor.getRegistrationNumber());
+			response.setExperienceYears(doctor.getExperienceYears());
+
+			// Specializations
+			response.setSpecializations(doctor.getSpecializations().stream()
+					.map(SpecializationMaster::getSpecializationName).collect(Collectors.toList()));
+
+			// Qualifications
+			response.setQualifications(doctor.getQualifications().stream()
+					.map(QualificationMaster::getQualificationName).collect(Collectors.toList()));
+
+			// Clinics
+			List<ClinicResponse> clinics = doctorClinicRepositoryPort.findByDoctor(doctor).stream().map(dc -> {
+				Clinic c = dc.getClinic();
+				ClinicResponse cr = new ClinicResponse();
+				cr.setClinicId(c.getClinicId());
+				cr.setClinicName(c.getClinicName());
+				cr.setAddress(c.getAddress());
+				cr.setContactNumber(c.getContactNumber());
+				return cr;
+			}).collect(Collectors.toList());
+			response.setClinics(clinics);
+
+			return response;
+		}, ApiResponse::success);
+		return new ResponseEntity<ApiResponse<DoctorProfileResponse>>(success, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<MessageResponse>> createLeaveOrBreak(DoctorLeaveRequest doctorLeaveRequest) {
+		// TODO Auto-generated method stub
+		return createUpdateLeaveOrBreak(null,doctorLeaveRequest);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<MessageResponse>> updateLeaveOrBreak(Long leaveId, DoctorLeaveRequest doctorLeaveRequest) {
+		// TODO Auto-generated method stub		
+		ApiResponse<DoctorLeave> leave = ApiExecutionUtils.ApiExecutor.processRequest(doctorLeaveRequest, req -> {
+		}, () -> {
+			DoctorLeave existing = doctorLeaveRepositoryPort.findById(leaveId)
+					.orElseThrow(() -> new RuntimeException("Leave not found."));
+			return existing;
+		}, ApiResponse::success);
+		return createUpdateLeaveOrBreak(leave.getData(), doctorLeaveRequest);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<MessageResponse>> createUpdateLeaveOrBreak(DoctorLeave existingLeave,DoctorLeaveRequest doctorLeaveRequest) {
+		// TODO Auto-generated method stub
+		ApiResponse<MessageResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(doctorLeaveRequest, req->{}, ()->{
+	        Doctor doctor = doctorRepositoryPort.findById(doctorLeaveRequest.getDoctorId())
+	                .orElseThrow(() -> new RuntimeException("Doctor not found"));
+	        
+	        boolean isUpdate = existingLeave != null;
+	        
+	        // VALIDATION — date range
+	        if (doctorLeaveRequest.getEndDate().isBefore(doctorLeaveRequest.getStartDate())) {
+	        	throw new RuntimeException("End date cannot be before start date.");
+	        }
+
+//	        // NON full-day needs time
+	        if (!doctorLeaveRequest.getLeaveType().equals("FULL_DAY")) {
+	            if (doctorLeaveRequest.getStartTime() == null || doctorLeaveRequest.getEndTime() == null) {
+	            	throw new RuntimeException("StartTime and EndTime required for BREAK/LUNCH/HALF_DAY");
+	            }
+	        }
+	        	        
+			List<DoctorLeave> overlaps = doctorLeaveRepositoryPort.findOverlappingLeaves(
+					doctorLeaveRequest.getDoctorId(), 
+					doctorLeaveRequest.getStartDate(),
+					doctorLeaveRequest.getEndDate());
+			
+			if (isUpdate) {
+	            overlaps.removeIf(l -> l.getLeave_id().equals(existingLeave.getLeave_id()));
+	        }
+
+	        if (!overlaps.isEmpty()) {
+	        	throw new RuntimeException("Leave already exists in this range.");
+	        }
+	        
+	        
+	     // OBJECT CREATE / UPDATE
+	        DoctorLeave leave = isUpdate ? existingLeave : new DoctorLeave();
+
+	        leave.setDoctor(doctor);
+	        leave.setLeaveType(doctorLeaveRequest.getLeaveType());
+	        leave.setStartDate(doctorLeaveRequest.getStartDate());
+	        leave.setEndDate(doctorLeaveRequest.getEndDate());
+
+	        if (doctorLeaveRequest.getLeaveType().equals("FULL_DAY")) {
+	            leave.setStartTime(LocalTime.of(0, 0));
+	            leave.setEndTime(LocalTime.of(23, 59));
+	        } else {
+	            leave.setStartTime(doctorLeaveRequest.getStartTime());
+	            leave.setEndTime(doctorLeaveRequest.getEndTime());
+	        }
+
+	        leave.setReason(doctorLeaveRequest.getReason());
+	        leave.setIsActive(true);
+	        
+	        DoctorLeaveModel leaveModel = new DoctorLeaveModel();
+	        leaveModel.setLeave_id(leave.getLeave_id());
+	        leaveModel.setLeaveType(leave.getLeaveType());
+	        leaveModel.setStartDate(leave.getStartDate());
+	        leaveModel.setEndDate(leave.getEndDate());
+	        leaveModel.setStartTime(leave.getStartTime());
+	        leaveModel.setEndTime(leave.getEndTime());
+	        leaveModel.setLeaveType(leave.getLeaveType());
+	        leaveModel.setReason(leave.getReason());
+	        leaveModel.setDoctor_id(leave.getDoctor());
+	        leaveModel.setCreatedAt(leave.getCreatedAt());
+	        leaveModel.setCreatedBy(leave.getCreatedBy());
+	        leaveModel.setUpdatedAt(leave.getUpdatedAt());
+	        leaveModel.setUpdatedAt(leave.getUpdatedAt());
+	        leaveModel.setIsActive(leave.getIsActive());
+	       
+	        doctorLeaveRepositoryPort.save(leaveModel);
+
+	        return new MessageResponse(isUpdate ? "Leave updated successfully" : "Leave added successfully");
+		}, ApiResponse::success);
+		return new ResponseEntity<ApiResponse<MessageResponse>>(success, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<DoctorLeaveResponse>>> getDoctorLeaves(Long doctorId) {
+		// TODO Auto-generated method stub
+		ApiResponse<List<DoctorLeaveResponse>> success = ApiExecutionUtils.ApiExecutor.processRequest(doctorId,
+				req->{
+//					if(doctorId==null) {
+//						
+//					}
+				},
+				()->{
+					List<DoctorLeaveResponse> leaveRes = new ArrayList<>();
+					DoctorLeaveResponse response = new DoctorLeaveResponse();
+					List<DoctorLeave> leaves = doctorLeaveRepositoryPort.getDoctorLeaves(doctorId);
+					for(DoctorLeave leave : leaves) {
+						response = new DoctorLeaveResponse();
+						response.setDoctor_id(leave.getDoctor().getDoctorId());
+						response.setEndDate(leave.getEndDate());
+						response.setEndTime(leave.getEndTime());
+						response.setLeave_id(leave.getLeave_id());
+						response.setLeaveType(leave.getLeaveType());
+						response.setReason(leave.getReason());
+						response.setStartDate(leave.getStartDate());
+						response.setStartTime(leave.getStartTime());
+						leaveRes.add(response);
+					}
+					return leaveRes;
+					}, ApiResponse::success);
+		return new ResponseEntity<ApiResponse<List<DoctorLeaveResponse>>>(success, HttpStatus.OK);
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<MessageResponse>> insertDoctorAvailability(Long doctorId, Long clinicId,DoctorAvailabilityRequest doctorAvailabilityRequest) {
+		// TODO Auto-generated method stub
+		ApiResponse<MessageResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(null, 
+				req->{}, 
+				()->{
+			        // Validate doctor & clinic
+			        Doctor doctor = doctorRepositoryPort.findById(doctorId).orElseThrow(() -> new RuntimeException("Doctor not found"));
+
+			        Clinic clinic = clinicRepositoryPort.findById(clinicId).orElseThrow(() -> new RuntimeException("Clinic not found"));
+			        
+
+			        // Time parsing
+			        LocalTime startTime = LocalTime.parse(doctorAvailabilityRequest.getStartTime());
+			        LocalTime endTime = LocalTime.parse(doctorAvailabilityRequest.getEndTime());
+
+			        if (!startTime.isBefore(endTime)) {
+			            throw new RuntimeException("Start time must be before end time.");
+			        }
+
+			        String day = doctorAvailabilityRequest.getDayOfWeek();
+			        
+			        // -------------------------------
+			        // VALIDATION A: SAME CLINIC
+			        // -------------------------------
+			        List<DoctorAvailability> sameClinicList = doctorAvailabilityRepositoryPort.findByDoctor_DoctorIdAndClinic_ClinicIdAndDayOfWeek(doctorId, clinicId, day);
+
+			        for (DoctorAvailability a : sameClinicList) {
+			        	if(day.equalsIgnoreCase(a.getDayOfWeek()))
+			            if (isOverlap(startTime, endTime,
+			                    LocalTime.parse(a.getStartTime()), LocalTime.parse(a.getEndTime()))) {
+			                throw new RuntimeException("Overlapping availability in same clinic.");
+			            }
+			        }
+			        
+			        
+			        // -------------------------------
+			        // VALIDATION B: OTHER CLINICS
+			        // -------------------------------
+			        List<DoctorAvailability> otherClinics = doctorAvailabilityRepositoryPort.findByDoctor_DoctorIdAndDayOfWeek(doctorId, day);
+
+			        for (DoctorAvailability a : otherClinics) {
+
+			            if (!a.getClinic().getClinicId().equals(clinicId)) { // other clinic only
+
+			                if (isOverlap(startTime, endTime,
+			                        LocalTime.parse(a.getStartTime()), LocalTime.parse(a.getEndTime()))) {
+			                    throw new RuntimeException("Doctor already available in another clinic at this time.");
+			                }
+			            }
+			        }
+
+					// -------------------------------
+					// SAVE FINAL RECORD
+					// -------------------------------
+
+					DoctorAvailabilityModel doctorAvailabilityModel = new DoctorAvailabilityModel();
+
+					doctorAvailabilityModel.setClinic(clinic);
+					doctorAvailabilityModel.setDoctor(doctor);
+
+					doctorAvailabilityModel.setStartTime(doctorAvailabilityRequest.getStartTime());
+					doctorAvailabilityModel.setEndTime(doctorAvailabilityRequest.getEndTime());
+					doctorAvailabilityModel.setSlotDuration(doctorAvailabilityRequest.getSlotDuration());
+					doctorAvailabilityModel.setDayOfWeek(day);
+
+					doctorAvailabilityModel.setCreatedAt(LocalDateTime.now());
+					doctorAvailabilityModel.setCreatedBy(doctorId.toString());
+					doctorAvailabilityModel.setUpdatedAt(null);
+					doctorAvailabilityModel.setUpdatedBy(doctorId.toString());
+					doctorAvailabilityModel.setIsActive(true);
+					doctorAvailabilityRepositoryPort.save(doctorAvailabilityModel);
+
+					return new MessageResponse("Availability added successfully.");
+					
+				}, ApiResponse::success);
+		return new ResponseEntity<ApiResponse<MessageResponse>>(success, HttpStatus.OK);
+	}
+	
+
+	@Override
+	public ResponseEntity<ApiResponse<MessageResponse>> updateDoctorAvailability(Long doctorId,DoctorAvailabilityUpdateRequest doctorAvailabilityUpdateRequest) {
+		// TODO Auto-generated method stub
+		ApiResponse<MessageResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(null, 
+				req->{}, 
+				()->{
+					
+				    Doctor doctor = doctorRepositoryPort.findById(doctorId)
+				            .orElseThrow(() -> new RuntimeException("Doctor not found."));
+
+				    Clinic clinic = clinicRepositoryPort.findById(doctorAvailabilityUpdateRequest.getClinicId())
+				            .orElseThrow(() -> new RuntimeException("Clinic not found."));
+
+				    String day = doctorAvailabilityUpdateRequest.getDayOfWeek();
+
+				    // 1️⃣ Delete old availability
+				    List<DoctorAvailability> oldList =
+				    		doctorAvailabilityRepositoryPort.findByDoctor_DoctorIdAndClinic_ClinicIdAndDayOfWeek(
+				                    doctorId, doctorAvailabilityUpdateRequest.getClinicId(), day);
+
+				    doctorAvailabilityRepositoryPort.deleteAll(oldList);
+
+				    // 2️⃣ Insert new availability items
+				    for (DoctorAvailabilityRequest item : doctorAvailabilityUpdateRequest.getAvailabilityList()) {
+
+				        LocalTime newStart = LocalTime.parse(item.getStartTime());
+				        LocalTime newEnd = LocalTime.parse(item.getEndTime());
+
+				        if (!newStart.isBefore(newEnd)) {
+				            throw new RuntimeException("Start time must be before end time.");
+				        }
+
+				        // CHECK AGAINST OTHER CLINICS
+				        List<DoctorAvailability> otherClinics =
+				        		doctorAvailabilityRepositoryPort.findByDoctor_DoctorIdAndDayOfWeek(doctorId, day);
+
+				        for (DoctorAvailability av : otherClinics) {
+				            if (!av.getClinic().getClinicId().equals(doctorAvailabilityUpdateRequest.getClinicId())) {
+				                LocalTime oldStart = LocalTime.parse(av.getStartTime());
+				                LocalTime oldEnd = LocalTime.parse(av.getEndTime());
+
+				                if (isOverlap(newStart, newEnd, oldStart, oldEnd)) {
+				                    throw new RuntimeException(
+				                            "Doctor already available in another clinic at this time.");
+				                }
+				            }
+				        }
+
+						DoctorAvailabilityModel doctorAvailabilityModel = new DoctorAvailabilityModel();
+
+						doctorAvailabilityModel.setClinic(clinic);
+						doctorAvailabilityModel.setDoctor(doctor);
+
+						doctorAvailabilityModel.setStartTime(item.getStartTime());
+						doctorAvailabilityModel.setEndTime(item.getEndTime());
+						doctorAvailabilityModel.setSlotDuration(item.getSlotDuration());
+						doctorAvailabilityModel.setDayOfWeek(day);
+
+						doctorAvailabilityModel.setUpdatedAt(LocalDateTime.now());
+						doctorAvailabilityModel.setUpdatedBy(doctorId.toString());
+						doctorAvailabilityModel.setIsActive(true);
+						doctorAvailabilityRepositoryPort.save(doctorAvailabilityModel);
+				    }
+						return new MessageResponse("Availability updated successfully.");
+					},
+				ApiResponse::success);
+		return new ResponseEntity<ApiResponse<MessageResponse>>(success, HttpStatus.OK);
+	}
+
+		// -------------------------------
+		// HELPER: OVERLAP LOGIC
+		// -------------------------------
+		private boolean isOverlap(LocalTime s1, LocalTime e1, LocalTime s2, LocalTime e2) {
+			    return !(e1.isBefore(s2) || s1.isAfter(e2));
+		}
+
+		@Override
+		public ResponseEntity<ApiResponse<List<AvailabilityResponse>>> getDoctorAvailability(Long doctorId) {
+			// TODO Auto-generated method stub
+			ApiResponse<List<AvailabilityResponse>> success = ApiExecutionUtils.ApiExecutor.processRequest(null, 
+					req->{}, 
+					()->{        // Fetch all availability records for the doctor
+				        List<DoctorAvailability> all = doctorAvailabilityRepositoryPort
+				                .findByDoctor_DoctorIdOrderByDayOfWeekAscStartTimeAsc(doctorId);
+
+				        // Convert entity → response DTO
+				        return all.stream()
+				                .map(a -> new AvailabilityResponse(
+				                        a.getAvailabilityId(),
+				                        a.getClinic().getClinicId(),			                     
+				                        a.getStartTime(),
+				                        a.getEndTime(),
+				                        a.getDayOfWeek(),
+				                        a.getSlotDuration()
+				                ))
+				                .collect(Collectors.toList());
+					}, 
+					ApiResponse::success);
+					
+			return new ResponseEntity<ApiResponse<List<AvailabilityResponse>>>(success, HttpStatus.OK);
+		}
+
+		@Override
+		public ResponseEntity<ApiResponse<MessageResponse>> deleteAvailability(Long doctorId, Long availabilityId) {
+			// TODO Auto-generated method stub
+			ApiResponse<MessageResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+			}, () -> {
+				DoctorAvailability availability = doctorAvailabilityRepositoryPort.findById(availabilityId)
+						.orElseThrow(() -> new RuntimeException("Availability not found."));
+
+				if (!availability.getDoctor().getDoctorId().equals(doctorId)) {
+					throw new RuntimeException("You cannot delete someone else’s availability.");
+				}
+
+				doctorAvailabilityRepositoryPort.deleteById(availabilityId);
+				return new MessageResponse("Availability removed successfully.");
+			}, ApiResponse::success);
+			return new ResponseEntity<ApiResponse<MessageResponse>>(success, HttpStatus.OK);
+		}
+
+	}

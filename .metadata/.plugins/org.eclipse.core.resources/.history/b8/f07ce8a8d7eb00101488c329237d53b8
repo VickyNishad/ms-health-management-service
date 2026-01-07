@@ -1,0 +1,29 @@
+/**
+ * 
+ */
+package com.medicque.adapter.out.persistence;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.health.adapter.out.persistence.entity.DoctorQualification;
+import com.health.adapter.out.persistence.jpa.JPADoctorQualificationRepository;
+import com.health.application.port.out.DoctorQualificationRepositoryPort;
+
+/**
+ * 
+ */
+@Component
+public class DoctorQualificationRepositoryAdapter implements DoctorQualificationRepositoryPort {
+	
+	@Autowired
+	private JPADoctorQualificationRepository doctorQualificationRepository;
+
+	@Override
+	public DoctorQualification save(DoctorQualification doctorQualification) {
+		// TODO Auto-generated method stub
+		doctorQualificationRepository.save(doctorQualification);
+		return doctorQualification;
+	}
+
+}

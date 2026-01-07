@@ -1,0 +1,11 @@
+/**
+ * 
+ */
+package com.auth.interfaces.usecase;
+
+/**
+ * 
+ */
+public interface GenerateTokenUseCase {
+
+}

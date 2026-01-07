@@ -1,0 +1,25 @@
+/**
+ * 
+ */
+package com.medicque.application.port.in;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
+import com.common.models.ApiResponse;
+import com.medicque.adapter.in.rest.dto.FamilyMemberRequest;
+import com.medicque.adapter.in.rest.dto.MessageResponse;
+import com.medicque.adapter.out.persistence.entity.FamilyMember;
+
+/**
+ * 
+ */
+public interface FamilyMemberUseCase {
+
+	public ResponseEntity<ApiResponse<FamilyMember>> addFamilyMember(Long userId,FamilyMemberRequest familyMemberRequest);
+	public ResponseEntity<ApiResponse<List<FamilyMember>>> getFamilyMember(Long userId );
+	public ResponseEntity<ApiResponse<FamilyMember>> modifyFamilyMember(Long userId,Long familyMemebrId ,FamilyMemberRequest familyMemberRequest);
+	public ResponseEntity<ApiResponse<MessageResponse>> removeFamilyMember(Long userId ,Long familyMemebrId);
+	
+}
