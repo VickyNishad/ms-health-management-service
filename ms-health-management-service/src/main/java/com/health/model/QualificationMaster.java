@@ -17,8 +17,6 @@ public class QualificationMaster extends BaseEntity {
 	@Column
 	private String description;
 
-	// Getters & Setters
-
 	public String getQualificationName() {
 		return qualificationName;
 	}

@@ -7,23 +7,18 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * 
  */
 public enum Provider {
-	GOOGLE,
-	FACEBOOK,
-	ALLPLE,
-	GITHUB,
-	OTP;
-	
-	
-	@JsonCreator
-    public static Provider fromValue(String value) {
-        if (value == null || value.trim().isEmpty()) {
-            return null; // will map empty string to null
-        }
-        return Provider.valueOf(value.toUpperCase());
-    }
+	GOOGLE, FACEBOOK, ALLPLE, GITHUB, OTP;
 
-    @JsonValue
-    public String toValue() {
-        return this.name();
-    }
+	@JsonCreator
+	public static Provider fromValue(String value) {
+		if (value == null || value.trim().isEmpty()) {
+			return null; // will map empty string to null
+		}
+		return Provider.valueOf(value.toUpperCase());
+	}
+
+	@JsonValue
+	public String toValue() {
+		return this.name();
+	}
 }
