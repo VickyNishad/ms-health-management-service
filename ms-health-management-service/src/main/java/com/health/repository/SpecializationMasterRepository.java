@@ -6,7 +6,7 @@ package com.health.repository;
 
 import java.util.List;
 
-import com.health.model.SpecializationMaster;
+import com.health.entity.SpecializationMaster;
 
 
 

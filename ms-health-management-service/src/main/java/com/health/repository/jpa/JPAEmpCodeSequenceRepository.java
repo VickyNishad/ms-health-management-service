@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 
-import com.health.model.EmpCodeSequence;
+import com.health.entity.EmpCodeSequence;
 
 import jakarta.persistence.LockModeType;
 

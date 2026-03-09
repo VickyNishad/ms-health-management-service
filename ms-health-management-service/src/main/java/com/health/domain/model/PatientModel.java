@@ -3,7 +3,7 @@
  */
 package com.health.domain.model;
 
-import com.health.model.UserRegistration;
+import com.health.entity.UserRegistration;
 
 /**
  * 

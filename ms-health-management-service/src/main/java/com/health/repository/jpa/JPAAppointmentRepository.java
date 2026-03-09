@@ -12,10 +12,10 @@ import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.health.model.Appointment;
-import com.health.model.Doctor;
-import com.health.model.DoctorSlot;
-import com.health.model.Patient;
+import com.health.entity.Appointment;
+import com.health.entity.Doctor;
+import com.health.entity.DoctorSlot;
+import com.health.entity.Patient;
 
 import jakarta.persistence.LockModeType;
 

@@ -6,7 +6,7 @@ package com.health.repository;
 import java.util.Optional;
 
 import com.health.domain.model.DoctorModel;
-import com.health.model.Doctor;
+import com.health.entity.Doctor;
 
 /**
  * 

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.health.domain.model.PatientModel;
-import com.health.model.Patient;
+import com.health.entity.Patient;
 import com.health.repository.PatientRepository;
 import com.health.repository.jpa.JPAPatientRepository;
 

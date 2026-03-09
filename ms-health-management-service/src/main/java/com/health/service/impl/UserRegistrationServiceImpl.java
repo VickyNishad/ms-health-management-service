@@ -18,7 +18,7 @@ import com.health.domain.model.IsRegisteredUser;
 import com.health.domain.model.UserRegistrationModel;
 import com.health.dto.MessageResponse;
 import com.health.dto.ResetPasswordRequest;
-import com.health.model.UserRegistration;
+import com.health.entity.UserRegistration;
 import com.health.repository.UserRegistrationRepository;
 import com.health.service.UserRegistrationService;
 

@@ -3,9 +3,9 @@
  */
 package com.health.domain.model;
 
-import com.health.model.BaseEntity;
-import com.health.model.Clinic;
-import com.health.model.Doctor;
+import com.health.entity.BaseEntity;
+import com.health.entity.Clinic;
+import com.health.entity.Doctor;
 
 /**
  * 

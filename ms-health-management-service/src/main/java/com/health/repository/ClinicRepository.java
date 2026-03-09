@@ -5,7 +5,7 @@ package com.health.repository;
 
 import java.util.Optional;
 
-import com.health.model.Clinic;
+import com.health.entity.Clinic;
 
 
 

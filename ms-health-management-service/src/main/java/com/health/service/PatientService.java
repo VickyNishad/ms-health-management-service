@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import com.common.models.ApiResponse;
 import com.health.dto.AddPatientRequest;
 import com.health.dto.MessageResponse;
-import com.health.model.Patient;
+import com.health.entity.Patient;
 
 
 /**

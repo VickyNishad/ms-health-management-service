@@ -11,7 +11,7 @@ import com.common.models.ApiResponse;
 import com.health.dto.DoctorLeaveRequest;
 import com.health.dto.DoctorLeaveResponse;
 import com.health.dto.MessageResponse;
-import com.health.model.DoctorLeave;
+import com.health.entity.DoctorLeave;
 
 
 /**

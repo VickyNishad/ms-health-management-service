@@ -3,7 +3,7 @@
  */
 package com.health.domain.model;
 
-import com.health.model.RoleMaster;
+import com.health.entity.RoleMaster;
 
 /**
  * 

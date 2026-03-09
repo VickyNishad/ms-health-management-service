@@ -6,8 +6,8 @@ package com.health.domain.model;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-import com.health.model.BaseEntity;
-import com.health.model.Doctor;
+import com.health.entity.BaseEntity;
+import com.health.entity.Doctor;
 
 
 

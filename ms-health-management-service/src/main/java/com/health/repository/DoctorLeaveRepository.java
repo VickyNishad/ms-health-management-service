@@ -9,7 +9,7 @@ import java.util.Optional;
 
 
 import com.health.domain.model.DoctorLeaveModel;
-import com.health.model.DoctorLeave;
+import com.health.entity.DoctorLeave;
 
 /**
  * 

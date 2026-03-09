@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 
 
 import com.health.domain.model.DoctorLeaveModel;
-import com.health.model.DoctorLeave;
+import com.health.entity.DoctorLeave;
 import com.health.repository.DoctorLeaveRepository;
 import com.health.repository.jpa.JPADoctorLeaveRepository;
 

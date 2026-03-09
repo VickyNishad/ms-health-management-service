@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.health.model.Clinic;
+import com.health.entity.Clinic;
 import com.health.repository.ClinicRepository;
 import com.health.repository.jpa.JPAClinicRepository;
 

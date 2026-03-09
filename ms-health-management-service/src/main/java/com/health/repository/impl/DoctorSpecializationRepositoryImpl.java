@@ -6,7 +6,7 @@ package com.health.repository.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.health.model.DoctorSpecialization;
+import com.health.entity.DoctorSpecialization;
 import com.health.repository.DoctorSpecializationRepository;
 import com.health.repository.jpa.JPADoctorSpecializationRepository;
 

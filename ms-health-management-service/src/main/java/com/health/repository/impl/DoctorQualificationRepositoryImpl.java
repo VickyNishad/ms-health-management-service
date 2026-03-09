@@ -6,7 +6,7 @@ package com.health.repository.impl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.health.model.DoctorQualification;
+import com.health.entity.DoctorQualification;
 import com.health.repository.DoctorQualificationRepository;
 import com.health.repository.jpa.JPADoctorQualificationRepository;
 

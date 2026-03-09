@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 
 import com.health.domain.model.DoctorModel;
-import com.health.model.Doctor;
+import com.health.entity.Doctor;
 import com.health.repository.DoctorRepository;
 import com.health.repository.jpa.JPADoctorRepository;
 

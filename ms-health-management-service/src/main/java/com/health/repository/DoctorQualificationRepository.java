@@ -3,7 +3,7 @@
  */
 package com.health.repository;
 
-import com.health.model.DoctorQualification;
+import com.health.entity.DoctorQualification;
 
 /**
  * 

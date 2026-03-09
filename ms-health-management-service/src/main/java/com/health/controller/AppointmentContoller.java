@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.common.models.ApiResponse;
 import com.health.dto.AppointmentBookingRequest;
 import com.health.dto.MessageResponse;
-import com.health.model.Appointment;
+import com.health.entity.Appointment;
 import com.health.service.AppointmentService;
 
 

@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.health.domain.model.DoctorAvailabilityModel;
-import com.health.model.DoctorAvailability;
+import com.health.entity.DoctorAvailability;
 
 /**
  * 

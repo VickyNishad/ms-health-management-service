@@ -7,7 +7,7 @@ import java.util.Optional;
 
 
 import com.health.domain.model.UserRegistrationModel;
-import com.health.model.UserRegistration;
+import com.health.entity.UserRegistration;
 
 /**
  * 

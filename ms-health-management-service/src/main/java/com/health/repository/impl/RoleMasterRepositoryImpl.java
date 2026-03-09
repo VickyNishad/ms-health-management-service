@@ -8,7 +8,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.health.model.RoleMaster;
+import com.health.entity.RoleMaster;
 import com.health.repository.RoleMasterRepository;
 import com.health.repository.jpa.JPARoleMasterRepository;
 

@@ -2,7 +2,7 @@ package com.health.repository;
 
 import java.util.List;
 
-import com.health.model.QualificationMaster;
+import com.health.entity.QualificationMaster;
 
 
 

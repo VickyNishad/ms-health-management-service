@@ -11,10 +11,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.health.model.Appointment;
-import com.health.model.Doctor;
-import com.health.model.DoctorSlot;
-import com.health.model.Patient;
+import com.health.entity.Appointment;
+import com.health.entity.Doctor;
+import com.health.entity.DoctorSlot;
+import com.health.entity.Patient;
 import com.health.repository.AppointmentRepository;
 import com.health.repository.jpa.JPAAppointmentRepository;
 

@@ -8,7 +8,7 @@ import java.util.Optional;
 
 
 import com.health.domain.model.PatientModel;
-import com.health.model.Patient;
+import com.health.entity.Patient;
 
 /**
  * 

@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.health.domain.model.DoctorAvailabilityModel;
-import com.health.model.DoctorAvailability;
+import com.health.entity.DoctorAvailability;
 import com.health.repository.DoctorAvailabilityRepository;
 import com.health.repository.jpa.JPADoctorAvailabilityRepository;
 

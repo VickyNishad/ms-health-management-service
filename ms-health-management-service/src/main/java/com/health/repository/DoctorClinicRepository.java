@@ -5,8 +5,8 @@ package com.health.repository;
 
 import java.util.List;
 
-import com.health.model.Doctor;
-import com.health.model.DoctorClinic;
+import com.health.entity.Doctor;
+import com.health.entity.DoctorClinic;
 
 
 

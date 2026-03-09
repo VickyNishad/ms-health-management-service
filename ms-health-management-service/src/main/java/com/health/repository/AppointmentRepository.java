@@ -8,10 +8,10 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-import com.health.model.Appointment;
-import com.health.model.Doctor;
-import com.health.model.DoctorSlot;
-import com.health.model.Patient;
+import com.health.entity.Appointment;
+import com.health.entity.Doctor;
+import com.health.entity.DoctorSlot;
+import com.health.entity.Patient;
 
 
 

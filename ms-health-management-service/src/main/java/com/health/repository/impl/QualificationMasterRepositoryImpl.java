@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.health.model.QualificationMaster;
+import com.health.entity.QualificationMaster;
 import com.health.repository.QualificationMasterRepository;
 import com.health.repository.jpa.JPAQualificationMasterRepository;
 

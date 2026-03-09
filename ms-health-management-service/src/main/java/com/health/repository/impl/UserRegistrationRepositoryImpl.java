@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 
 import com.health.domain.model.UserRegistrationModel;
-import com.health.model.UserRegistration;
+import com.health.entity.UserRegistration;
 import com.health.repository.UserRegistrationRepository;
 import com.health.repository.jpa.JPAUserRegistrationRepository;
 

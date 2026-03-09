@@ -1,4 +1,4 @@
-package com.health.model;
+package com.health.entity;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

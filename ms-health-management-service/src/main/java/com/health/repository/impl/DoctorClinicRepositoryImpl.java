@@ -8,8 +8,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.health.model.Doctor;
-import com.health.model.DoctorClinic;
+import com.health.entity.Doctor;
+import com.health.entity.DoctorClinic;
 import com.health.repository.DoctorClinicRepository;
 import com.health.repository.jpa.JPADoctorClinicRepository;
 

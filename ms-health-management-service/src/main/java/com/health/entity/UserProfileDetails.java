@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.health.model;
+package com.health.entity;
 
 import java.time.LocalDate;
 
