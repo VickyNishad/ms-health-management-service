@@ -11,7 +11,7 @@ import java.util.Map;
 import javax.crypto.SecretKey;
 
 @Component
-public class JwtUtil {
+public class JwtUtils {
 	
 	private final String SECRET_KEY = "FDJKFGDGFDKHJSGFLDKGFLDSGLDAGLDS563948648URUIT7435843HFJKDGSJ";
 	private static final long ACCESS_TOKEN_VALIDITY_MS = 15 * 60 * 1000; // 15 minutes

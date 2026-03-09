@@ -7,12 +7,12 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.health.utility.JwtUtil;
+import com.health.utility.JwtUtils;
 
 @Configuration
 public class SecurityConfig {
 
-    private final JwtUtil jwtUtil;
+    private final JwtUtils jwtUtils;
     private final JwtAuthenticationEntryPoint unauthorizedHandler;
 
     private static final String[] SWAGGER_WHITELIST = {
@@ -30,8 +30,8 @@ public class SecurityConfig {
 //    	"/medicque/doctor/update/leave-or-break/**"
     };
 
-    public SecurityConfig(JwtUtil jwtUtil, JwtAuthenticationEntryPoint unauthorizedHandler) {
-        this.jwtUtil = jwtUtil;
+    public SecurityConfig(JwtUtils jwtUtils, JwtAuthenticationEntryPoint unauthorizedHandler) {
+        this.jwtUtils = jwtUtils;
         this.unauthorizedHandler = unauthorizedHandler;
     }
 
@@ -46,7 +46,7 @@ public class SecurityConfig {
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
-            .addFilterBefore(new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(new JwtAuthenticationFilter(jwtUtils), UsernamePasswordAuthenticationFilter.class)
             .build();
     }
 }

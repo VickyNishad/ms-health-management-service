@@ -12,7 +12,7 @@ import com.common.utility.Convertors;
 import com.health.domain.model.TokenModel;
 import com.health.dto.TokenResponse;
 import com.health.service.JwtService;
-import com.health.utility.JwtUtil;
+import com.health.utility.JwtUtils;
 
 /*
  * 
@@ -20,32 +20,32 @@ import com.health.utility.JwtUtil;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-	private JwtUtil jwtUtil;
+	private JwtUtils jwtUtils;
 
-	public JwtServiceImpl(JwtUtil jwtUtil) {
-		this.jwtUtil = jwtUtil;
+	public JwtServiceImpl(JwtUtils jwtUtils) {
+		this.jwtUtils = jwtUtils;
 	}
 
 	@Override
 	public TokenResponse generateToken(TokenModel model) {
 		// TODO Auto-generated method stub
 		Map<String, Object> claim = Convertors.convertObjectToMap(model);
-		String accessToken = jwtUtil.generateAccessToken(model.getUserName(), claim);
-		String refereshToken = jwtUtil.generateRefreshToken(model.getUserName(), claim);
-		return new TokenResponse(accessToken, refereshToken, "Bearer", JwtUtil.getExpiry("1").toString(),
-				JwtUtil.getExpiry("2").toString());
+		String accessToken = jwtUtils.generateAccessToken(model.getUserName(), claim);
+		String refereshToken = jwtUtils.generateRefreshToken(model.getUserName(), claim);
+		return new TokenResponse(accessToken, refereshToken, "Bearer", JwtUtils.getExpiry("1").toString(),
+				JwtUtils.getExpiry("2").toString());
 	}
 
 	@Override
 	public TokenResponse refereshToken(String refereshToken) {
 		// TODO Auto-generated method stub
 		
-//		if (!jwtUtil.validateRefreshToken(refreshToken)) {
+//		if (!jwtUtils.validateRefreshToken(refreshToken)) {
 //	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
 //	    }
 //
 //	    // Step 2 — extract username from token
-//	    String username = jwtUtil.extractUsername(refreshToken);
+//	    String username = jwtUtils.extractUsername(refreshToken);
 //
 //	    // Step 3 — (Optional) Verify user still exists and active
 //	    Optional<User> userOpt = userRepository.findByUsername(username);
@@ -56,7 +56,7 @@ public class JwtServiceImpl implements JwtService {
 //	    // Step 4 — generate new access token
 //	    Map<String, Object> claims = new HashMap<>();
 //	    claims.put("userName", username);
-//	    String newAccessToken = jwtUtil.generateAccessToken(username, claims);
+//	    String newAccessToken = jwtUtils.generateAccessToken(username, claims);
 //
 //	    // Step 5 — return both tokens
 //	    return ResponseEntity.ok(Map.of(
