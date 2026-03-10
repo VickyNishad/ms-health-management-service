@@ -3,47 +3,45 @@ package com.health.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(
-    name = "patients",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"user_id", "relationship"})
-    }
-)
+@Table(name = "patients", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "relation" }) })
 public class Patient extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "patient_id")
-	private Long patientId;
+	private Long id;
 
 //	@ManyToOne(fetch = FetchType.LAZY)
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
 	private UserRegistration user;
-	
-	@Column(name = "patient_name", nullable = false)
-	private String patientName;
+
+	@Column(name = "name", nullable = false)
+	private String name;
 
 	@Column(name = "gender", nullable = true)
 	private String gender;
 
 	@Column(name = "age", nullable = true)
 	private Integer age;
-	
+
 	@Column(nullable = false)
-	private String relationship; // Father, Mother, Son, etc.
+	private String relation;
 
-	@Column(name = "contact_number", nullable = true)
-	private String contactNumber;
+	@Column(name = "mobile_number", nullable = true)
+	private String mobileNumber;
 
-	// ---------- Getters & Setters ----------
+	@Column(name = "email_id", nullable = true)
+	private String emailId;
 
-	public Long getPatientId() {
-		return patientId;
+	@Column(name = "description", nullable = true)
+	private String description;
+
+	public Long getId() {
+		return id;
 	}
 
-	public void setPatientId(Long patientId) {
-		this.patientId = patientId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public UserRegistration getUser() {
@@ -54,12 +52,12 @@ public class Patient extends BaseEntity {
 		this.user = user;
 	}
 
-	public String getPatientName() {
-		return patientName;
+	public String getName() {
+		return name;
 	}
 
-	public void setPatientName(String patientName) {
-		this.patientName = patientName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getGender() {
@@ -78,19 +76,36 @@ public class Patient extends BaseEntity {
 		this.age = age;
 	}
 
-	public String getRelationship() {
-		return relationship;
+	public String getRelation() {
+		return relation;
 	}
 
-	public void setRelationship(String relationship) {
-		this.relationship = relationship;
+	public void setRelation(String relation) {
+		this.relation = relation;
 	}
 
-	public String getContactNumber() {
-		return contactNumber;
+	public String getMobileNumber() {
+		return mobileNumber;
 	}
 
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
+
+	public String getEmailId() {
+		return emailId;
+	}
+
+	public void setEmailId(String emailId) {
+		this.emailId = emailId;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
 }

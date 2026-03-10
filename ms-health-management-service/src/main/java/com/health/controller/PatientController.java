@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.common.models.ApiResponse;
 import com.health.dto.AddPatientRequest;
 import com.health.dto.MessageResponse;
 import com.health.entity.Patient;
+import com.health.models.ApiResponse;
 import com.health.service.PatientService;
 
 

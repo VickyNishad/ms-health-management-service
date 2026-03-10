@@ -6,37 +6,36 @@ import jakarta.persistence.*;
 @Table(name = "doctor_availability")
 public class DoctorAvailability extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "availability_id")
-    private Long availabilityId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false)
-    private Doctor doctor;
+	@ManyToOne
+	@JoinColumn(name = "doctor_id", nullable = false)
+	private Doctor doctor;
 
-    @ManyToOne
-    @JoinColumn(name = "clinic_id", nullable = false)
-    private Clinic clinic;
+	@ManyToOne
+	@JoinColumn(name = "clinic_id", nullable = false)
+	private Clinic clinic;
 
-    @Column(name = "day_of_week", nullable = false)
-    private String dayOfWeek;   // MONDAY, TUESDAY...
+	@Column(name = "day_of_week", nullable = false)
+	private String dayOfWeek; // MONDAY, TUESDAY...
 
-    @Column(name = "start_time", nullable = false)
-    private String startTime;   // HH:mm
+	@Column(name = "start_time", nullable = false)
+	private String startTime; // HH:mm
 
-    @Column(name = "end_time", nullable = false)
-    private String endTime;     // HH:mm
+	@Column(name = "end_time", nullable = false)
+	private String endTime; // HH:mm
 
-    @Column(name = "slot_duration", nullable = false)
-    private Integer slotDuration; // in minutes
+	@Column(name = "slot_duration", nullable = false)
+	private Integer slotDuration; // in minutes
 
-	public Long getAvailabilityId() {
-		return availabilityId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setAvailabilityId(Long availabilityId) {
-		this.availabilityId = availabilityId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Doctor getDoctor() {
@@ -87,8 +86,6 @@ public class DoctorAvailability extends BaseEntity {
 		this.slotDuration = slotDuration;
 	}
 
-    // Getters & Setters
-	
-    
-    
+	// Getters & Setters
+
 }

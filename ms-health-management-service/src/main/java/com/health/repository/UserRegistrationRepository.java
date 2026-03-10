@@ -5,17 +5,21 @@ package com.health.repository;
 
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import com.health.domain.model.UserRegistrationModel;
 import com.health.entity.UserRegistration;
 
 /**
  * 
  */
-public interface UserRegistrationRepository {
+@Repository
+public interface UserRegistrationRepository extends JpaRepository<UserRegistration, Long> {
 	
-	public Optional<UserRegistration> findByProviderLoginId(String providerLoginId);
-	public UserRegistration save(UserRegistrationModel model);
-	public Optional<UserRegistration> findById(Long id);
+	Optional<UserRegistration> findByMobileNumber(String mobileNumber);
+
+	Optional<UserRegistration> findByEmailId(String mobileNumber);
+
+	Optional<UserRegistration> findBysocialId(String mobileNumber);
 
 }

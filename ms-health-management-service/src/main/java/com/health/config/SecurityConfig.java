@@ -25,9 +25,9 @@ public class SecurityConfig {
     };
 
     private static final String[] PUBLIC_ENDPOINTS = {
-    	"/medicque/auth/**",
+    	"/api/v1/auth/**",
     	"/medicque/menu/**"
-//    	"/medicque/doctor/update/leave-or-break/**"
+
     };
 
     public SecurityConfig(JwtUtils jwtUtils, JwtAuthenticationEntryPoint unauthorizedHandler) {
@@ -40,9 +40,9 @@ public class SecurityConfig {
         return http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(SWAGGER_WHITELIST).permitAll() // ✅ Swagger
-                .requestMatchers(PUBLIC_ENDPOINTS).permitAll()  // ✅ Public APIs
-                .anyRequest().authenticated()                  // 🔒 Everything else requires JWT
+                .requestMatchers(SWAGGER_WHITELIST).permitAll() 
+                .requestMatchers(PUBLIC_ENDPOINTS).permitAll()  
+                .anyRequest().authenticated()             
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedHandler))
@@ -50,3 +50,4 @@ public class SecurityConfig {
             .build();
     }
 }
+

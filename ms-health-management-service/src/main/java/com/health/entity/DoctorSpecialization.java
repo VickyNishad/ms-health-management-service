@@ -23,11 +23,6 @@ public class DoctorSpecialization extends BaseEntity {
     @JoinColumn(name = "specialization_id", nullable = false)
     private SpecializationMaster specialization;
 
-    @Column(name = "is_active", nullable = false)
-    private Boolean isActive = true;
-
-    // ---------- Getters & Setters ----------
-
     public Long getId() {
         return id;
     }

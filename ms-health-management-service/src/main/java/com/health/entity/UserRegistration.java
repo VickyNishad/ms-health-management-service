@@ -2,58 +2,55 @@ package com.health.entity;
 
 import jakarta.persistence.*;
 
+
 @Entity
 @Table(name = "user_registration")
 public class UserRegistration extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "user_id")
-	private Long userId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-	@Column(name = "full_name", nullable = true)
-	private String fullName;
+    @Column(name = "user_name")
+    private String userName;
 
-	@Column(name = "email_id", nullable = true)
-	private String emailId;
+    @Column(name = "email_id", unique = true)
+    private String emailId;
 
-	@Column(name = "contact_number", nullable = true)
-	private String contactNumber;
+    @Column(name = "mobile_number", unique = true)
+    private String mobileNumber;
 
-	@Column(name = "provider_login_id", unique = true, nullable = false)
-	private String providerLoginId;
+    @Column(name = "emp_code", unique = true)
+    private String empCode;
 
-	@Column(name = "password", nullable = true)
-	private String password;
+    @Column(name = "social_id" ,unique = true)
+    private String socialId;
 
-	@ManyToOne
-	@JoinColumn(name = "role_id", nullable = false)
-	private RoleMaster role;
+    @Column(name = "login_type", nullable = false)
+    private String loginType;
 
-	@Column(name = "social_id")
-	private String socialId;
+    @Column(name = "password")
+    private String password;
 
-	@Column(name = "profile_picture")
-	private String profilePicture;
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private RoleMaster role;
 
-	@Column(name = "login_type", nullable = false)
-	private String loginType;
-
-	// ---------- Getters & Setters ----------
-	public Long getUserId() {
-		return userId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setUserId(Long userId) {
-		this.userId = userId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
-	public String getFullName() {
-		return fullName;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setFullName(String fullName) {
-		this.fullName = fullName;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public String getEmailId() {
@@ -62,6 +59,38 @@ public class UserRegistration extends BaseEntity {
 
 	public void setEmailId(String emailId) {
 		this.emailId = emailId;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getEmpCode() {
+		return empCode;
+	}
+
+	public void setEmpCode(String empCode) {
+		this.empCode = empCode;
+	}
+
+	public String getSocialId() {
+		return socialId;
+	}
+
+	public void setSocialId(String socialId) {
+		this.socialId = socialId;
+	}
+
+	public String getLoginType() {
+		return loginType;
+	}
+
+	public void setLoginType(String loginType) {
+		this.loginType = loginType;
 	}
 
 	public String getPassword() {
@@ -78,54 +107,6 @@ public class UserRegistration extends BaseEntity {
 
 	public void setRole(RoleMaster role) {
 		this.role = role;
-	}
-
-	public String getProviderLoginId() {
-		return providerLoginId;
-	}
-
-	public void setProviderLoginId(String providerLoginId) {
-		this.providerLoginId = providerLoginId;
-	}
-
-	public String getSocialId() {
-		return socialId;
-	}
-
-	public void setSocialId(String socialId) {
-		this.socialId = socialId;
-	}
-
-	public String getProfilePicture() {
-		return profilePicture;
-	}
-
-	public void setProfilePicture(String profilePicture) {
-		this.profilePicture = profilePicture;
-	}
-
-	public String getLoginType() {
-		return loginType;
-	}
-
-	public void setLoginType(String loginType) {
-		this.loginType = loginType;
-	}
-
-	public String getContactNumber() {
-		return contactNumber;
-	}
-
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
-	}
-
-	@Override
-	public String toString() {
-		return "UserRegistration [userId=" + userId + ", fullName=" + fullName + ", emailId=" + emailId
-				+ ", contactNumber=" + contactNumber + ", providerLoginId=" + providerLoginId + ", password=" + password
-				+ ", role=" + role + ", socialId=" + socialId + ", profilePicture=" + profilePicture + ", loginType="
-				+ loginType + "]";
 	}
 
 }

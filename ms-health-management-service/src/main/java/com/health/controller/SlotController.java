@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.common.models.ApiResponse;
 import com.health.dto.MessageResponse;
 import com.health.dto.SlotDTO;
 import com.health.dto.SlotSummaryDTO;
+import com.health.models.ApiResponse;
 import com.health.service.SlotService;
 
 import io.swagger.v3.oas.annotations.Parameter;

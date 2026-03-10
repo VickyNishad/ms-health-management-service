@@ -13,29 +13,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.common.models.ApiResponse;
 
-
-import com.health.domain.model.IsRegisteredUser;
 import com.health.dto.DoctorSignUpRequest;
 import com.health.dto.MessageResponse;
 import com.health.dto.PatientSignUpRequest;
 import com.health.dto.ResetPasswordRequest;
 import com.health.dto.SignInRequest;
 import com.health.dto.TokenResponse;
+import com.health.dto.response.RegisteredUserResponse;
 import com.health.enums.LoginType;
 import com.health.enums.Role;
+import com.health.models.ApiResponse;
 import com.health.service.LoginService;
 import com.health.service.SignUpService;
 import com.health.service.UserRegistrationService;
-
 
 /**
  * 
  */
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("/medicque/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
 	@Autowired
@@ -47,51 +45,75 @@ public class AuthController {
 	@Autowired
 	private LoginService loginService;
 
-	@GetMapping("/is-reg-user/{providerLoginId}")
-	public ResponseEntity<ApiResponse<IsRegisteredUser>>  isRegisteredUser(@PathVariable(name = "providerLoginId") String providerLoginId) {
-		return userRegistrationService.isRegUser(providerLoginId);
+	// Check if user already registered
+	@GetMapping("/user/{providerLoginId}")
+	public ResponseEntity<ApiResponse<RegisteredUserResponse>> isRegisteredUser(@PathVariable String providerLoginId) {
+		return userRegistrationService.isRegister(providerLoginId);
 	}
-	
+
+	// Reset password
 	@PostMapping("/password/reset")
-	public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+	public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(
+			@RequestBody ResetPasswordRequest resetPasswordRequest) {
 		return userRegistrationService.resetPassword(resetPasswordRequest);
 	}
 
-	@PostMapping("/patient/sign-up")
-	public ResponseEntity<ApiResponse<TokenResponse>> patientSignUp(@RequestBody PatientSignUpRequest patientSignUpRequest) {
-		patientSignUpRequest.setRole(Role.PATIENT);
-		patientSignUpRequest.setLoginType(LoginType.MANUAL);
-		return signUpService.patientSignUp(patientSignUpRequest);
+	// Patient Signup
+	@PostMapping("/patients/signup")
+	public ResponseEntity<ApiResponse<TokenResponse>> patientSignUp(@RequestBody PatientSignUpRequest request) {
+
+		request.setRole(Role.PATIENT);
+		request.setLoginType(LoginType.MANUAL);
+
+		return signUpService.patientSignUp(request);
 	}
 
-	@PostMapping("/patient/login")
-	public ResponseEntity<ApiResponse<TokenResponse>> patientSignIn(@RequestBody SignInRequest signInRequest) {
-		signInRequest.setRole(Role.PATIENT);
-		return loginService.login(signInRequest);
+	// Patient Login
+	@PostMapping("/patients/login")
+	public ResponseEntity<ApiResponse<TokenResponse>> patientLogin(@RequestBody SignInRequest request) {
+
+		request.setRole(Role.PATIENT);
+
+		return loginService.login(request);
 	}
 
-	@PostMapping("/patient/social-login/{providerLoginId}")
-	public ResponseEntity<IsRegisteredUser> socialLogin(@PathVariable(name = "providerLoginId") String providerLoginId) {
+	// Doctor Signup
+	@PostMapping("/doctors/signup")
+	public ResponseEntity<ApiResponse<TokenResponse>> doctorSignUp(@RequestBody DoctorSignUpRequest request) {
+
+		request.setRole(Role.DOCTOR);
+		request.setLoginType(LoginType.MANUAL);
+
+		return signUpService.doctorSignUp(request);
+	}
+
+	// Employee Login (Doctor/Staff)
+	@PostMapping("/employees/login")
+	public ResponseEntity<ApiResponse<TokenResponse>> employeeLogin(@RequestBody SignInRequest request) {
+
+		request.setRole(Role.DOCTOR);
+
+		return loginService.login(request);
+	}
+
+	// Send OTP
+	@PostMapping("/login/otp/send")
+	public ResponseEntity<ApiResponse<TokenResponse>> sendOtp(@RequestBody SignInRequest request) {
+
+		return loginService.login(request);
+	}
+
+	// Verify OTP
+	@PostMapping("/login/otp/verify")
+	public ResponseEntity<ApiResponse<TokenResponse>> verifyOtp(@RequestBody SignInRequest request) {
+
+		return loginService.login(request);
+	}
+
+	// Social Login
+	@PostMapping("/login/social/{providerLoginId}")
+	public ResponseEntity<RegisteredUserResponse> socialLogin(@PathVariable String providerLoginId) {
+
 		return null;
 	}
-
-	@PostMapping("/doctor/sign-up")
-	public ResponseEntity<ApiResponse<TokenResponse>> doctorSignUp(@RequestBody DoctorSignUpRequest doctorSignUpRequest) {
-		doctorSignUpRequest.setRole(Role.DOCTOR);
-		doctorSignUpRequest.setLoginType(LoginType.MANUAL);
-		return signUpService.doctorSignUp(doctorSignUpRequest);
-	}
-
-	@PostMapping("/doctor/login")
-	public ResponseEntity<ApiResponse<TokenResponse>> doctorSignIn(@RequestBody SignInRequest signInRequest) {
-		signInRequest.setRole(Role.DOCTOR);
-		return loginService.login(signInRequest);
-	}
-
-	@PostMapping("/admin/login")
-	public ResponseEntity<ApiResponse<TokenResponse>> adminSignIn(@RequestBody SignInRequest signInRequest) {
-		signInRequest.setRole(Role.ADMIN);
-		return loginService.login(signInRequest);
-	}
-
 }

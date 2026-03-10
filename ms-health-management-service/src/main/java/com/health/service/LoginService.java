@@ -5,7 +5,8 @@ package com.health.service;
 
 import org.springframework.http.ResponseEntity;
 
-import com.common.models.ApiResponse;
+import com.health.models.ApiResponse;
+
 import com.health.dto.SignInRequest;
 import com.health.dto.TokenResponse;
 

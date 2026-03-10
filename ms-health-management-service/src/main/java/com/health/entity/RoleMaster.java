@@ -3,28 +3,27 @@ package com.health.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "roles_master")
+@Table(name = "role_master")
 public class RoleMaster extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "role_id")
-	private Long roleId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
+    private Long id;
 
-	@Column(name = "role_name", nullable = false, unique = true)
-	private String roleName;
+    @Column(name = "role_name", nullable = false, unique = true)
+    private String roleName;
 
-	@ManyToOne
-	@JoinColumn(name = "parent_role_id")
-	private RoleMaster parentRole;
+    @ManyToOne
+    @JoinColumn(name = "parent_role_id")
+    private RoleMaster parentRole;
 
-	// ---------- Getters & Setters ----------
-	public Long getRoleId() {
-		return roleId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setRoleId(Long roleId) {
-		this.roleId = roleId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getRoleName() {
@@ -43,10 +42,4 @@ public class RoleMaster extends BaseEntity {
 		this.parentRole = parentRole;
 	}
 
-	@Override
-	public String toString() {
-		return "RoleMaster [roleId=" + roleId + ", roleName=" + roleName + ", parentRole=" + parentRole + "]";
-	}
-	
-	
 }

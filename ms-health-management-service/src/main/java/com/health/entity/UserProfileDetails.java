@@ -21,48 +21,48 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "user_profile_details")
 public class UserProfileDetails {
-	
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long profileId;
-    
-	@OneToOne
-	@JoinColumn(name = "user_id", nullable = false)
-	private UserRegistration user;
-	
-	@Column(name = "name", nullable = true)
-	private String name;
-	
-	@Column(name = "age",nullable = true)
-	private String age;
 
-	@Column(name = "gender",nullable = true)
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@OneToOne
+	@JoinColumn(name = "user_id", nullable = false, unique = true)
+	private UserRegistration user;
+
+	@Column(name = "name")
+	private String name;
+
+	@Column(name = "age")
+	private Integer age;
+
+	@Column(name = "gender")
 	private String gender;
-	
-	@Column(name = "date_of_birth",nullable = true)
+
+	@Column(name = "date_of_birth")
 	private LocalDate dateOfBirth;
-	
-	@Column(name = "email_id",nullable = true)
+
+	@Column(name = "email_id")
 	private String emailId;
-	
-	@Column(name = "contact_number",nullable = true)
+
+	@Column(name = "contact_number")
 	private String contactNumber;
-	
+
 	@Column(name = "profile_picture")
 	private String profilePicture;
-	
+
 	@Column(name = "is_email_verified")
 	private Boolean isEmailVerified = false;
 
 	@Column(name = "is_mobile_verified")
 	private Boolean isMobileVerified = false;
 
-	public Long getProfileId() {
-		return profileId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setProfileId(Long profileId) {
-		this.profileId = profileId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public UserRegistration getUser() {
@@ -81,11 +81,11 @@ public class UserProfileDetails {
 		this.name = name;
 	}
 
-	public String getAge() {
+	public Integer getAge() {
 		return age;
 	}
 
-	public void setAge(String age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 
@@ -145,13 +145,4 @@ public class UserProfileDetails {
 		this.isMobileVerified = isMobileVerified;
 	}
 
-	@Override
-	public String toString() {
-		return "UserProfileDetails [profileId=" + profileId + ", user=" + user + ", name=" + name + ", age=" + age
-				+ ", gender=" + gender + ", dateOfBirth=" + dateOfBirth + ", emailId=" + emailId + ", contactNumber="
-				+ contactNumber + ", profilePicture=" + profilePicture + ", isEmailVerified=" + isEmailVerified
-				+ ", isMobileVerified=" + isMobileVerified + "]";
-	}
-	
-	
 }

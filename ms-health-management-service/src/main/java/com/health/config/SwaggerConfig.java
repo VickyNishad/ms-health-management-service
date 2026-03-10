@@ -39,7 +39,7 @@ public class SwaggerConfig {
     public GroupedOpenApi  publicApi() {
         return GroupedOpenApi.builder()
                 .group("healthcare-api")
-                .packagesToScan("com.health")
+                .packagesToScan("com.health.exception")
                 .pathsToMatch("/**")
                 .build();
     }

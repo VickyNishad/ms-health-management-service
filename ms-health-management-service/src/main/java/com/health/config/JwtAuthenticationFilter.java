@@ -13,9 +13,10 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.common.exceptions.AuthenticationFailedException;
-import com.common.models.ApiResponse;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.health.exception.AuthenticationFailedException;
+import com.health.models.ApiResponse;
 import com.health.utility.JwtUtils;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -37,7 +38,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/swagger-resources/**",
             "/webjars/**",
             "/api-docs/**",
-            "/medicque/auth/**",
+            "/api/v1/auth/**",
             "/medicque/menu/**"
     };
 
@@ -81,11 +82,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (AuthenticationFailedException e) {
-            // ✅ handle gracefully using the entry point
-//        	e.printStackTrace();
             unauthorizedResponse(response, e.getMessage(), request.getRequestURI());
         } catch (ExpiredJwtException e) {
-//        	e.printStackTrace();
             unauthorizedResponse(response, "Token expired", request.getRequestURI());
         } catch (MalformedJwtException e) {
             unauthorizedResponse(response, "Invalid JWT token", request.getRequestURI());
@@ -95,15 +93,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void unauthorizedResponse(HttpServletResponse response, String message, String path) throws IOException {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
-//        Map<String, Object> error = new HashMap<>();
-//        error.put("timestamp", LocalDateTime.now().toString());
-//        error.put("status", HttpStatus.UNAUTHORIZED.value());
-//        error.put("error", "Unauthorized");
-//        error.put("message", message);
-//        error.put("path", path);
-        
-//        return ApiResponse.error("API processing failed: " + e.getMessage());
 
         new ObjectMapper().writeValue(response.getOutputStream(), ApiResponse.error(message));
     }

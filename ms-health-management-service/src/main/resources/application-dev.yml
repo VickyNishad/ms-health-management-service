@@ -3,9 +3,9 @@ spring:
     name: ms-health-management-service
 
   datasource:
-    url: jdbc:mysql://13.127.245.216:3306/MedicQueDB?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://localhost:3306/medicquedb?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
     username: root
-    password: NeXt&Gen$O12O25
+    password: admin@123
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 #    hikari:
@@ -36,7 +36,7 @@ logging:
     org.hibernate.SQL: DEBUG
 
 springdoc:
-    packages-to-scan: com.health
+    packages-to-scan: com.health.exception
     paths-to-match: "/**"
     api-docs:
       enabled: true

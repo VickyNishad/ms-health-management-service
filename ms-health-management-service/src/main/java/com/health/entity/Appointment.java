@@ -10,10 +10,7 @@ public class Appointment extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "appointment_id")
-	private Long appointmentId;
-
-	/* ---------- RELATIONSHIPS ---------- */
+	private Long id;
 
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
@@ -30,8 +27,6 @@ public class Appointment extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "doctor_slot_id", nullable = false)
 	private DoctorSlot doctorSlot;
-
-	/* ---------- APPOINTMENT DATA ---------- */
 
 	@Column(name = "clinic_id", nullable = false)
 	private Long clinicId;
@@ -53,14 +48,12 @@ public class Appointment extends BaseEntity {
 	@Column(name = "appointment_status", length = 20)
 	private String appointmentStatus; // ACTIVE / COMPLETED / CANCELLED
 
-	/* ---------- GETTERS & SETTERS ---------- */
-
-	public Long getAppointmentId() {
-		return appointmentId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setAppointmentId(Long appointmentId) {
-		this.appointmentId = appointmentId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public UserRegistration getUser() {

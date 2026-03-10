@@ -8,8 +8,7 @@ public class Clinic extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "clinic_id")
-	private Long clinicId;
+	private Long id;
 
 	@Column(name = "clinic_name", nullable = false)
 	private String clinicName;
@@ -17,17 +16,15 @@ public class Clinic extends BaseEntity {
 	@Column(name = "address")
 	private String address;
 
-	@Column(name = "contact_number")
-	private String contactNumber;
+	@Column(name = "mobile_number")
+	private String mobileNumber;
 
-	// ---------- Getters & Setters ----------
-
-	public Long getClinicId() {
-		return clinicId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setClinicId(Long clinicId) {
-		this.clinicId = clinicId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getClinicName() {
@@ -46,11 +43,12 @@ public class Clinic extends BaseEntity {
 		this.address = address;
 	}
 
-	public String getContactNumber() {
-		return contactNumber;
+	public String getMobileNumber() {
+		return mobileNumber;
 	}
 
-	public void setContactNumber(String contactNumber) {
-		this.contactNumber = contactNumber;
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
 	}
+
 }

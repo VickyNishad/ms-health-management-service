@@ -7,73 +7,72 @@ import java.time.LocalDateTime;
 public abstract class BaseEntity {
 
 	@Column(name = "created_by")
-	private String createdBy;
+	private String created_by;
 
 	@Column(name = "updated_by")
-	private String updatedBy;
+	private String updated_by;
 
 	@Column(name = "is_active", nullable = false)
-	private Boolean isActive = true;
+	private Boolean is_active = true;
 
 	@Column(name = "created_at", nullable = false)
-	private LocalDateTime createdAt;
+	private LocalDateTime created_at;
 
 	@Column(name = "updated_at", nullable = false)
-	private LocalDateTime updatedAt;
+	private LocalDateTime updated_at;
 
-	// ---------- Lifecycle Methods ----------
 	@PrePersist
 	protected void onCreate() {
-		this.createdAt = LocalDateTime.now();
-		this.updatedAt = LocalDateTime.now();
-		if (this.isActive == null) {
-			this.isActive = true;
+		this.created_at = LocalDateTime.now();
+		this.updated_at = LocalDateTime.now();
+		if (this.is_active == null) {
+			this.is_active = true;
 		}
 	}
 
 	@PreUpdate
 	protected void onUpdate() {
-		this.updatedAt = LocalDateTime.now();
+		this.updated_at = LocalDateTime.now();
 	}
 
-	// ---------- Getters & Setters ----------
-	public String getCreatedBy() {
-		return createdBy;
+	public String getCreated_by() {
+		return created_by;
 	}
 
-	public void setCreatedBy(String createdBy) {
-		this.createdBy = createdBy;
+	public void setCreated_by(String created_by) {
+		this.created_by = created_by;
 	}
 
-	public String getUpdatedBy() {
-		return updatedBy;
+	public String getUpdated_by() {
+		return updated_by;
 	}
 
-	public void setUpdatedBy(String updatedBy) {
-		this.updatedBy = updatedBy;
+	public void setUpdated_by(String updated_by) {
+		this.updated_by = updated_by;
 	}
 
-	public Boolean getIsActive() {
-		return isActive;
+	public Boolean getIs_active() {
+		return is_active;
 	}
 
-	public void setIsActive(Boolean isActive) {
-		this.isActive = isActive;
+	public void setIs_active(Boolean is_active) {
+		this.is_active = is_active;
 	}
 
-	public LocalDateTime getCreatedAt() {
-		return createdAt;
+	public LocalDateTime getCreated_at() {
+		return created_at;
 	}
 
-	public void setCreatedAt(LocalDateTime createdAt) {
-		this.createdAt = createdAt;
+	public void setCreated_at(LocalDateTime created_at) {
+		this.created_at = created_at;
 	}
 
-	public LocalDateTime getUpdatedAt() {
-		return updatedAt;
+	public LocalDateTime getUpdated_at() {
+		return updated_at;
 	}
 
-	public void setUpdatedAt(LocalDateTime updatedAt) {
-		this.updatedAt = updatedAt;
+	public void setUpdated_at(LocalDateTime updated_at) {
+		this.updated_at = updated_at;
 	}
+
 }

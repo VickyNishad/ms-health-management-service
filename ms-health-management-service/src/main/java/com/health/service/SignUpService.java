@@ -6,7 +6,8 @@ package com.health.service;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import com.common.models.ApiResponse;
+import com.health.models.ApiResponse;
+
 import com.health.dto.DoctorSignUpRequest;
 import com.health.dto.PatientSignUpRequest;
 import com.health.dto.TokenResponse;

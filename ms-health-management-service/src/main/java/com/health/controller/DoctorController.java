@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.common.models.ApiResponse;
 import com.health.dto.AvailabilityResponse;
 import com.health.dto.DoctorAvailabilityRequest;
 import com.health.dto.DoctorAvailabilityUpdateRequest;
@@ -24,6 +23,7 @@ import com.health.dto.DoctorLeaveResponse;
 import com.health.dto.DoctorProfileRequest;
 import com.health.dto.DoctorProfileResponse;
 import com.health.dto.MessageResponse;
+import com.health.models.ApiResponse;
 import com.health.service.DoctorService;
 
 

@@ -8,7 +8,8 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.common.models.ApiResponse;
+import com.health.models.ApiResponse;
+
 import com.health.dto.MessageResponse;
 import com.health.dto.SlotDTO;
 import com.health.dto.SlotSummaryDTO;

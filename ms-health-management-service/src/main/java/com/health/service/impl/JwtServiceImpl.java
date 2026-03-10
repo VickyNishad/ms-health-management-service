@@ -7,11 +7,10 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.common.utility.Convertors;
-
 import com.health.domain.model.TokenModel;
 import com.health.dto.TokenResponse;
 import com.health.service.JwtService;
+import com.health.utility.Convertors;
 import com.health.utility.JwtUtils;
 
 /*

@@ -11,7 +11,7 @@ public class DoctorSlot extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long slotId;
+	private Long id;
 
 	@Column(name = "doctor_id")
 	private Long doctorId;
@@ -22,8 +22,11 @@ public class DoctorSlot extends BaseEntity {
 	@Column(name = "slot_date")
 	private LocalDate slotDate;
 
-	@Column(name = "slot_time")
-	private LocalTime slotTime;
+	@Column(name = "slot_start_time")
+	private LocalTime slotStartTime;
+
+	@Column(name = "slot_end_time")
+	private LocalTime slotEndTime;
 
 	@Column(name = "token_number")
 	private Integer token;
@@ -34,12 +37,12 @@ public class DoctorSlot extends BaseEntity {
 	@Column(name = "is_booked")
 	private Boolean isBooked = false;
 
-	public Long getSlotId() {
-		return slotId;
+	public Long getId() {
+		return id;
 	}
 
-	public void setSlotId(Long slotId) {
-		this.slotId = slotId;
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public Long getDoctorId() {
@@ -66,12 +69,20 @@ public class DoctorSlot extends BaseEntity {
 		this.slotDate = slotDate;
 	}
 
-	public LocalTime getSlotTime() {
-		return slotTime;
+	public LocalTime getSlotStartTime() {
+		return slotStartTime;
 	}
 
-	public void setSlotTime(LocalTime slotTime) {
-		this.slotTime = slotTime;
+	public void setSlotStartTime(LocalTime slotStartTime) {
+		this.slotStartTime = slotStartTime;
+	}
+
+	public LocalTime getSlotEndTime() {
+		return slotEndTime;
+	}
+
+	public void setSlotEndTime(LocalTime slotEndTime) {
+		this.slotEndTime = slotEndTime;
 	}
 
 	public Integer getToken() {
@@ -98,8 +109,5 @@ public class DoctorSlot extends BaseEntity {
 		this.isBooked = isBooked;
 	}
 
-	// getters + setters
-	
-	
 
 }

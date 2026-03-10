@@ -8,7 +8,6 @@ public class SpecializationMaster extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "specialization_id")
 	private Long id;
 
 	@Column(name = "specialization_name",nullable = false, unique = true)

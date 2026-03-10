@@ -8,7 +8,6 @@ public class QualificationMaster extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "qualification_id")
 	private Long id;
 
 	@Column(name = "qualification_name",nullable = false, unique = true)
