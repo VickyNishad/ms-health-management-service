@@ -3,6 +3,7 @@
  */
 package com.health.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +44,22 @@ public class KycStepServiceImpl implements KycStepService {
 	public void addStep(Long userId, Long stepId) {
 		// TODO Auto-generated method stub
 		
+		Optional<UserRegistration> userOptional = userRegistrationRepository.findById(userId);
+		if(userOptional.isPresent()) {
+			
+		}
+		Optional<KycStepMaster> kycSteps = kycStepMasterRepository.findById(stepId);
+		
+		KycStepStatus kycStepStatus = new KycStepStatus();
+		kycStepStatus.setIsCompleted(true);
+		kycStepStatus.setUser(userOptional.get());
+		kycStepStatus.setStep(kycSteps.get());
+		kycStepStatus.setCreatedAt(LocalDateTime.now());
+		kycStepStatus.setCreatedBy(userId.toString());
+		kycStepStatus.setUpdatedAt(LocalDateTime.now());
+		kycStepStatus.setUpdatedBy(userId.toString());
+		
+		kycStepStatusReposotory.save(kycStepStatus);
 	}
 
 	@Override
@@ -84,44 +101,72 @@ public class KycStepServiceImpl implements KycStepService {
 		return new ResponseEntity<ApiResponse<List<KycStepResponse>>>(success, HttpStatus.OK);
 	}
 	
-	private List<KycStepResponse> userSteps(Long userId,Long roleId,List<KycStepStatus> kycStepStatus) {
-		List<KycStepResponse> kycStepResponses = new ArrayList<>();
-		KycStepResponse kycStepResponse = new KycStepResponse();
-		for(KycStepStatus kycStatus : kycStepStatus) {
-			KycStepMaster kycStepMaster = kycStatus.getStep();
-			
-			kycStepResponse.setIsCompleted(kycStatus.getIsCompleted());
-			kycStepResponse.setStepId(kycStepMaster.getId());
-			kycStepResponse.setStepName(kycStepMaster.getStepName());
-			kycStepResponse.setStepOrder(kycStepMaster.getStepOrder());
-			kycStepResponse.setUserId(userId);
-			
-			kycStepResponses.add(kycStepResponse);
-		}
+	private List<KycStepResponse> userSteps(Long userId, Long roleId, List<KycStepStatus> kycStepStatus) {
 
-		return kycStepResponses;
+	    List<KycStepResponse> kycStepResponses = new ArrayList<>();
+	    List<KycStepMaster> kycSteps = kycStepMasterRepository.findAll();
+
+	    for (KycStepMaster stepMaster : kycSteps) {
+
+	        KycStepResponse response = new KycStepResponse();
+	        boolean isCompleted = false;
+	        Integer kycStepId = 0;
+
+	        for (KycStepStatus stepStatus : kycStepStatus) {
+
+	            if (stepMaster.getId().equals(stepStatus.getStep().getId())) {
+	                isCompleted = stepStatus.getIsCompleted();
+	                kycStepId = stepStatus.getId().intValue();
+	                break;
+	            }
+	        }
+
+	        response.setIsCompleted(isCompleted);
+	        response.setKycStepId(kycStepId);
+	        response.setStepId(stepMaster.getId().intValue());
+	        response.setStepName(stepMaster.getStepName());
+	        response.setStepOrder(stepMaster.getStepOrder());
+	        response.setUserId(userId);
+
+	        if (stepMaster.getId() == 1 || stepMaster.getId() == 2 || stepMaster.getId() == 3) {
+	            kycStepResponses.add(response);
+	        }
+	    }
+
+	    return kycStepResponses;
 	}
 	
 	private List<KycStepResponse> doctorSteps(Long userId,Long roleId,List<KycStepStatus> kycStepStatus) {
-		List<KycStepResponse> kycStepResponses = new ArrayList<>();
-		KycStepResponse kycStepResponse = new KycStepResponse();
-		List<KycStepMaster> kycSteps = kycStepMasterRepository.findAll();
+	    List<KycStepResponse> kycStepResponses = new ArrayList<>();
+	    List<KycStepMaster> kycSteps = kycStepMasterRepository.findAll();
 
-		for(KycStepMaster kycStepMaster : kycSteps) {
-			for(KycStepStatus stepStatus : kycStepStatus) {
-				if(kycStepMaster.getId() == stepStatus.getStep().getId()) {
-					kycStepResponse.setIsCompleted(stepStatus.getIsCompleted());
-				}
-			}
-			kycStepResponse.setStepId(kycStepMaster.getId());
-			kycStepResponse.setStepName(kycStepMaster.getStepName());
-			kycStepResponse.setStepOrder(kycStepMaster.getStepOrder());
-			kycStepResponse.setUserId(userId);
-			
-			kycStepResponses.add(kycStepResponse);
-		}
+	    for (KycStepMaster stepMaster : kycSteps) {
 
-		return kycStepResponses;
+	        KycStepResponse response = new KycStepResponse();
+	        boolean isCompleted = false;
+	        Integer kycStepId = null;
+
+	        for (KycStepStatus stepStatus : kycStepStatus) {
+
+	            if (stepMaster.getId().equals(stepStatus.getStep().getId())) {
+	                isCompleted = stepStatus.getIsCompleted();
+	                kycStepId = stepStatus.getId().intValue();
+	                break;
+	            }
+	        }
+
+	        response.setIsCompleted(isCompleted);
+	        response.setKycStepId(kycStepId);
+	        response.setStepId(stepMaster.getId().intValue());
+	        response.setStepName(stepMaster.getStepName());
+	        response.setStepOrder(stepMaster.getStepOrder());
+	        response.setUserId(userId);
+
+	        kycStepResponses.add(response);
+	        
+	    }
+
+	    return kycStepResponses;
 	}
 	
 }

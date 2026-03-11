@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+import java.util.Random;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -33,7 +34,11 @@ public class HealthUtils {
     
     private static final BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
     
-    
+	public static String generateOtp() {
+		Random random = new Random();
+		int otp = random.nextInt(900000) + 100000;
+		return String.valueOf(otp);
+	}
 	public static String getRandomPassword(String s1, String s2) {
 		String prefix = "";
 		String sufix = "";
@@ -219,7 +224,5 @@ public class HealthUtils {
         // Extract everything after the last dot (.)
         return filename.substring(filename.lastIndexOf('.') + 1).toLowerCase();
     }
-
-
 
 }

@@ -22,6 +22,8 @@ import com.health.dto.PatientSignUpRequest;
 import com.health.dto.ResetPasswordRequest;
 import com.health.dto.SignInRequest;
 import com.health.dto.TokenResponse;
+import com.health.dto.request.UserRegistrationRequest;
+import com.health.dto.request.UserSignUpRequest;
 import com.health.dto.response.KycStepResponse;
 import com.health.dto.response.RegisteredUserResponse;
 import com.health.enums.LoginType;
@@ -65,20 +67,17 @@ public class AuthController {
 	}
 
 	@PostMapping("/user/signup")
-	public ResponseEntity<ApiResponse<TokenResponse>> patientSignUp(@RequestBody PatientSignUpRequest request) {
-
-		request.setRole(Role.PATIENT);
-		request.setLoginType(LoginType.MANUAL);
-
-		return signUpService.patientSignUp(request);
+	public ResponseEntity<ApiResponse<TokenResponse>> userSignUp(@RequestBody UserSignUpRequest request) {
+		UserRegistrationRequest userRegistrationRequest = new UserRegistrationRequest(request.getUserName(), null,
+				request.getProviderLoginId(), null, null, LoginType.MANUAL, request.getPassword(), 4);
+		userRegistrationService.register(userRegistrationRequest);
+		return null;
 	}
 
 
 	@PostMapping("/user/login")
 	public ResponseEntity<ApiResponse<TokenResponse>> patientLogin(@RequestBody SignInRequest request) {
-
 		request.setRole(Role.PATIENT);
-
 		return loginService.login(request);
 	}
 

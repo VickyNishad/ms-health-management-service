@@ -11,6 +11,7 @@ public class KycStepResponse {
 	private String stepName;
 	private int stepId;
 	private int stepOrder;
+	private int kycStepId;
 	private Boolean isCompleted;
 	private Long userId;
 
@@ -36,6 +37,14 @@ public class KycStepResponse {
 
 	public void setStepOrder(int stepOrder) {
 		this.stepOrder = stepOrder;
+	}
+
+	public int getKycStepId() {
+		return kycStepId;
+	}
+
+	public void setKycStepId(int kycStepId) {
+		this.kycStepId = kycStepId;
 	}
 
 	public Boolean getIsCompleted() {
