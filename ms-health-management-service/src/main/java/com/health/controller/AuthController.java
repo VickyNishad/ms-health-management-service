@@ -60,8 +60,7 @@ public class AuthController {
 
 
 	@PostMapping("/password/reset")
-	public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(
-			@RequestBody ResetPasswordRequest resetPasswordRequest) {
+	public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
 		return userRegistrationService.resetPassword(resetPasswordRequest);
 	}
 
