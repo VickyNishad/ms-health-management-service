@@ -29,11 +29,11 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
 
 
-logging:
-  level:
-    com.zaxxer.hikari: DEBUG
-    org.springframework.jdbc.datasource: DEBUG
-    org.hibernate.SQL: DEBUG
+#logging:
+#  level:
+#    com.zaxxer.hikari: DEBUG
+#    org.springframework.jdbc.datasource: DEBUG
+#    org.hibernate.SQL: DEBUG
 
 springdoc:
     packages-to-scan: com.health

@@ -16,7 +16,7 @@ import com.health.entity.RoleMaster;
  * 
  */
 @Repository
-public interface JPARoleMasterRepository extends JpaRepository<RoleMaster, Long> {
+public interface RoleMasterRepository extends JpaRepository<RoleMaster, Long> {
 
 	Optional<RoleMaster> findByRoleName(String roleName);
 }

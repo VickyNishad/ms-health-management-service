@@ -21,11 +21,13 @@ public class SecurityConfig {
         "/swagger-ui.html",
         "/swagger-resources/**",
         "/webjars/**",
-        "/api-docs/**"
+        "/api-docs/**",
+        
     };
 
     private static final String[] PUBLIC_ENDPOINTS = {
     	"/api/v1/auth/**",
+    	"/api/v1/master/**",
     	"/medicque/menu/**"
 
     };

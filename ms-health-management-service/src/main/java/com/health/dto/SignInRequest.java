@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public class SignInRequest {
 
 	private String providerLoginId;
-
 	private String password;
 
 	@Hidden

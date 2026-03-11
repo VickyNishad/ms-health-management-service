@@ -43,8 +43,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 				UserRegistration userData = user.get();
 				
 				registeredUserResponse.setUserName(userData.getUserName());
-				registeredUserResponse.setIsActive(userData.getIs_active());
-				registeredUserResponse.setIsRegistered(userData.getIs_active());
+				registeredUserResponse.setIsActive(userData.getIsActive());
+				registeredUserResponse.setIsRegistered(userData.getIsActive());
 				registeredUserResponse.setLoginType(userData.getLoginType());
 				
 				RoleMaster roleMaster = userData.getRole();
@@ -87,8 +87,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 				// return message
 				UserRegistration userRegistration = user.get();
 				userRegistration.setPassword(encryptPass);
-				userRegistration.setUpdated_at(LocalDateTime.now());
-				userRegistration.setUpdated_by(mobileNumber);
+				userRegistration.setUpdatedAt(LocalDateTime.now());
+				userRegistration.setUpdatedBy(mobileNumber);
 				
 				userRegistrationRepository.save(userRegistration);
 				return new MessageResponse("Your password has been reset successfully.");
