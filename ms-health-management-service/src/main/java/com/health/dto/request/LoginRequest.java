@@ -1,27 +1,25 @@
-package com.health.dto;
-
-import com.health.enums.Role;
-
-import io.swagger.v3.oas.annotations.Hidden;
-import io.swagger.v3.oas.annotations.media.Schema;
+/**
+ * 
+ */
+package com.health.dto.request;
 
 /**
- * Request DTO for user sign-in
+ * 
  */
-@Schema(description = "Sign-in request DTO")
-public class SignInRequest {
+public class LoginRequest {
 
 	private String providerLoginId;
 	private String password;
+	private Long roleId;
 
-	// Constructor
-	public SignInRequest(String providerLoginId, String password) {
+	
+	public LoginRequest(String providerLoginId, String password, Long roleId) {
 		super();
 		this.providerLoginId = providerLoginId;
 		this.password = password;
+		this.roleId = roleId;
 	}
 
-	// Getters & Setters
 	public String getProviderLoginId() {
 		return providerLoginId;
 	}
@@ -36,6 +34,14 @@ public class SignInRequest {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public Long getRoleId() {
+		return roleId;
+	}
+
+	public void setRoleId(Long roleId) {
+		this.roleId = roleId;
 	}
 
 }

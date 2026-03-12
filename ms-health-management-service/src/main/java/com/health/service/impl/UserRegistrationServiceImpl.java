@@ -14,9 +14,12 @@ import org.springframework.stereotype.Service;
 
 import com.health.dto.MessageResponse;
 import com.health.dto.ResetPasswordRequest;
+import com.health.dto.request.LoginRequest;
 import com.health.dto.request.ProfileDetailsRequest;
 import com.health.dto.request.UserRegistrationRequest;
-import com.health.dto.response.RegisteredUserResponse;
+import com.health.dto.response.ProfileDetailsResponse;
+import com.health.dto.response.UserRegisteredResponse;
+import com.health.dto.response.UserResponse;
 import com.health.entity.RoleMaster;
 import com.health.entity.UserRegistration;
 import com.health.models.ApiResponse;
@@ -42,7 +45,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 	private RoleMasterRepository roleMasterRepository;
 	
 	@Autowired
-	private KycStepService kycStepService;
+	private KycStepService kycStepService; 
 	
 	@Autowired
 	private UserProfileService userProfileService;
@@ -52,32 +55,32 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
 
 	@Override
-	public ResponseEntity<ApiResponse<RegisteredUserResponse>> isRegister(String providerLofinId) {
+	public ResponseEntity<ApiResponse<UserRegisteredResponse>> isRegister(String providerLofinId) {
 		// TODO Auto-generated method stub
-		RegisteredUserResponse registeredUserResponse = new RegisteredUserResponse();
-		ApiResponse<RegisteredUserResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(providerLofinId, req -> {
+		UserRegisteredResponse userRegisteredResponse = new UserRegisteredResponse();
+		ApiResponse<UserRegisteredResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(providerLofinId, req -> {
 		}, () -> {
 			Optional<UserRegistration> user = userRegistrationRepository.findByMobileNumber(providerLofinId);
 			if(user.isPresent()) {
 				UserRegistration userData = user.get();
 				
-				registeredUserResponse.setUserName(userData.getUserName());
-				registeredUserResponse.setIsActive(userData.getIsActive());
-				registeredUserResponse.setIsRegistered(userData.getIsActive());
-				registeredUserResponse.setLoginType(userData.getLoginType());
+				userRegisteredResponse.setUserName(userData.getUserName());
+				userRegisteredResponse.setIsActive(userData.getIsActive());
+				userRegisteredResponse.setIsRegistered(userData.getIsActive());
+				userRegisteredResponse.setLoginType(userData.getLoginType());
 				
 				RoleMaster roleMaster = userData.getRole();
 				
-				registeredUserResponse.setRole(roleMaster.getRoleName());
-				registeredUserResponse.setRoleId(roleMaster.getId());
+				userRegisteredResponse.setRole(roleMaster.getRoleName());
+				userRegisteredResponse.setRoleId(roleMaster.getId());
 				
 				
 			} else {
 				throw new RuntimeException("User not found. Please create an account to proceed.");
 			}
-			return registeredUserResponse;
+			return userRegisteredResponse;
 		}, ApiResponse::success);
-		return new ResponseEntity<ApiResponse<RegisteredUserResponse>>(success, HttpStatus.OK);
+		return new ResponseEntity<ApiResponse<UserRegisteredResponse>>(success, HttpStatus.OK);
 	}
 
 	@Override
@@ -119,32 +122,40 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> register(UserRegistrationRequest userRegistrationRequest) {
+	public ResponseEntity<ApiResponse<UserResponse>> register(UserRegistrationRequest userRegistrationRequest) {
 		// TODO Auto-generated method stub
-		
-		// First check user registration or not
-		Optional<UserRegistration> user = userRegistrationRepository.findByMobileNumber(userRegistrationRequest.getMobileNumber());
-		if(user.isPresent()) {
-			throw new RuntimeException("You already have an account. Please log in to continue.");
-			
-		}
-		
-		boolean isPresent =  otpService.existsByMobileNumber(userRegistrationRequest.getMobileNumber());
-		if(!isPresent) {
-			throw new RuntimeException("Your mobile number is not verified. Please verify the OTP first, then continue to register.");
-		}
-		
-		if (userRegistrationRequest.getRoleId() == 4) {
-			userRegistration( userRegistrationRequest ,isPresent);
-		} else if (userRegistrationRequest.getRoleId() == 3) {
-			doctorRegistration( userRegistrationRequest );
-		} else {
-			
-		}
-		return null;
+	
+		ApiResponse<UserResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(userRegistrationRequest,
+				req -> {
+
+				}, () -> {
+					UserResponse userRes = new UserResponse();
+					
+					Optional<UserRegistration> user = userRegistrationRepository.findByMobileNumber(userRegistrationRequest.getMobileNumber());
+					if(user.isPresent()) {
+						throw new RuntimeException("You already have an account. Please log in to continue.");
+						
+					}
+					
+					boolean isPresent =  otpService.existsByMobileNumber(userRegistrationRequest.getMobileNumber());
+					if(!isPresent) {
+						throw new RuntimeException("Your mobile number is not verified. Please verify the OTP first, then continue to register.");
+					}
+					
+					if (userRegistrationRequest.getRoleId() == 4) {
+						userRes = userRegistration( userRegistrationRequest ,isPresent);
+					} else if (userRegistrationRequest.getRoleId() == 3) {
+						doctorRegistration( userRegistrationRequest );
+					} else {
+						
+					}
+
+					return userRes;
+				}, ApiResponse::success);
+		return new ResponseEntity<ApiResponse<UserResponse>>(success, HttpStatus.OK);
 	}
 	
-	private void userRegistration(UserRegistrationRequest userRegistrationRequest,boolean isPresent) {
+	private UserResponse userRegistration(UserRegistrationRequest userRegistrationRequest,boolean isPresent) {
 		Long roleId = (long) userRegistrationRequest.getRoleId();
 		
 		Optional<RoleMaster> roleMaster = roleMasterRepository.findById(roleId);
@@ -169,6 +180,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 		
 		// mark step login completed
 		Long userId = userRegistration.getId();
+		String roleName = roleMaster.get().getRoleName();
 		Long stepId = 1L;
 		kycStepService.addStep(userId, stepId);
 		
@@ -176,8 +188,20 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 		profileDetailsRequest.setName(userRegistration.getUserName());
 		profileDetailsRequest.setMobileNumber(userRegistration.getMobileNumber());
 		profileDetailsRequest.setIsMobileVerified(isPresent);
-		userProfileService.createNewProfile(userRegistration, profileDetailsRequest);
 		
+		ResponseEntity<ApiResponse<ProfileDetailsResponse>> apiResponseEntity = userProfileService.createNewProfile(userRegistration, profileDetailsRequest);
+		ApiResponse<ProfileDetailsResponse> apiResponse = apiResponseEntity.getBody();
+		ProfileDetailsResponse profileDetailsResponse = apiResponse.getData();
+		
+		UserResponse userResponse = new UserResponse();
+		userResponse.setId(profileDetailsResponse.getId());
+		userResponse.setUserId(userId);
+		userResponse.setIsRegistered(true);
+		userResponse.setRoleId(roleId);
+		userResponse.setRole(roleName);
+		userResponse.setUserName(userRegistration.getUserName());
+		userResponse.setIsActive(true);		
+		return userResponse;
 	}
 	
 	private void doctorRegistration(UserRegistrationRequest userRegistrationRequest) {
@@ -194,6 +218,12 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 
 	public boolean verifyEmail(String mobileNumber) {
 		return false;
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<UserResponse>> autenticate(LoginRequest loginRequest) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

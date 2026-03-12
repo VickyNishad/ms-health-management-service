@@ -18,17 +18,19 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.health.dto.DoctorSignUpRequest;
 import com.health.dto.MessageResponse;
-import com.health.dto.PatientSignUpRequest;
 import com.health.dto.ResetPasswordRequest;
 import com.health.dto.SignInRequest;
 import com.health.dto.TokenResponse;
+import com.health.dto.request.LoginRequest;
 import com.health.dto.request.UserRegistrationRequest;
 import com.health.dto.request.UserSignUpRequest;
 import com.health.dto.response.KycStepResponse;
-import com.health.dto.response.RegisteredUserResponse;
+import com.health.dto.response.UserRegisteredResponse;
+import com.health.dto.response.UserResponse;
 import com.health.enums.LoginType;
 import com.health.enums.Role;
 import com.health.models.ApiResponse;
+import com.health.service.AuthenticationService;
 import com.health.service.KycStepService;
 import com.health.service.LoginService;
 import com.health.service.SignUpService;
@@ -44,6 +46,9 @@ public class AuthController {
 
 	@Autowired
 	private UserRegistrationService userRegistrationService;
+	
+	@Autowired
+	private AuthenticationService authenticationService;
 
 	@Autowired
 	private SignUpService signUpService;
@@ -56,7 +61,7 @@ public class AuthController {
 
 
 	@GetMapping("/user/{providerLoginId}")
-	public ResponseEntity<ApiResponse<RegisteredUserResponse>> isRegisteredUser(@PathVariable String providerLoginId) {
+	public ResponseEntity<ApiResponse<UserRegisteredResponse>> isRegisteredUser(@PathVariable String providerLoginId) {
 		return userRegistrationService.isRegister(providerLoginId);
 	}
 
@@ -76,9 +81,9 @@ public class AuthController {
 
 
 	@PostMapping("/user/login")
-	public ResponseEntity<ApiResponse<TokenResponse>> patientLogin(@RequestBody SignInRequest request) {
-		request.setRole(Role.PATIENT);
-		return loginService.login(request);
+	public ResponseEntity<ApiResponse<UserResponse>> patientLogin(@RequestBody SignInRequest request) {
+		LoginRequest loginRequest = new LoginRequest(request.getProviderLoginId(), request.getPassword(), 4L);
+		return authenticationService.autenticate(loginRequest);
 	}
 
 
@@ -93,9 +98,6 @@ public class AuthController {
 
 	@PostMapping("/employees/login")
 	public ResponseEntity<ApiResponse<TokenResponse>> employeeLogin(@RequestBody SignInRequest request) {
-
-		request.setRole(Role.DOCTOR);
-
 		return loginService.login(request);
 	}
 
@@ -115,7 +117,7 @@ public class AuthController {
 
 
 	@PostMapping("/login/social/{providerLoginId}")
-	public ResponseEntity<RegisteredUserResponse> socialLogin(@PathVariable String providerLoginId) {
+	public ResponseEntity<UserRegisteredResponse> socialLogin(@PathVariable String providerLoginId) {
 
 		return null;
 	}

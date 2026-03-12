@@ -6,7 +6,7 @@ package com.health.dto.response;
 /**
  * 
  */
-public class RegisteredUserResponse {
+public class UserRegisteredResponse {
 
 	private String userName;
 	private Boolean isRegistered;
