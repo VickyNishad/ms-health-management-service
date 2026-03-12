@@ -59,12 +59,10 @@ public class AuthController {
 	@Autowired
 	private KycStepService kycStepService;
 
-
 	@GetMapping("/user/{providerLoginId}")
 	public ResponseEntity<ApiResponse<UserRegisteredResponse>> isRegisteredUser(@PathVariable String providerLoginId) {
 		return userRegistrationService.isRegister(providerLoginId);
 	}
-
 
 	@PostMapping("/password/reset")
 	public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
@@ -72,13 +70,12 @@ public class AuthController {
 	}
 
 	@PostMapping("/user/signup")
-	public ResponseEntity<ApiResponse<TokenResponse>> userSignUp(@RequestBody UserSignUpRequest request) {
+	public ResponseEntity<ApiResponse<UserResponse>> userSignUp(@RequestBody UserSignUpRequest request) {
 		UserRegistrationRequest userRegistrationRequest = new UserRegistrationRequest(request.getUserName(), null,
 				request.getProviderLoginId(), null, null, LoginType.MANUAL, request.getPassword(), 4);
-		userRegistrationService.register(userRegistrationRequest);
-		return null;
+		
+		return userRegistrationService.register(userRegistrationRequest);
 	}
-
 
 	@PostMapping("/user/login")
 	public ResponseEntity<ApiResponse<UserResponse>> patientLogin(@RequestBody SignInRequest request) {
@@ -86,13 +83,10 @@ public class AuthController {
 		return authenticationService.autenticate(loginRequest);
 	}
 
-
 	@PostMapping("/doctors/signup")
 	public ResponseEntity<ApiResponse<TokenResponse>> doctorSignUp(@RequestBody DoctorSignUpRequest request) {
-
 		request.setRole(Role.DOCTOR);
 		request.setLoginType(LoginType.MANUAL);
-
 		return signUpService.doctorSignUp(request);
 	}
 
@@ -101,24 +95,18 @@ public class AuthController {
 		return loginService.login(request);
 	}
 
-
 	@PostMapping("/user/otp/send")
 	public ResponseEntity<ApiResponse<TokenResponse>> sendOtp(@RequestBody SignInRequest request) {
-
 		return loginService.login(request);
 	}
-
 
 	@PostMapping("/user/otp/verify")
 	public ResponseEntity<ApiResponse<TokenResponse>> verifyOtp(@RequestBody SignInRequest request) {
-
 		return loginService.login(request);
 	}
 
-
 	@PostMapping("/login/social/{providerLoginId}")
 	public ResponseEntity<UserRegisteredResponse> socialLogin(@PathVariable String providerLoginId) {
-
 		return null;
 	}
 	
