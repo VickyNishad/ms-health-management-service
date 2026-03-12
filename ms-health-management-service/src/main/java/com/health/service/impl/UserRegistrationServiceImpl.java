@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import com.health.dto.MessageResponse;
 import com.health.dto.ResetPasswordRequest;
-import com.health.dto.request.LoginRequest;
 import com.health.dto.request.ProfileDetailsRequest;
 import com.health.dto.request.UserRegistrationRequest;
 import com.health.dto.response.ProfileDetailsResponse;
@@ -133,8 +132,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 					
 					Optional<UserRegistration> user = userRegistrationRepository.findByMobileNumber(userRegistrationRequest.getMobileNumber());
 					if(user.isPresent()) {
-						throw new RuntimeException("You already have an account. Please log in to continue.");
-						
+						throw new RuntimeException("You already have an account. Please log in to continue.");						
 					}
 					
 					boolean isPresent =  otpService.existsByMobileNumber(userRegistrationRequest.getMobileNumber());
@@ -145,11 +143,10 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 					if (userRegistrationRequest.getRoleId() == 4) {
 						userRes = userRegistration( userRegistrationRequest ,isPresent);
 					} else if (userRegistrationRequest.getRoleId() == 3) {
-						doctorRegistration( userRegistrationRequest );
+						userRes = doctorRegistration( userRegistrationRequest , isPresent);
 					} else {
 						
 					}
-
 					return userRes;
 				}, ApiResponse::success);
 		return new ResponseEntity<ApiResponse<UserResponse>>(success, HttpStatus.OK);
@@ -158,72 +155,100 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 	private UserResponse userRegistration(UserRegistrationRequest userRegistrationRequest,boolean isPresent) {
 		Long roleId = (long) userRegistrationRequest.getRoleId();
 		
-		Optional<RoleMaster> roleMaster = roleMasterRepository.findById(roleId);
+		Optional<RoleMaster> optionalRoleMaster = roleMasterRepository.findById(roleId);
+		RoleMaster roleMaster = optionalRoleMaster.get();
 		
 		String password = userRegistrationRequest.getPassword();
 		String ecnryptPassword = HealthUtils.encryptPassword(password);
 		
+		userRegistrationRequest.setPassword(ecnryptPassword);
+		
+		UserRegistration userRegistration = userRegistration(userRegistrationRequest,roleMaster);
+		userRegistration = userRegistrationRepository.save(userRegistration);
+		
+		/**
+		 * Mark Registration step is completed
+		 */
+		Long userId = userRegistration.getId();
+		Long stepId = 1L;
+		kycStepService.addStep(userId, stepId);
+		
+		ProfileDetailsResponse profileDetailsResponse = createNewProfile(userRegistration,isPresent);
+		
+		return userResponse(userRegistration,profileDetailsResponse);
+	}
+	
+	private UserResponse doctorRegistration(UserRegistrationRequest userRegistrationRequest,boolean isPresent) {
+		Long roleId = (long) userRegistrationRequest.getRoleId();
+
+		Optional<RoleMaster> optionalRoleMaster = roleMasterRepository.findById(roleId);
+		RoleMaster roleMaster = optionalRoleMaster.get();
+
+		String password = userRegistrationRequest.getPassword();
+		String ecnryptPassword = HealthUtils.encryptPassword(password);
+
+		userRegistrationRequest.setPassword(ecnryptPassword);
+
+		UserRegistration userRegistration = userRegistration(userRegistrationRequest, roleMaster);
+		userRegistration = userRegistrationRepository.save(userRegistration);
+
+		/**
+		 * Mark Registration step is completed
+		 */
+		Long userId = userRegistration.getId();
+		Long stepId = 1L;
+		kycStepService.addStep(userId, stepId);
+
+		ProfileDetailsResponse profileDetailsResponse = createNewProfile(userRegistration, isPresent);
+
+		return userResponse(userRegistration, profileDetailsResponse);
+	}
+
+	private void emplyeeRegistration(UserRegistrationRequest userRegistrationRequest) {
+		
+	}
+		
+	private UserRegistration userRegistration(UserRegistrationRequest userRegistrationRequest,RoleMaster roleMaster) {
+		
 		UserRegistration userRegistration = new UserRegistration();
 		userRegistration.setMobileNumber(userRegistrationRequest.getMobileNumber());
 		userRegistration.setUserName(userRegistrationRequest.getUserName());
-		userRegistration.setEmailId(null);
-		userRegistration.setEmpCode(null);
+		userRegistration.setEmailId(userRegistrationRequest.getEmailId());
+		userRegistration.setEmpCode(userRegistrationRequest.getEmpCode());
 		userRegistration.setLoginType(userRegistrationRequest.getLoginType().name());
-		userRegistration.setPassword(ecnryptPassword);
-		userRegistration.setRole(roleMaster.get());
-		userRegistration.setSocialId(null);
+		userRegistration.setPassword(userRegistrationRequest.getPassword());
+		userRegistration.setRole(roleMaster);
+		userRegistration.setSocialId(userRegistrationRequest.getSocialId());
 		userRegistration.setCreatedAt(LocalDateTime.now());
-		userRegistration.setCreatedBy(null);
+		userRegistration.setCreatedBy("BACKEND");
 		userRegistration.setIsActive(true);
+		return userRegistration;
+	}
+	
+	private UserResponse userResponse(UserRegistration userRegistration,ProfileDetailsResponse profileDetailsResponse) {
 
-		userRegistration = userRegistrationRepository.save(userRegistration);
-		
-		// mark step login completed
-		Long userId = userRegistration.getId();
-		String roleName = roleMaster.get().getRoleName();
-		Long stepId = 1L;
-		kycStepService.addStep(userId, stepId);
+		UserResponse userResponse = new UserResponse();
+		userResponse.setId(profileDetailsResponse.getId());
+		userResponse.setUserId(userRegistration.getId());
+		userResponse.setIsRegistered(true);
+		userResponse.setRoleId(userRegistration.getRole().getId());
+		userResponse.setRole(userRegistration.getRole().getRoleName());
+		userResponse.setUserName(userRegistration.getUserName());
+		userResponse.setIsActive(true);
+		return userResponse;
+	}
+
+	private ProfileDetailsResponse createNewProfile(UserRegistration userRegistration,boolean isMobileVerified) {
 		
 		ProfileDetailsRequest profileDetailsRequest = new ProfileDetailsRequest();
 		profileDetailsRequest.setName(userRegistration.getUserName());
 		profileDetailsRequest.setMobileNumber(userRegistration.getMobileNumber());
-		profileDetailsRequest.setIsMobileVerified(isPresent);
+		profileDetailsRequest.setIsMobileVerified(isMobileVerified);
 		
 		ResponseEntity<ApiResponse<ProfileDetailsResponse>> apiResponseEntity = userProfileService.createNewProfile(userRegistration, profileDetailsRequest);
 		ApiResponse<ProfileDetailsResponse> apiResponse = apiResponseEntity.getBody();
 		ProfileDetailsResponse profileDetailsResponse = apiResponse.getData();
 		
-		UserResponse userResponse = new UserResponse();
-		userResponse.setId(profileDetailsResponse.getId());
-		userResponse.setUserId(userId);
-		userResponse.setIsRegistered(true);
-		userResponse.setRoleId(roleId);
-		userResponse.setRole(roleName);
-		userResponse.setUserName(userRegistration.getUserName());
-		userResponse.setIsActive(true);		
-		return userResponse;
+		return profileDetailsResponse;
 	}
-	
-	private void doctorRegistration(UserRegistrationRequest userRegistrationRequest) {
-		
-	}
-	
-	private void emplyeeRegistration(UserRegistrationRequest userRegistrationRequest) {
-		
-	}
-	
-	public boolean verifyMobile(String mobileNumber) {
-		return false;
-	}
-
-	public boolean verifyEmail(String mobileNumber) {
-		return false;
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<UserResponse>> autenticate(LoginRequest loginRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

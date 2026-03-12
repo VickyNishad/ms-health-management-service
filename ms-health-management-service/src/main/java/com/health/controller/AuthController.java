@@ -73,7 +73,6 @@ public class AuthController {
 	public ResponseEntity<ApiResponse<UserResponse>> userSignUp(@RequestBody UserSignUpRequest request) {
 		UserRegistrationRequest userRegistrationRequest = new UserRegistrationRequest(request.getUserName(), null,
 				request.getProviderLoginId(), null, null, LoginType.MANUAL, request.getPassword(), 4);
-		
 		return userRegistrationService.register(userRegistrationRequest);
 	}
 
@@ -84,10 +83,10 @@ public class AuthController {
 	}
 
 	@PostMapping("/doctors/signup")
-	public ResponseEntity<ApiResponse<TokenResponse>> doctorSignUp(@RequestBody DoctorSignUpRequest request) {
-		request.setRole(Role.DOCTOR);
-		request.setLoginType(LoginType.MANUAL);
-		return signUpService.doctorSignUp(request);
+	public ResponseEntity<ApiResponse<UserResponse>> doctorSignUp(@RequestBody UserSignUpRequest request) {
+		UserRegistrationRequest userRegistrationRequest = new UserRegistrationRequest(request.getUserName(), null,
+				request.getProviderLoginId(), null, null, LoginType.MANUAL, request.getPassword(), 3);
+		return userRegistrationService.register(userRegistrationRequest);
 	}
 
 	@PostMapping("/employees/login")
