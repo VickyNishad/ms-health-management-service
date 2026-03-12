@@ -91,8 +91,9 @@ public class AuthController {
 	}
 
 	@PostMapping("/employees/login")
-	public ResponseEntity<ApiResponse<TokenResponse>> employeeLogin(@RequestBody SignInRequest request) {
-		return loginService.login(request);
+	public ResponseEntity<ApiResponse<UserResponse>> employeeLogin(@RequestBody SignInRequest request) {
+		LoginRequest loginRequest = new LoginRequest(request.getProviderLoginId(), request.getPassword(), 2L);
+		return authenticationService.autenticate(loginRequest);
 	}
 
 	@PostMapping("/user/otp/send")

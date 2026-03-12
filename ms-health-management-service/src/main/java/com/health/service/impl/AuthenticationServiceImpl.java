@@ -52,12 +52,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			UserRegistration user = optionUser.get();
 			if(loginRequest.getRoleId() == 4) {
 				userResponse = userAuthentication(user,loginRequest);
+			} else {
+				userResponse = employeeAuthentication(user,loginRequest);	
 			}
 			
 			return userResponse;
 		}, ApiResponse::success);
 
-		return new ResponseEntity<ApiResponse<UserResponse>>(success, HttpStatus.OK);
+		return new ResponseEntity<ApiResponse<UserResponse>>(success , HttpStatus.OK);
 	}
 	
 	private UserResponse userAuthentication(UserRegistration user , LoginRequest loginRequest ) {
@@ -79,21 +81,44 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		
 		Optional<UserProfileDetails> optionalUserProfile = userProfileRepository.findByUserId(user.getId());
 		
+		return userResponse(optionalUserProfile.get(),user);
+
+	}
+	
+	private UserResponse employeeAuthentication(UserRegistration user , LoginRequest loginRequest) {
+		String role = user.getRole().getRoleName();
+		
+		Optional<RoleMaster> optional = roleMasterRepository.findById(loginRequest.getRoleId());
+		RoleMaster roleMaster = optional.get();
+		String requestRole = roleMaster.getRoleName();
+		
+		if(user.getRole().getId() == 4) {
+			throw new RuntimeException("Role mismatch. You are registered as a "+role+" and cannot login as a "+requestRole+".");
+		}
+		
+		String pass = loginRequest.getPassword();
+		String regPass = user.getPassword();
+		if(!HealthUtils.matchPassword(pass, regPass)) {
+			throw new RuntimeException("Invalid password. Please try again.");
+		}
+		
+		Optional<UserProfileDetails> optionalUserProfile = userProfileRepository.findByUserId(user.getId());
+		
+		return userResponse(optionalUserProfile.get(),user);
+	}
+
+	private UserResponse userResponse(UserProfileDetails userProfileDetails , UserRegistration user) {
+		
 		UserResponse userResponse = new UserResponse();
-		userResponse.setId(optionalUserProfile.get().getId());
+		userResponse.setId(userProfileDetails.getId());
 		userResponse.setUserId(user.getId());
 		userResponse.setIsRegistered(true);
 		userResponse.setRoleId(user.getRole().getId());
 		userResponse.setRole(user.getRole().getRoleName());
 		userResponse.setUserName(user.getUserName());
-		userResponse.setIsActive(true);		
+		userResponse.setIsActive(true);
 		userResponse.setLoginType(user.getLoginType());
 		return userResponse;
-
-	}
-	
-	private void employeeAuthentication() {
 		
 	}
-
 }
