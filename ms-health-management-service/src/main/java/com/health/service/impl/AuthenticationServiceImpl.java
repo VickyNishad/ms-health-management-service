@@ -120,6 +120,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		userResponse.setUserName(user.getUserName());
 		userResponse.setIsActive(true);
 		userResponse.setLoginType(user.getLoginType());
+		
 		return userResponse;
 		
 	}
