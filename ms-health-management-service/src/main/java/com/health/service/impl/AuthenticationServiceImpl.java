@@ -88,10 +88,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private UserResponse employeeAuthentication(UserRegistration user , LoginRequest loginRequest) {
 		String role = user.getRole().getRoleName();
 		
-		Optional<RoleMaster> optional = roleMasterRepository.findById(loginRequest.getRoleId());
-		RoleMaster roleMaster = optional.get();
-		String requestRole = roleMaster.getRoleName();
-		
 		if(user.getRole().getId() == 4) {		
 			throw new RuntimeException("Role mismatch. You are registered as a "+role+".");
 		}
