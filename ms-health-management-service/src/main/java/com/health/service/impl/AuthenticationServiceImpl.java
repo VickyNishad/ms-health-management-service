@@ -70,6 +70,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		String requestRole = roleMaster.getRoleName();
 		
 		if(user.getRole().getId() != loginRequest.getRoleId()) {
+			
 			throw new RuntimeException("Role mismatch. You are registered as a "+role+" and cannot login as a "+requestRole+".");
 		}
 		
