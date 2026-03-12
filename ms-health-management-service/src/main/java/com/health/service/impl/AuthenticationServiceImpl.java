@@ -79,8 +79,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new RuntimeException("Invalid password. Please try again.");
 		}
 		
-		Optional<UserProfileDetails> optionalUserProfile = userProfileRepository.findByUserId(user.getId());
-		
+		Optional<UserProfileDetails> optionalUserProfile = userProfileRepository.findByUserId(user.getId());	
 		return userResponse(optionalUserProfile.get(),user);
 
 	}
@@ -98,8 +97,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			throw new RuntimeException("Invalid password. Please try again.");
 		}
 		
-		Optional<UserProfileDetails> optionalUserProfile = userProfileRepository.findByUserId(user.getId());
-		
+		Optional<UserProfileDetails> optionalUserProfile = userProfileRepository.findByUserId(user.getId());		
 		return userResponse(optionalUserProfile.get(),user);
 	}
 
