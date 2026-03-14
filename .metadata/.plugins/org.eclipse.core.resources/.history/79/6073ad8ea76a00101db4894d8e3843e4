@@ -1,0 +1,39 @@
+/**
+ * 
+ */
+package com.tsm.invoice.shared.utils;
+
+import com.tsm.invoice.domain.models.InvoiceBillDetails;
+import com.tsm.invoice.domain.models.InvoiceBillDetailsRequest;
+
+/**
+ * 
+ */
+public class ObjectMappers {
+	
+	public static InvoiceBillDetails convertDtoToEntity(InvoiceBillDetailsRequest invoiceBillDetailsRequest) {
+		InvoiceBillDetails invoiceBillDetails = new InvoiceBillDetails();
+		
+		invoiceBillDetails.setInvoiceId(null);
+		invoiceBillDetails.setEmpCode(invoiceBillDetailsRequest.getEmpCode());
+		invoiceBillDetails.setUserId(invoiceBillDetailsRequest.getUserId());
+		invoiceBillDetails.setFirstName(invoiceBillDetailsRequest.getFirstName());
+		invoiceBillDetails.setMiddleName(invoiceBillDetailsRequest.getMiddleName());
+		invoiceBillDetails.setLastName(invoiceBillDetailsRequest.getLastName());
+		invoiceBillDetails.setMobileNumber(invoiceBillDetailsRequest.getMobileNumber());
+		invoiceBillDetails.setEmailId(invoiceBillDetailsRequest.getEmailId());
+		invoiceBillDetails.setAddress(invoiceBillDetailsRequest.getAddress());
+		invoiceBillDetails.setItemName(invoiceBillDetailsRequest.getItemName());
+		invoiceBillDetails.setQuantity(invoiceBillDetailsRequest.getQuantity());
+		invoiceBillDetails.setDueDate(Convertors.getIntValue(invoiceBillDetailsRequest.getDueDate()));
+		invoiceBillDetails.setAuthorisedSignatory(invoiceBillDetailsRequest.getAuthorisedSignatory());
+		invoiceBillDetails.setFinalAmount(invoiceBillDetailsRequest.getFinalAmount());
+		invoiceBillDetails.setTaxAmount(invoiceBillDetailsRequest.getTaxAmount());
+		invoiceBillDetails.setTotalTaxAmount(invoiceBillDetailsRequest.getTotalTaxAmount());
+		invoiceBillDetails.setDiscount(invoiceBillDetailsRequest.getDiscount());
+		invoiceBillDetails.setAmount(invoiceBillDetailsRequest.getAmount());
+		
+		return invoiceBillDetails;
+	}
+
+}

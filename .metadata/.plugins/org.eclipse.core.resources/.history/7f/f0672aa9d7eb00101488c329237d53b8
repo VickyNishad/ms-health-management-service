@@ -1,0 +1,22 @@
+/**
+ * 
+ */
+package com.medicque.application.port.in;
+
+import org.springframework.http.ResponseEntity;
+
+import com.common.models.ApiResponse;
+import com.health.adapter.in.rest.dto.SignInRequest;
+import com.health.adapter.in.rest.dto.TokenResponse;
+
+/**
+ * 
+ */
+public interface LoginUseCase {
+	
+
+	public ResponseEntity<ApiResponse<TokenResponse>> handleSocialSign(SignInRequest signInRequest);
+	
+	public ResponseEntity<ApiResponse<TokenResponse>> login(SignInRequest signInRequest);
+
+}

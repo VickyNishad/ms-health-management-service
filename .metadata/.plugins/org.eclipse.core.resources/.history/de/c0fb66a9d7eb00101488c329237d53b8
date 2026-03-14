@@ -1,0 +1,96 @@
+/**
+ * 
+ */
+package com.medicque.domain.model;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import com.health.adapter.out.persistence.entity.BaseEntity;
+import com.health.adapter.out.persistence.entity.Doctor;
+
+/**
+ * 
+ */
+public class DoctorLeaveModel extends BaseEntity {
+
+	private Long leave_id;
+
+	private Doctor doctor_id;
+
+	private LocalDate startDate;
+
+	private LocalDate endDate;
+
+	private LocalTime startTime; // full day leave => 00:00
+
+	private LocalTime endTime; // full day leave => 23:59
+
+	private String leaveType; // FULL_DAY, BREAK, LUNCH, HALF_DAY
+
+	private String reason;
+
+	public Long getLeave_id() {
+		return leave_id;
+	}
+
+	public void setLeave_id(Long leave_id) {
+		this.leave_id = leave_id;
+	}
+
+	public Doctor getDoctor_id() {
+		return doctor_id;
+	}
+
+	public void setDoctor_id(Doctor doctor_id) {
+		this.doctor_id = doctor_id;
+	}
+
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+
+	public LocalTime getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(LocalTime startTime) {
+		this.startTime = startTime;
+	}
+
+	public LocalTime getEndTime() {
+		return endTime;
+	}
+
+	public void setEndTime(LocalTime endTime) {
+		this.endTime = endTime;
+	}
+
+	public String getLeaveType() {
+		return leaveType;
+	}
+
+	public void setLeaveType(String leaveType) {
+		this.leaveType = leaveType;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+}

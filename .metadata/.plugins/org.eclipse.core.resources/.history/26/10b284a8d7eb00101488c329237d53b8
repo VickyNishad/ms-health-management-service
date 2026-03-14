@@ -1,0 +1,10 @@
+package com.medicque.application.port.out;
+
+import java.util.List;
+
+import com.medicque.adapter.out.persistence.entity.QualificationMaster;
+
+public interface QualificationMasterRepositoryPort {
+
+	public List<QualificationMaster> findAllById(List<Long> id);
+}

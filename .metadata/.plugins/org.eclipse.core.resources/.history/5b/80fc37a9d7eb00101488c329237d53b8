@@ -1,0 +1,17 @@
+/**
+ * 
+ */
+package com.medicque.application.port.out;
+
+import java.util.Optional;
+
+import com.health.adapter.out.persistence.entity.Doctor;
+import com.health.domain.model.DoctorModel;
+
+/**
+ * 
+ */
+public interface DoctorRepositoryPort {
+	Optional<Doctor> findById(Long id);
+	Doctor save(DoctorModel model);
+}

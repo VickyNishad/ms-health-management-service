@@ -1,0 +1,70 @@
+log.dir: logs/console_log/ms-health-care-service
+log.filename: ms-health-care-service
+
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultZone: http://51.21.209.119:8761/eureka
+s3:
+  access-key: AKIAV6BKDVVIV34YCV5G
+  secret-key: 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
+  region: ap-south-1
+  bucket-name: uat-media-bucket-apmumbai
+  bucket-url: https://uat-media-bucket-apmumbai.s3.ap-south-1.amazonaws.com/
+
+          
+server:
+  port: 7100
+spring:
+  application:
+    name: ms-health-care-service-test
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+          
+
+  datasource:
+    url: jdbc:mysql://free-db.cpcsmuqugjqz.eu-north-1.rds.amazonaws.com:3306/MedicQueDB
+    username: admin
+    password: Welcome#2025
+    driver-class-name: com.mysql.cj.jdbc.Driver
+	jpa:
+	  hibernate:
+	    ddl-auto: update
+	    naming:
+	      physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+	  show-sql: true
+	  properties:
+	    hibernate:
+	      dialect: org.hibernate.dialect.MySQL8Dialect
+		  
+    hikari:
+      minimum-idle: 5
+      maximum-pool-size: 20
+      connection-timeout: 30000 # 30 seconds
+      idle-timeout: 120000 # 2 minutes
+      max-lifetime: 1800000 # 30 minutes
+      connection-test-query: SELECT 1
+      validation-timeout: 600000
+  web:
+    resources:
+      add-mappings: false
+
+
+springdoc:
+#  packages-to-scan: com.healthcare
+#  paths-to-match: "/**"
+#  api-docs:
+#    enabled: true
+#    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /healthcare
+    url: /api-docs
+
+

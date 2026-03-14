@@ -1,0 +1,25 @@
+package com.notification.sdk.service;
+
+public class GenericModel<T> {
+	private String token;
+	private T payload;
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public T getPayload() {
+		return payload;
+	}
+
+	public void setPayload(T payload) {
+		this.payload = payload;
+	}
+
+	// Getters and setters
+
+}

@@ -1,0 +1,92 @@
+/**
+ * 
+ */
+package com.healthcare.dto;
+
+/**
+ * 
+ */
+public class AvailabilityRequest {
+
+    private Integer profileId;
+    private Integer addressId;
+    private Integer repeatWeekly;
+    private Integer dayOfWeek;
+    private Integer duration;
+    private String startTime;
+    private String endTime;
+
+    // Constructors
+    public AvailabilityRequest() {
+    }
+
+    public AvailabilityRequest(Integer profileId, Integer addressId,
+                                      Integer repeatWeekly, Integer dayOfWeek,
+                                      Integer duration, String startTime,
+                                      String endTime) {
+        this.profileId = profileId;
+        this.addressId = addressId;
+        this.repeatWeekly = repeatWeekly;
+        this.dayOfWeek = dayOfWeek;
+        this.duration = duration;
+        this.startTime = startTime;
+        this.endTime = endTime;
+    }
+
+    // Getters & Setters
+    public Integer getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(Integer profileId) {
+        this.profileId = profileId;
+    }
+
+    public Integer getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(Integer addressId) {
+        this.addressId = addressId;
+    }
+
+    public Integer getRepeatWeekly() {
+        return repeatWeekly;
+    }
+
+    public void setRepeatWeekly(Integer repeatWeekly) {
+        this.repeatWeekly = repeatWeekly;
+    }
+
+    public Integer getDayOfWeek() {
+        return dayOfWeek;
+    }
+
+    public void setDayOfWeek(Integer dayOfWeek) {
+        this.dayOfWeek = dayOfWeek;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+}

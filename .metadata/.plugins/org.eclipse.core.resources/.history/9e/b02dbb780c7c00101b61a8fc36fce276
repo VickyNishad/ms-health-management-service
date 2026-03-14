@@ -1,0 +1,34 @@
+package com.document.models.request;
+
+public class DocumentRequest {
+	private String referenceType;
+	private String referenceId;
+	private String fileName;
+
+	// Getters and Setters
+
+	public String getReferenceType() {
+		return referenceType;
+	}
+
+	public void setReferenceType(String referenceType) {
+		this.referenceType = referenceType;
+	}
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+}

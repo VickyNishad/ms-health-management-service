@@ -1,0 +1,51 @@
+/**
+ * 
+ */
+package com.document.service;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.document.interfaces.AbstractUseCase;
+import com.document.models.GenericModel;
+import com.document.models.request.DBProcedureRequest;
+import com.document.models.request.S3BucketRequest;
+
+/**
+ * 
+ */
+@Service
+public class S3BucketServiceImpl extends AbstractUseCase<S3BucketRequest, DBProcedureRequest, ResponseEntity<?>> {
+
+	@Override
+	protected ResponseEntity<?> validateInput(GenericModel<S3BucketRequest> model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected DBProcedureRequest buildDatabaseRequest(GenericModel<S3BucketRequest> model) {
+		// TODO Auto-generated method stub
+		DBProcedureRequest dbProcedureRequest = new DBProcedureRequest();
+		return dbProcedureRequest;
+	}
+
+	@Override
+	protected ResponseEntity<?> execute(GenericModel<S3BucketRequest> model, DBProcedureRequest dbRequest) {
+		// TODO Auto-generated method stub
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@Override
+	protected ResponseEntity<?> buildFinalResponse(GenericModel<S3BucketRequest> model, ResponseEntity<?> result) {
+		// TODO Auto-generated method stub
+		try {
+			S3BucketRequest s3BucketRequest = model.getPayload();
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return null;
+	}
+
+}

@@ -1,0 +1,40 @@
+package com.healthcare.models.request;
+
+import java.time.DayOfWeek;
+import java.util.List;
+
+import com.healthcare.dto.TimeSlot;
+
+public class WeeklySchedule {
+
+	private DayOfWeek dayOfWeek;
+	private int duration;
+
+	List<TimeSlot> slots;
+
+	// Getters and Setters
+	public DayOfWeek getDayOfWeek() {
+		return dayOfWeek;
+	}
+
+	public void setDayOfWeek(DayOfWeek dayOfWeek) {
+		this.dayOfWeek = dayOfWeek;
+	}
+
+	public int getDuration() {
+		return duration;
+	}
+
+	public void setDuration(int duration) {
+		this.duration = duration;
+	}
+
+	public List<TimeSlot> getSlots() {
+		return slots;
+	}
+
+	public void setSlots(List<TimeSlot> slots) {
+		this.slots = slots;
+	}
+
+}

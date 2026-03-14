@@ -1,0 +1,116 @@
+/**
+ * 
+ */
+package com.common.exceptions;
+
+import org.springframework.beans.ConversionNotSupportedException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingPathVariableException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.context.request.async.AsyncRequestTimeoutException;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.common.models.ApiResponse;
+
+
+/**
+ * 
+ */
+@ControllerAdvice
+public class MedicqueGlobalException extends ResponseEntityExceptionHandler {
+
+	@Override
+	protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex,
+			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		return new ResponseEntity<>(ApiResponse.error("API processing failed: " + ex.getMessage()), status);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		return new ResponseEntity<>(ApiResponse.error("API processing failed: " + ex.getMessage()), status);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		return new ResponseEntity<>(ApiResponse.error("API processing failed: " + ex.getMessage()), status);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleMissingPathVariable(MissingPathVariableException ex, HttpHeaders headers,
+			HttpStatusCode status, WebRequest request) {
+		return new ResponseEntity<>(ApiResponse.error("API processing failed: " + ex.getMessage()), status);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex,
+			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		return new ResponseEntity<>(ApiResponse.error("API processing failed: " + ex.getMessage()), status);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleConversionNotSupported(ConversionNotSupportedException ex,
+			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		return new ResponseEntity<>(ApiResponse.error("API processing failed: " + ex.getMessage()), status);
+	}
+
+	@Override
+	protected ResponseEntity<Object> handleAsyncRequestTimeoutException(AsyncRequestTimeoutException ex,
+			HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+		return new ResponseEntity<>(ApiResponse.error("API processing failed: " + ex.getMessage()), status);
+	}
+
+	@ExceptionHandler(InvalidInputException.class)
+	public ResponseEntity<ApiResponse<String>> invalidInputException(InvalidInputException ex) {
+		return new ResponseEntity<ApiResponse<String>>(ApiResponse.error("API processing failed: " + ex.getMessage()), HttpStatus.BAD_REQUEST);
+	}
+
+	@ExceptionHandler(AuthenticationFailedException.class)
+	public ResponseEntity<ApiResponse<String>> authenticationFailedException(AuthenticationFailedException ex) {
+		return new ResponseEntity<ApiResponse<String>>(ApiResponse.error("API processing failed: " + ex.getMessage()), HttpStatus.UNAUTHORIZED);
+	}
+
+	@ExceptionHandler(DataNotFoundException.class)
+	public ResponseEntity<ApiResponse<String>> dataNotFoundException(DataNotFoundException ex) {
+		return new ResponseEntity<ApiResponse<String>>(ApiResponse.error("API processing failed: " + ex.getMessage()), HttpStatus.OK);
+	}
+
+	@ExceptionHandler(MedicqueException.class)
+	public ResponseEntity<ApiResponse<String>> tException(MedicqueException ex) {
+		return new ResponseEntity<ApiResponse<String>>(ApiResponse.error("API processing failed: " + ex.getMessage()), HttpStatus.OK);
+	}
+	
+	@ExceptionHandler(DatabaseException.class)
+	public ResponseEntity<ApiResponse<String>> databaseException(DatabaseException ex) {
+		return new ResponseEntity<ApiResponse<String>>(ApiResponse.error("API processing failed: " + ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+//	
+//	 // Validation error handler
+//    @ExceptionHandler(MethodArgumentNotValidException.class)
+//    public ResponseEntity<ApiResponse<String>> handleValidationErrors(MethodArgumentNotValidException ex) {
+//        return new ResponseEntity<>(ApiResponse.error("API processing failed: " + ex.getMessage()), HttpStatus.BAD_REQUEST);
+//    }
+
+    // Custom business exceptions
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<ApiResponse<String>> handleRuntime(RuntimeException ex) {
+
+    	return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.OK);
+    }
+
+    // Generic fallback
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<String>> handleGeneral(Exception ex) {
+    	return new ResponseEntity<>(ApiResponse.error(ex.getMessage()), HttpStatus.OK);
+    }
+}

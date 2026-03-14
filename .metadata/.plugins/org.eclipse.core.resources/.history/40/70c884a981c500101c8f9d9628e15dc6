@@ -1,0 +1,418 @@
+/**
+ * 
+ */
+package com.healthcare.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.exception.TException;
+import com.healthcare.interfaces.ManageAdminUseCase;
+import com.healthcare.interfaces.ManageStaffUseCase;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.interfaces.usecase.AuthLoginUseCase;
+import com.healthcare.models.GenericModel;
+import com.healthcare.models.request.AuthLoginRequest;
+import com.healthcare.models.request.DBProcedureRequest;
+import com.healthcare.models.request.FilterRequest;
+import com.healthcare.models.request.Provider;
+import com.healthcare.models.request.UserRole;
+import com.healthcare.models.response.AuthTokenResponse;
+import com.healthcare.models.response.ResponseModel;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Service
+public class ManageAdminServiceImpl implements ManageAdminUseCase,ManageStaffUseCase {
+	
+	private TRepository repository;
+    private AuthLoginUseCase authLoginUseCase;
+
+	public ManageAdminServiceImpl(TRepository repository, AuthLoginUseCase authLoginUseCase) {
+		this.repository = repository;
+		this.authLoginUseCase = authLoginUseCase;
+	}
+
+	@Override
+	public ResponseEntity<?> getDashboard(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<?> getAppointments(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<?> getPendingDoctorOrClinics(GenericModel<FilterRequest> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+//			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+//			String role =  authTokenResponse.getRole();
+//			
+//			TValidatiors.validateRequestedField("role", role, true, false, false, false, null, 0, 0, true);
+//
+//			if(!role.equalsIgnoreCase("admin")){
+//				throw new TException("Only admin has permission to get all pending doctors.");
+//			}
+//			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+//			
+			/*
+			 * 
+			 */
+
+			FilterRequest filterRequest = model.getRequest();
+			filterRequest.setProfileId("7");
+			
+			/*
+			 * 
+			 */
+	
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,filterRequest, TConstants.ParamProcess.GET_PENDING_DOCTORS);
+			/**
+			 * 
+			 */
+			
+			Map<String, Object> response = repository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+	        list1.sort((map1, map2) -> {
+	            String name1 = TUtils.getStringValue(map1.get("fullName"));
+	            String name2 = TUtils.getStringValue(map2.get("fullName"));
+	            return name1.compareToIgnoreCase(name2);
+	        });
+	        
+	        
+//	        {
+//	            "KYCStatus": "APPROVED",
+//	            "doctorId": 27,
+//	            "Role": "DOCTOR",
+//	            "FullName": "Dr Vikas Diwedi",
+//	            "Gender": "Male",
+//	            "Age": 32,
+//	            "ExperienceYears": 14,
+//	            "Qualification": "MBBS",
+//	            "RegistrationNumber": "ABCD1234",
+//	            "ProfileDescription": "Hello Hello Heloo ",
+//	            "ImagePath": null,
+//	            "CreatedBy": "0",
+//	            "CreatedOn": "2025-11-16T07:04:08.000+00:00",
+//	            "UpdatedBy": "7",
+//	            "UpdatedOn": "2025-11-17T18:27:09.000+00:00",
+//	            "IsActive": true,
+//	            "ParentId": null,
+//	            "MobileNumber": "9110101111",
+//	            "Email": "dr.@gmail.com",
+//	            "specializations": "Dentistry",
+//	            "AddressId": 14,
+//	            "HospitalName": "Good Health Clinic",
+//	            "ClinicName": "Good Health Clinic",
+//	            "CompleteAddress": "BCK, Mumbai",
+//	            "Pincode": "400071",
+//	            "ConsultationFee": null,
+//	            "docType": "MedicalCertificate",
+//	            "isUploaded": 1,
+//	            "docUrl": "https://uat-media-bucket-apmumbai.s3.ap-south-1.amazonaws.com/file/27/20251116_070532_Screenshot 2025-11-16 at 9.47.32 AM.png.png"
+//	          },
+	        
+	        
+//	        {
+//	        	  "success": true,
+//	        	  "data": {
+//	        	    "id": 3,
+//	        	    "name": "Dr. John",
+//	        	    "email": "john@mail.com",
+//	        	    "phone": "99999",
+//	        	    "age": 40,
+//	        	    "gender": "Male",
+//	        	    "qualification": "MBBS",
+//	        	    "experience": 10,
+//	        	    "registrationNumber": "12345",
+//	        	    "specialization": "Dermatologist",
+//	        	    "profileImage": "url",
+//	        	    "status": "PENDING",
+//	        	    "clinics": [
+//	        	      {
+//	        	        "id": 1,
+//	        	        "name": "Clinic 1",
+//	        	        "pincode": "400001",
+//	        	        "address": "Mumbai",
+//	        	        "gpsLocation": "18.5204, 73.8567"
+//	        	      }
+//	        	    ],
+//	        	    "documents": [
+//	        	      {
+//	        	        "id": 1,
+//	        	        "name": "certificate.pdf",
+//	        	        "size": "1MB",
+//	        	        "type": "license",
+//	        	        "url": "file-url"
+//	        	      }
+//	        	    ],
+//	        	    "clinicImages": [
+//	        	      {
+//	        	        "id": 1,
+//	        	        "url": "image.jpg",
+//	        	        "alt": "clinic"
+//	        	      }
+//	        	    ]
+//	        	  }
+//	        	}
+	        String previousDoctorId = "";
+	        Map<String, Object> success = new HashMap<>();
+	        List<Map<String, Object>> successList = new ArrayList<>();
+	        for(Map<String, Object> res : list1) {
+	        	success = new HashMap<>();
+	        	String doctorId = TUtils.getStringValue(res.get("doctorId"));
+	        	if (!previousDoctorId.equalsIgnoreCase(doctorId)) {
+	        	success.put("doctorId", doctorId);
+	        	success.put("name", TUtils.getStringValue(res.get("FullName")));
+	        	success.put("profileImage", TUtils.getStringValue(res.get("FullName")));
+	        	success.put("gender", TUtils.getStringValue(res.get("Gender")));
+	        	success.put("age", TUtils.getStringValue(res.get("Age")));
+	        	success.put("experience", TUtils.getStringValue(res.get("ExperienceYears")));
+	        	success.put("registrationNumber", TUtils.getStringValue(res.get("RegistrationNumber")));
+	        	success.put("phone", TUtils.getStringValue(res.get("MobileNumber")));
+	        	success.put("email", TUtils.getStringValue(res.get("Email")));
+	        	success.put("profileDescription", TUtils.getStringValue(res.get("ProfileDescription")));
+	        	success.put("specialization", TUtils.getStringValue(res.get("specializations")));	        	
+	        	
+	        	success.put("clinicImages", new ArrayList<>());
+	        	
+				List<Map<String, Object>> addresses = getAddress(list1, doctorId);
+				addresses.sort((a1, a2) -> {
+					Integer h1 = TUtils.getIntValue(a1.get("addressId"));
+					Integer h2 = TUtils.getIntValue(a2.get("addressId"));
+
+					if (h1 == null)
+						h1 = 0;
+					if (h2 == null)
+						h2 = 0;
+
+					return h1.compareTo(h2); // ✔ correct for Integer
+				});
+				success.put("clinics", addresses);
+				success.put("documents", getDocuments(list1, doctorId));
+				successList.add(success);
+				previousDoctorId = doctorId;
+			}
+	        }
+
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(successList));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+	
+	private List<Map<String, Object>> getAddress(List<Map<String, Object>> list1, String profileId) {
+		Map<String, Object> address = new HashMap<>();
+		List<Map<String, Object>> addresss = new ArrayList<>();
+		Set<String> addressIds = new HashSet<>();
+		for (Map<String, Object> res : list1) {
+
+			if (TUtils.getStringValue(res.get("adprofileId")).equalsIgnoreCase(profileId)) {
+				String addressId = TUtils.getStringValue(res.get("AddressId"));
+				if (!addressIds.contains(addressId)) {
+					address = new HashMap<>();
+					address.put("addressId", TUtils.getStringValue(res.get("AddressId")));
+					address.put("clinicName", TUtils.getStringValue(res.get("ClinicName")));
+					address.put("hospitalName", TUtils.getStringValue(res.get("FospitalName")));
+					address.put("address", TUtils.getStringValue(res.get("CompleteAddress")));
+					address.put("pinCode", TUtils.getStringValue(res.get("ConsultationFee")));
+					address.put("consultationFee", TUtils.getStringValue(res.get("ConsultationFee")));
+					addresss.add(address);
+					addressIds.add(addressId); 
+				}
+			}
+		}
+		return addresss;
+	}
+	
+	private String getProfileImage(List<Map<String, Object>> list1, String profileId) {
+		for (Map<String, Object> res : list1) {
+
+			if (TUtils.getStringValue(res.get("dmProfileId")).equalsIgnoreCase(profileId) && TUtils.getStringValue(res.get("docType")).equalsIgnoreCase("ProfilePhoto")) {
+				return TUtils.getStringValue(res.get("url"));
+			}
+		}
+		return "";
+	}
+	
+	private List<Map<String, Object>> getDocuments(List<Map<String, Object>> list1, String profileId) {
+		Map<String, Object> document = new HashMap<>();
+		List<Map<String, Object>> documents = new ArrayList<>();
+		Set<String> docTypes = new HashSet<>();
+		for (Map<String, Object> res : list1) {
+
+			if (TUtils.getStringValue(res.get("dmProfileId")).equalsIgnoreCase(profileId)) {
+				String docType = TUtils.getStringValue(res.get("docType"));
+				if (!docTypes.contains(docType)) {
+					document = new HashMap<>();
+					document.put("id", TUtils.getStringValue(res.get("DocId")));
+					document.put("docType", TUtils.getStringValue(res.get("docType")));
+					document.put("isUploaded", TUtils.getBoolValue(res.get("isUploaded")));
+					document.put("url", TUtils.getStringValue(res.get("docUrl")));
+					documents.add(document);
+					docTypes.add(docType); 
+				}
+			}
+		}
+		return documents;
+	}
+
+	@Override
+	public ResponseEntity<?> addSatff(GenericModel<AuthLoginRequest> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			String role =  authTokenResponse.getRole();
+			
+			AuthLoginRequest authLoginRequest = model.getRequest();
+			
+			TValidatiors.validateRequestedField("admin/doctor role", role, true, false, false, false, null, 0, 0, true);
+
+			if(!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("doctor")){
+				throw new TException("Only admin/doctor has permission to add new staff.");
+			}
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			
+			Provider provider = authLoginRequest.getProvider(); 
+			UserRole role1 = authLoginRequest.getRole(); 
+			authLoginRequest.setCreatedBy(authTokenResponse.getProfileId());
+
+			TValidatiors.validateRequestedField("fullName", authLoginRequest.getFullName(), true, false, false, false, null, 0, 0, true);
+
+			switch (provider.name().trim()) {
+
+			case "LOCAL":
+				TValidatiors.validateRequestedField("providerLoginId", authLoginRequest.getProviderLoginId(), true,
+						true, false, true, null, 10, 10, true);
+				TValidatiors.validateRequestedField("password", authLoginRequest.getPassword(), true, false, false,
+						true, null, 4, 16, true);
+				break;
+
+			default:
+				throw new RuntimeException(
+						TConstants.Error.UNKNOWN + provider.name() + TConstants.Error.INPUT_PARAMETER);
+			}
+			
+			if(role.equalsIgnoreCase("admin")) {
+				switch (role1.name().trim()) {
+
+				case "SALES":
+				case "SUPPORT":
+				case "STAFF":
+					break;
+				default:
+					throw new RuntimeException(TConstants.Error.UNKNOWN + role1.name() + TConstants.Error.INPUT_PARAMETER);
+				}
+			}else {
+				switch (role1.name().trim()) {
+
+				case "NURSE":
+				case "STAFF":
+					break;
+				default:
+					throw new RuntimeException(TConstants.Error.UNKNOWN + role1.name() + TConstants.Error.INPUT_PARAMETER);
+				}
+			}
+
+			GenericModel<AuthLoginRequest> authGenericModel = new GenericModel<AuthLoginRequest>();
+			
+			authGenericModel.setRequest(authLoginRequest);
+			ResponseEntity<?> responseEntity =  authLoginUseCase.handle(authGenericModel);
+			responseModel  = (ResponseModel) responseEntity.getBody();
+			Object res = responseModel.getData();
+			
+			responseModel = new ResponseModel(TConstants.Keys.SUCCESS, res);
+			return new ResponseEntity<>(responseModel, HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> getSatff(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			String role =  authTokenResponse.getRole();
+			
+			TValidatiors.validateRequestedField("role", role, true, false, false, false, null, 0, 0, true);
+
+			if(!role.equalsIgnoreCase("admin") && !role.equalsIgnoreCase("doctor")){
+				throw new TException("Only admin/doctor has permission to get all staff.");
+			}
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			/*
+			 * 
+			 */
+			Map<String, Object> request = new HashMap<>();
+			request.put("profileId", authTokenResponse.getProfileId());
+			
+			/*
+			 * 
+			 */
+	
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,request, TConstants.ParamProcess.GET_STAFF);
+			/**
+			 * 
+			 */
+			
+			Map<String, Object> response = repository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+}

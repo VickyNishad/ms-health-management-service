@@ -1,0 +1,225 @@
+/**
+ * 
+ */
+package com.healthcare.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.exception.TException;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.models.GenericModel;
+import com.healthcare.models.entity.AreaMaster;
+import com.healthcare.models.request.DBProcedureRequest;
+import com.healthcare.models.request.DoctorSearchRequest;
+import com.healthcare.models.request.SearchQueryRequest;
+import com.healthcare.models.response.ResponseModel;
+import com.healthcare.repository.AreaMasterRepository;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Service
+public class ManageSearchService {
+	
+	@Autowired
+	private AreaMasterRepository areaMasterRepository;
+	
+	private TRepository repository;
+	
+	public ManageSearchService(TRepository repository) {
+		this.repository = repository;
+	}
+
+	public ResponseEntity<?> search(GenericModel<SearchQueryRequest> model) {
+	    ResponseModel responseModel = null;
+	    try {
+	        DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model, TConstants.ParamProcess.AUTOSUGGESTION);
+	        Map<String, Object> response = repository.execute(dbProcedureRequest);
+
+	        if (TValidatiors.isNullOrEmpty(response)) {
+	            throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+	        }
+
+	        List<Map<String, Object>> list = new ArrayList<>();
+	        List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+
+	        // 1. Sort doctors by fullName ascending
+	        list1.sort((map1, map2) -> {
+	            String name1 = TUtils.getStringValue(map1.get("fullName"));
+	            String name2 = TUtils.getStringValue(map2.get("fullName"));
+	            return name1.compareToIgnoreCase(name2);
+	        });
+
+	        Map<String, Object> success;
+	        String previousDoctorId = "";
+
+	        for (Map<String, Object> res : list1) {
+	            String doctorId = TUtils.getStringValue(res.get("doctorId"));
+
+	            // Only process each doctor once
+	            if (!previousDoctorId.equalsIgnoreCase(doctorId)) {
+	                success = new HashMap<>();
+	                success.put("doctorId", doctorId);
+	                success.put("fullName", TUtils.getStringValue(res.get("fullName")));
+	                success.put("experienceYears", TUtils.getStringValue(res.get("experienceYears")));
+	                success.put("qualification", TUtils.getStringValue(res.get("qualification")));
+	                success.put("gender", TUtils.getStringValue(res.get("gender")));
+	                success.put("imagePath", TUtils.getStringValue(res.get("imagePath")));
+	                success.put("profileDescription", TUtils.getStringValue(res.get("profileDescription")));
+	                success.put("specialization", TUtils.getStringValue(res.get("specialization")));
+	                success.put("consultationFee", TUtils.getStringValue(res.get("consultationFee")));
+	                // Get and sort addresses for this doctor
+	                List<Map<String, Object>> addresses = getAddress(list1, doctorId);
+	                addresses.sort((a1, a2) -> {
+	                    String h1 = TUtils.getStringValue(a1.get("hospitalName"));
+	                    String h2 = TUtils.getStringValue(a2.get("hospitalName"));
+	                    return h1.compareToIgnoreCase(h2);
+	                });
+
+	                success.put("address", addresses);
+	                list.add(success);
+	                previousDoctorId = doctorId;
+	            }
+	        }
+
+	        responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list));
+	        return new ResponseEntity<>(responseModel, HttpStatus.OK);
+
+	    } catch (DatabaseException e) {
+	        throw new DatabaseException(e.getMessage());
+	    } catch (RuntimeException e) {
+	        throw new DataNotFoundException(e.getMessage());
+	    } catch (Exception e) {
+	        throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+	    }
+	}
+
+	private List<Map<String, Object>> getAddress(List<Map<String, Object>> list1, String profileId) {
+	    List<Map<String, Object>> list = new ArrayList<>();
+	    Set<String> addressIds = new HashSet<>(); // track unique addresses
+
+	    for (Map<String, Object> res : list1) {
+	        if (TUtils.getStringValue(res.get("doctorId")).equalsIgnoreCase(profileId)) {
+	            String addressId = TUtils.getStringValue(res.get("addressId"));
+	            if (!addressIds.contains(addressId)) {
+	                Map<String, Object> item = new HashMap<>();
+	                item.put("addressId", addressId);
+	                item.put("doctorId", profileId);
+	                item.put("hospitalName", TUtils.getStringValue(res.get("hospitalName")));
+	                item.put("clinicName", TUtils.getStringValue(res.get("clinicName")));
+	                item.put("completeAddress", TUtils.getStringValue(res.get("address")));
+	                list.add(item);
+	                addressIds.add(addressId); // mark as added
+	            }
+	        }
+	    }
+	    return list;
+	}
+
+	public ResponseEntity<?> searchDoctor(GenericModel<DoctorSearchRequest> model) {
+	    ResponseModel responseModel = null;
+	    try {
+	        DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model, TConstants.ParamProcess.RECOMM_DOCTOR);
+	        Map<String, Object> response = repository.execute(dbProcedureRequest);
+
+	        if (TValidatiors.isNullOrEmpty(response)) {
+	            throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+	        }
+
+	        List<Map<String, Object>> list = new ArrayList<>();
+	        List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+
+	        // 1. Sort doctors by fullName ascending
+	        list1.sort((map1, map2) -> {
+	            String name1 = TUtils.getStringValue(map1.get("fullName"));
+	            String name2 = TUtils.getStringValue(map2.get("fullName"));
+	            return name1.compareToIgnoreCase(name2);
+	        });
+
+	        Map<String, Object> success;
+	        String previousDoctorId = "";
+
+	        for (Map<String, Object> res : list1) {
+	            String doctorId = TUtils.getStringValue(res.get("doctorId"));
+
+	            // Only process each doctor once
+	            if (!previousDoctorId.equalsIgnoreCase(doctorId)) {
+	                success = new HashMap<>();
+	                success.put("doctorId", doctorId);
+	                success.put("fullName", TUtils.getStringValue(res.get("fullName")));
+	                success.put("imagePath", TUtils.getStringValue(res.get("imagePath")));
+	                success.put("experienceYears", TUtils.getStringValue(res.get("experienceYears")));
+	                success.put("qualification", TUtils.getStringValue(res.get("qualification")));
+	                success.put("gender", TUtils.getStringValue(res.get("gender")));
+	                success.put("profileDescription", TUtils.getStringValue(res.get("profileDescription")));
+	                success.put("specialization", TUtils.getStringValue(res.get("specialization")));
+	                success.put("consultationFee", TUtils.getStringValue(res.get("consultationFee")));
+
+
+	                // Get and sort addresses for this doctor
+	                List<Map<String, Object>> addresses = getAddress(list1, doctorId);
+	                addresses.sort((a1, a2) -> {
+	                    String h1 = TUtils.getStringValue(a1.get("hospitalName"));
+	                    String h2 = TUtils.getStringValue(a2.get("hospitalName"));
+	                    return h1.compareToIgnoreCase(h2);
+	                });
+	                
+	                
+
+	                success.put("address", addresses);
+	                list.add(success);
+	                previousDoctorId = doctorId;
+	            }
+	        }
+
+	        responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list));
+	        return new ResponseEntity<>(responseModel, HttpStatus.OK);
+
+	    } catch (DatabaseException e) {
+	        throw new DatabaseException(e.getMessage());
+	    } catch (RuntimeException e) {
+	        throw new DataNotFoundException(e.getMessage());
+	    } catch (Exception e) {
+	        throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+	    }
+	}
+	
+	
+	public ResponseEntity<?> filter(GenericModel<DoctorSearchRequest> model){
+		
+		return null;
+	}
+	
+	public ResponseEntity<?> getAreaMaster(String city){
+		List<AreaMaster> list = areaMasterRepository.findByCityNameAndIsActiveTrue(city);
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
+	
+	
+	public ResponseEntity<?> getAreaMasterBySearch(String areaName){
+		List<AreaMaster> list = areaMasterRepository.findByAreaNameContainingIgnoreCaseAndIsActiveTrue(areaName);
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
+	
+
+	public ResponseEntity<?> findAllActiveCities(){
+		List<String> list = areaMasterRepository.findAllActiveCities();
+		return new ResponseEntity<>(list, HttpStatus.OK);
+	}
+
+}

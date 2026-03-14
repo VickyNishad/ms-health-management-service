@@ -1,0 +1,18 @@
+/**
+ * 
+ */
+package com.health.repository;
+
+import java.util.List;
+
+import com.health.adapter.out.persistence.entity.Doctor;
+import com.health.adapter.out.persistence.entity.DoctorClinic;
+
+/**
+ * 
+ */
+public interface DoctorClinicRepositoryPort {
+
+	public DoctorClinic save(DoctorClinic doctorClinic);
+	List<DoctorClinic> findByDoctor(Doctor doctor);
+}

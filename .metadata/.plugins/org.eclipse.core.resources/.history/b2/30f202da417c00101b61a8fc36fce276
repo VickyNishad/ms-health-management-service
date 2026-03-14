@@ -1,0 +1,99 @@
+/**
+ * 
+ */
+package com.document.service;
+
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.document.config.S3BucketPro;
+import com.document.dto.DocumentFileDto;
+import com.document.interfaces.AbstractUseCase;
+import com.document.interfaces.usecase.DocumentUploadUseCase;
+import com.document.interfaces.usecase.S3BucketUseCase;
+import com.document.models.GenericModel;
+import com.document.models.request.DBProcedureRequest;
+import com.document.models.request.DocumentRequest;
+import com.document.models.request.S3BucketRequest;
+import com.document.utils.BConvertors;
+import com.document.utils.BUtils;
+
+/**
+ * 
+ */
+@Service
+public class DocumetUploadServiceImpl extends AbstractUseCase<DocumentRequest, DBProcedureRequest, ResponseEntity<?>> implements  DocumentUploadUseCase {
+
+	private final S3BucketPro s3BucketPro;
+	private S3BucketUseCase s3BucketUseCase;
+	
+	public DocumetUploadServiceImpl(S3BucketUseCase s3BucketUseCase , S3BucketPro s3BucketPro) {
+		this.s3BucketUseCase = s3BucketUseCase;
+		this.s3BucketPro = s3BucketPro;
+	}
+	
+	@Override
+	protected ResponseEntity<?> validateInput(GenericModel<DocumentRequest> model) {
+		// TODO Auto-generated method stub
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@Override
+	protected DBProcedureRequest buildDatabaseRequest(GenericModel<DocumentRequest> model) {
+		// TODO Auto-generated method stub
+		DBProcedureRequest dbProcedureRequest = new DBProcedureRequest();
+		DocumentRequest documentRequest = model.getPayload();
+		MultipartFile file = documentRequest.getMultipartFile();
+		
+		String key = "file/" + documentRequest.getReferenceId() + "/"+ BUtils.getFileName(documentRequest.getFileName(), file);
+		S3BucketRequest s3BucketRequest = new S3BucketRequest();
+		s3BucketRequest.setKey(key);
+		s3BucketRequest.setMultipartFile(file);
+		
+		GenericModel<S3BucketRequest> genericModel = new GenericModel<S3BucketRequest>();
+		genericModel.setPayload(s3BucketRequest);
+		
+		ResponseEntity<?> responseEntity = s3BucketUseCase.handle(genericModel);
+		if(responseEntity.getStatusCode().is2xxSuccessful()) {
+			
+			DocumentFileDto documentFileDto = new DocumentFileDto();
+			
+			documentFileDto.setContentType(file.getContentType());		
+			documentFileDto.setFileName(BUtils.getFileName(documentRequest.getFileName(), file));
+			documentFileDto.setFilePath(key);
+			documentFileDto.setFileType(documentRequest.getFileType());
+			documentFileDto.setReferenceType(documentRequest.getReferenceType());
+			documentFileDto.setReferenceId(documentRequest.getReferenceId());
+			documentFileDto.setS3BucketKey(key);
+			documentFileDto.setS3BucketName(key);
+			
+			
+			String json = BConvertors.convertObjectToString("");
+			dbProcedureRequest.setParam_JSON(json);
+			dbProcedureRequest.setParam_Process(key);
+			dbProcedureRequest.setTokenId(key);
+			
+			return dbProcedureRequest;
+		}
+		
+		return null;
+	}
+
+	@Override
+	protected ResponseEntity<?> execute(GenericModel<DocumentRequest> model, DBProcedureRequest dbRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected ResponseEntity<?> buildFinalResponse(GenericModel<DocumentRequest> model, ResponseEntity<?> result) {
+		// TODO Auto-generated method stub
+		
+
+		return null;
+	}
+
+}

@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.document.service;
+
+import com.document.interfaces.AbstractUseCase;
+import com.document.interfaces.usecase.TestUseCase;
+
+/**
+ * 
+ */
+public class TestServiceImpl extends AbstractUseCase<T, DBReq, Response> implements TestUseCase {
+
+}

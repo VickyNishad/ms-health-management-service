@@ -1,0 +1,17 @@
+/**
+ * 
+ */
+package com.health.adapter.out.persistence.jpa;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.health.adapter.out.persistence.entity.SpecializationMaster;
+
+/**
+ * 
+ */
+@Repository
+public interface JPASpecializationMasterRepository extends JpaRepository<SpecializationMaster, Long>{
+
+}

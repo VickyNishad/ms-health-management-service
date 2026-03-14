@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.health.repository;
+
+import com.health.model.DoctorQualification;
+
+/**
+ * 
+ */
+public interface DoctorQualificationRepositoryService {
+
+	public DoctorQualification save(DoctorQualification doctorQualification);
+}

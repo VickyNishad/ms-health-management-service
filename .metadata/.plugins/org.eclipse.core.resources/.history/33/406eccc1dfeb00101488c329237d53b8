@@ -1,0 +1,19 @@
+package com.health.repository.jpa;
+
+import java.util.Optional;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
+import org.springframework.stereotype.Repository;
+
+import com.health.adapter.out.persistence.entity.EmpCodeSequence;
+
+import jakarta.persistence.LockModeType;
+
+@Repository
+public interface JPAEmpCodeSequenceRepository
+        extends JpaRepository<EmpCodeSequence, String> {
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    Optional<EmpCodeSequence> findByRoleCode(String roleCode);
+}

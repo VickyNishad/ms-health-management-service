@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Rename resource &apos;ms-graphql-service/src/main/resources/graphql/schema.graphql&apos; to &apos;schema.graphqls&apos;" description="Rename resource &apos;schema.graphql&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="src/main/resources/graphql/schema.graphql" name="schema.graphqls" stamp="1762526665504" updateReferences="true"/>
+</session>

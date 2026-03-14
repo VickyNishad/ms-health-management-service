@@ -1,0 +1,17 @@
+/**
+ * 
+ */
+package com.medicque.adapter.out.persistence.jpa;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import com.health.adapter.out.persistence.entity.DoctorQualification;
+
+/**
+ * 
+ */
+@Repository
+public interface JPADoctorQualificationRepository extends JpaRepository<DoctorQualification, Long> {
+
+}

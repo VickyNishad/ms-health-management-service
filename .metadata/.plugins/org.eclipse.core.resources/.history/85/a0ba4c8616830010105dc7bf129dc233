@@ -1,0 +1,9 @@
+package com.healthcare.interfaces.usecase;
+
+import org.springframework.http.ResponseEntity;
+
+import com.document.models.GenericModel;
+
+public interface UseCase<T> {
+	ResponseEntity<?> handle(GenericModel<T> model);
+}

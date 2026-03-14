@@ -1,0 +1,22 @@
+package com.health.enums;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
+public enum Role {
+
+	SUPER_ADMIN, ADMIN, SALES, SUPPORT, DOCTOR, NURSE, RECEPTIONIST, PATIENT;
+
+	@JsonCreator
+	public static Role fromValue(String value) {
+		if (value == null || value.trim().isEmpty()) {
+			return null;
+		}
+		return Role.valueOf(value.toUpperCase());
+	}
+
+	@JsonValue
+	public String toValue() {
+		return this.name();
+	}
+}

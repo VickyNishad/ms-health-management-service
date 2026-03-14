@@ -1,0 +1,110 @@
+package com.healthcare.repository;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+import org.springframework.stereotype.Repository;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.healthcare.constant.TConstants;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.models.request.DBProcedureRequest;
+import com.healthcare.utils.TConvertors;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Repository
+public class HealthCareRepositoryImpl implements TRepository {
+
+	private static final Logger logger = LoggerFactory.getLogger(HealthCareRepositoryImpl.class);
+
+	private JdbcTemplate jdbcTemplate;
+
+	public HealthCareRepositoryImpl(JdbcTemplate jdbcTemplate, ObjectMapper objectMapper) {
+		this.jdbcTemplate = jdbcTemplate;
+	}
+
+	@Override
+	public Map<String, Object> execute(DBProcedureRequest dbProcedureRequest) {
+		logger.info("HealthCareRepositoryImpl execute information : {}", dbProcedureRequest);
+
+		try {
+			Map<String, Object> dbInput = TConvertors.convertObjectToMap(dbProcedureRequest);
+			
+			String procedureName = TUtils.getProcedureName(dbProcedureRequest.getParam_Process());
+			logger.info("HealthCareRepositoryImpl execute procedureName information : {}", procedureName);
+
+			SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(jdbcTemplate).withProcedureName(procedureName);
+
+			HashMap<String, Object> resultMap = (HashMap<String, Object>) simpleJdbcCall.execute(dbInput);
+			logger.info("HealthCareRepositoryImpl execute resultMap information : {}", resultMap);
+			if(TValidatiors.isNullOrEmpty(resultMap) || !resultMap.containsKey(TConstants.ResultSet.RESULT_SET_1)) {
+				throw new RuntimeException(TConstants.Error.RESULT_SET_NOT_FOUND);
+			}
+			return resultMap;
+		} catch (DataIntegrityViolationException e) {
+			logger.error("HealthCareRepositoryImpl DataIntegrityViolationException information : {}", e.getLocalizedMessage());
+			throw new DatabaseException(TConstants.Error.TECHNICAL_ISSUE);
+		} catch (DataAccessException e) {
+			logger.error("HealthCareRepositoryImpl DataAccessException information : {}", e.getLocalizedMessage());
+			throw new DatabaseException(TConstants.Error.TECHNICAL_ISSUE);
+		} catch (ClassCastException e) {
+			logger.error("HealthCareRepositoryImpl ClassCastException information : {}", e.getLocalizedMessage());
+			throw new DatabaseException(TConstants.Error.TECHNICAL_ISSUE);
+		} catch (RuntimeException e) {
+			logger.error("HealthCareRepositoryImpl RuntimeException information : {}", e.getLocalizedMessage());
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			logger.error("HealthCareRepositoryImpl Exception information : {}", e.getLocalizedMessage());
+			throw new DatabaseException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	
+	
+	@Autowired
+	public Map<String, Object> execute(Map<String, Object> req , String action, String proName) {
+		logger.info("HealthCareRepositoryImpl execute information : {}", req);
+
+		try {
+
+			logger.info("HealthCareRepositoryImpl execute procedureName information : {}", proName);
+
+			SimpleJdbcCall simpleJdbcCall = new SimpleJdbcCall(jdbcTemplate).withProcedureName(proName);
+
+			HashMap<String, Object> resultMap = (HashMap<String, Object>) simpleJdbcCall.execute(req);
+			logger.info("HealthCareRepositoryImpl execute resultMap information : {}", resultMap);
+			if(TValidatiors.isNullOrEmpty(resultMap) || !resultMap.containsKey(TConstants.ResultSet.RESULT_SET_1)) {
+				throw new RuntimeException(TConstants.Error.RESULT_SET_NOT_FOUND);
+			}
+			return resultMap;
+		} catch (DataIntegrityViolationException e) {
+			logger.error("HealthCareRepositoryImpl DataIntegrityViolationException information : {}", e.getLocalizedMessage());
+			throw new DatabaseException(TConstants.Error.TECHNICAL_ISSUE);
+		} catch (DataAccessException e) {
+			logger.error("HealthCareRepositoryImpl DataAccessException information : {}", e.getLocalizedMessage());
+			throw new DatabaseException(TConstants.Error.TECHNICAL_ISSUE);
+		} catch (ClassCastException e) {
+			logger.error("HealthCareRepositoryImpl ClassCastException information : {}", e.getLocalizedMessage());
+			throw new DatabaseException(TConstants.Error.TECHNICAL_ISSUE);
+		} catch (RuntimeException e) {
+			logger.error("HealthCareRepositoryImpl RuntimeException information : {}", e.getLocalizedMessage());
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			logger.error("HealthCareRepositoryImpl Exception information : {}", e.getLocalizedMessage());
+			throw new DatabaseException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+}

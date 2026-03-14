@@ -1,0 +1,312 @@
+/**
+ * 
+ */
+package com.healthcare.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.exception.TException;
+import com.healthcare.interfaces.ManageDoctorUseCase;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.models.GenericModel;
+import com.healthcare.models.request.DBProcedureRequest;
+import com.healthcare.models.request.FilterRequest;
+import com.healthcare.models.response.AuthTokenResponse;
+import com.healthcare.models.response.ResponseModel;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Service
+public class ManageDoctorServiceImpl implements ManageDoctorUseCase {
+	
+	private TRepository repository;
+
+	public ManageDoctorServiceImpl(TRepository repository) {
+		this.repository = repository;
+	}
+
+	@Override
+	public ResponseEntity<?> getDashboard(GenericModel<FilterRequest> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			
+			/*
+			 */
+
+			FilterRequest filterRequest = model.getRequest();
+			filterRequest.setProfileId(authTokenResponse.getProfileId());
+			
+			/** 
+			 * 
+			 */						
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,filterRequest, TConstants.ParamProcess.DOCTOR_DASHBOARD);
+			/**
+			 * 
+			 */
+			
+			Map<String, Object> response = repository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+				return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			}
+			
+			/**
+			 * SELECT 'success' AS result , varLiveTokenQue AS liveTokenQue , varTotalPatient AS totalPatient , varTotalAppointments AS totalAppointments;
+			 */
+			Map<String, Object> success = new HashMap<>();
+			success.put("liveTokenQue", TUtils.getIntValue(list1.get(0).get("liveTokenQue")));
+			success.put("totalPatient", TUtils.getIntValue(list1.get(0).get("totalPatient")));
+			success.put("totalAppointments", TUtils.getIntValue(list1.get(0).get("totalAppointments")));
+			success.put("avgDiagnosisTime", TUtils.getIntValue(list1.get(0).get("avgDiagnosisTime")));
+			
+			
+			List<Map<String, Object>> list2 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_2);
+//			success.put("success", true);
+			success.put("todayAppointments", list2);
+//			success.put("profileDetails", getProfileDetails(response));
+			
+			
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(success));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+
+	}
+	
+	private Map<String, Object> getProfileDetails(Map<String, Object> response){
+		Map<String, Object> success = new HashMap<>();
+		try {
+			List<Map<String, Object>> list3 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_3);
+			List<Map<String, Object>> list4 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_4);
+			List<Map<String, Object>> list5 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_5);
+			
+			success = list3.getFirst();	
+			success.put("clinics", list4);
+			success.put("documents",list5);
+			success.put("clinicImages",new ArrayList<>());
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		return success;
+	}
+	
+	
+
+	@Override
+	public ResponseEntity<?> getAppointments(GenericModel<FilterRequest> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+
+			FilterRequest filterRequest = model.getRequest();
+			filterRequest.setProfileId(authTokenResponse.getProfileId());
+			System.out.println(filterRequest);
+			/*
+			 * 
+			 */
+	
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,filterRequest, TConstants.ParamProcess.DOCTOR_TOTAL_APPOINTMENTS);
+			/**
+			 * 
+			 */
+			
+			Map<String, Object> response = repository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+				return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			}
+
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> getClinics(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			/*
+			 * 
+			 */
+			Map<String, Object> request = new HashMap<>();
+			request.put("profileId", authTokenResponse.getProfileId());
+			
+			/*
+			 * 
+			 */
+	
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,request, TConstants.ParamProcess.DOCTOR_CLINICS);
+			/**
+			 * 
+			 */
+			
+			Map<String, Object> response = repository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+				return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			}
+
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> getRecommendedDoctor(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+//			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+//			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			/*
+			 * 
+			 */
+			Map<String, Object> request = new HashMap<>();
+			request.put("profileId", null);
+			
+			/*
+			 * 
+			 */
+	
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,request, TConstants.ParamProcess.RECOMM_DOCTOR);
+			/**
+			 * 
+			 */
+			
+			Map<String, Object> response = repository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+				return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			}
+
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@Override
+	public ResponseEntity<?> getMediqueProducts(GenericModel<String> model) {
+		// TODO Auto-generated method stub
+		ResponseModel responseModel = null;
+		try {
+			AuthTokenResponse authTokenResponse = model.getAuthTokenResponse();
+//			TValidatiors.validateRequestedField("profileId", authTokenResponse.getProfileId(), true, true, false, false, null, 0, 0, true);
+			
+			/*
+			 * 
+			 */
+			Map<String, Object> request = new HashMap<>();
+			request.put("profileId", authTokenResponse.getProfileId());
+			
+			/*
+			 * 
+			 */
+	
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model,request, TConstants.ParamProcess.GET_ALL_PRODUCTS);
+			/**
+			 * 
+			 */
+			
+			Map<String, Object> response = repository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(list1.size()==0) {
+				responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+				return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			}
+
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list1));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+}

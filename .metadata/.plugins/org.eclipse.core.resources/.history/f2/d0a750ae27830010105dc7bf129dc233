@@ -1,0 +1,11 @@
+/**
+ * 
+ */
+package com.auth.models.request;
+
+/**
+ * 
+ */
+public class AuthTokenRequest {
+
+}

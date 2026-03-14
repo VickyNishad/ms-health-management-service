@@ -1,0 +1,89 @@
+/**
+ * 
+ */
+package com.healthcare.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.exception.TException;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.models.GenericModel;
+import com.healthcare.models.request.DBProcedureRequest;
+import com.healthcare.models.request.SearchQueryRequest;
+import com.healthcare.models.response.ResponseModel;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Service
+public class ManageSearchService {
+	
+	private TRepository repository;
+	
+	public ManageSearchService(TRepository repository) {
+		this.repository = repository;
+	}
+
+	public ResponseEntity<?> search(GenericModel<SearchQueryRequest> model){
+		ResponseModel responseModel = null;
+		try {
+			DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model, TConstants.ParamProcess.AUTOSUGGESTION);
+			
+			Map<String, Object> response = repository.execute(dbProcedureRequest);
+			
+			if (TValidatiors.isNullOrEmpty(response)) {
+				throw new RuntimeException(TConstants.Error.TECHNICAL_ISSUE);
+			}
+			List<Map<String, Object>> list = new ArrayList<>();
+			List<Map<String, Object>> list1 = (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			Map<String, Object> success = new HashMap<>();
+			for(Map<String, Object> res : list1 ) {
+				success.put("doctorId", TUtils.getStringValue(res.get("doctorId")));
+				success.put("fullName", TUtils.getStringValue(res.get("fullName")));
+				success.put("imagePath", TUtils.getStringValue(res.get("imagePath")));
+				success.put("profileDescription", TUtils.getStringValue(res.get("profileDescription")));
+				success.put("specialization", TUtils.getStringValue(res.get("specialization")));
+				success.put("address", getAddress(list1,TUtils.getStringValue(res.get("doctorId"))));
+				list.add(success);
+			}
+
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(list));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+			
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	private List<Map<String, Object>> getAddress(List<Map<String, Object>> list1,String profileId) {
+		List<Map<String, Object>> list = new ArrayList<>();
+		Map<String, Object> item = new HashMap<>();
+		for(Map<String, Object> res : list1) {
+			if(TUtils.getStringValue(res.get("doctorId")).equalsIgnoreCase(profileId)) {
+				item.put("addressId", TUtils.getStringValue(res.get("addressId")));
+				item.put("doctorId", profileId);
+				item.put("hospitalName", TUtils.getStringValue(res.get("hospitalName")));
+				item.put("clinicName", TUtils.getStringValue(res.get("clinicName")));
+				item.put("completeAddress", TUtils.getStringValue(res.get("address")));
+				list.add(item);
+			}
+		}
+		return list;
+	}
+}

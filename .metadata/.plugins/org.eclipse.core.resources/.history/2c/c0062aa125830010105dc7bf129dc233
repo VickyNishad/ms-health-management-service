@@ -1,0 +1,37 @@
+package com.healthcare.dto;
+
+/**
+ * 
+ */
+public class ProcedureResponseDto {
+
+	private String message;
+	private String result;
+	public String getMessage() {
+		return message;
+	}
+	public void setMessage(String message) {
+		this.message = message;
+	}
+	public String getResult() {
+		return result;
+	}
+	public void setResult(String result) {
+		this.result = result;
+	}
+	public ProcedureResponseDto() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	public ProcedureResponseDto(String message, String result) {
+		super();
+		this.message = message;
+		this.result = result;
+	}
+	@Override
+	public String toString() {
+		return "ProcedureResponseDto [message=" + message + ", result=" + result + "]";
+	}
+	
+	
+}

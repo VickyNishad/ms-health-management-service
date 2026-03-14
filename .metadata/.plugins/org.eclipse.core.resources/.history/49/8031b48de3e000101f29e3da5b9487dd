@@ -1,0 +1,57 @@
+/**
+ * 
+ */
+package com.medicque.application.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.common.models.ApiResponse;
+import com.medicque.adapter.in.rest.dto.AddPatientRequest;
+import com.medicque.adapter.in.rest.dto.MessageResponse;
+import com.medicque.adapter.out.persistence.entity.Patient;
+import com.medicque.application.port.in.PatientUseCase;
+import com.medicque.application.port.out.PatientRepositoryPort;
+import com.medicque.application.port.out.UserRegistrationRepositoryPort;
+
+/**
+ * 
+ */
+@Service
+public class PatientService implements PatientUseCase {
+	
+	@Autowired
+	private PatientRepositoryPort patientRepositoryPort;
+	
+	@Autowired
+	private UserRegistrationRepositoryPort useRepositoryPort;
+
+	@Override
+	public ResponseEntity<ApiResponse<Patient>> addPatient(Long userId, AddPatientRequest addPatientRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<List<Patient>>> getPatient(Long userId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<Patient>> modifyPatient(Long userId, Long patientId,
+			AddPatientRequest addPatientRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ResponseEntity<ApiResponse<MessageResponse>> removePatient(Long userId, Long patientId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

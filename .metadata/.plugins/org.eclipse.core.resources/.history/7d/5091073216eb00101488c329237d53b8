@@ -1,0 +1,62 @@
+/**
+ * 
+ */
+package com.healthcare.dto;
+
+/**
+ * 
+ */
+public class AvailabilityRequest {
+
+	private Integer profileId;
+	private Integer addressId;
+	private Integer repeatWeekly;
+	private String dayOfWeek;
+	private Integer duration;
+	private String startTime;
+	private String endTime;
+	public Integer getProfileId() {
+		return profileId;
+	}
+	public void setProfileId(Integer profileId) {
+		this.profileId = profileId;
+	}
+	public Integer getAddressId() {
+		return addressId;
+	}
+	public void setAddressId(Integer addressId) {
+		this.addressId = addressId;
+	}
+	public Integer getRepeatWeekly() {
+		return repeatWeekly;
+	}
+	public void setRepeatWeekly(Integer repeatWeekly) {
+		this.repeatWeekly = repeatWeekly;
+	}
+	public String getDayOfWeek() {
+		return dayOfWeek;
+	}
+	public void setDayOfWeek(String dayOfWeek) {
+		this.dayOfWeek = dayOfWeek;
+	}
+	public Integer getDuration() {
+		return duration;
+	}
+	public void setDuration(Integer duration) {
+		this.duration = duration;
+	}
+	public String getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(String startTime) {
+		this.startTime = startTime;
+	}
+	public String getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(String endTime) {
+		this.endTime = endTime;
+	}
+
+	
+}

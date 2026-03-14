@@ -1,0 +1,73 @@
+/**
+ * 
+ */
+package com.auth.service;
+
+import java.util.Date;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.auth.interfaces.TAbstractUseCase;
+import com.auth.interfaces.usecase.AuthTokenUseCase;
+import com.auth.interfaces.usecase.TUseCase;
+import com.auth.models.GenericModel;
+import com.auth.models.request.AuthTokenRequest;
+import com.auth.models.request.DBProcedureRequest;
+import com.auth.models.response.ResponseModel;
+import com.auth.utils.TConvertors;
+import com.auth.utils.TUtils;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+
+/**
+ * 
+ */
+@Service
+public class AuthTokenServiceImpl extends TAbstractUseCase<AuthTokenRequest, DBProcedureRequest, ResponseEntity<?>> implements AuthTokenUseCase {
+	private final String SECRET_KEY = "my-secret-key"; // 🔐 Use env var in real apps
+
+	@Override
+	protected ResponseEntity<?> validateInput(GenericModel<AuthTokenRequest> model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected DBProcedureRequest buildDatabaseRequest(GenericModel<AuthTokenRequest> model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected ResponseEntity<?> execute(GenericModel<AuthTokenRequest> model, DBProcedureRequest dbRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected ResponseEntity<?> buildFinalResponse(GenericModel<AuthTokenRequest> model, ResponseEntity<?> result) {
+		// TODO Auto-generated method stub
+		
+		String json = TConvertors.convertObjectToString(model.getRequest());
+		 long expirationTimeMs = 1000 * 60 * 60; // 1 hour
+
+	      String accessToken = Jwts.builder()
+	                .setSubject(json)
+	                .setIssuer("ms-auth-service")
+	                .setIssuedAt(new Date())
+	                .setExpiration(new Date(System.currentTimeMillis() + expirationTimeMs))
+	                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+	                .compact();
+	    ResponseModel responseModel = new ResponseModel();
+	    responseModel.setData(TUtils.getSuccess(accessToken));
+	    
+		return new ResponseEntity<>(responseModel, HttpStatus.OK);
+	}
+
+	
+
+}

@@ -1,0 +1,25 @@
+/**
+ * 
+ */
+package com.health.application.port.in;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
+import com.common.models.ApiResponse;
+import com.health.adapter.in.rest.dto.AppointmentBookingRequest;
+import com.health.adapter.in.rest.dto.MessageResponse;
+import com.health.adapter.out.persistence.entity.Appointment;
+
+/**
+ * 
+ */
+public interface AppointmentUseCase {
+
+	
+	public ResponseEntity<ApiResponse<MessageResponse>> bookAppointment(Long userId,AppointmentBookingRequest request);
+
+	public ResponseEntity<ApiResponse<List<Appointment>>> findAllAppointmentsByUser(Long userId);
+	
+}

@@ -1,0 +1,17 @@
+/**
+ * 
+ */
+package com.health.application.port.out;
+
+
+import java.util.List;
+
+import com.health.adapter.out.persistence.entity.SpecializationMaster;
+
+/**
+ * 
+ */
+public interface SpecializationMasterRepositoryPort {
+
+	List<SpecializationMaster> findAllById(List<Long> id);
+}

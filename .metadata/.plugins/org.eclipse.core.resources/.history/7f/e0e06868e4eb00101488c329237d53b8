@@ -1,0 +1,13 @@
+/**
+ * 
+ */
+package com.health.domain.enums;
+
+/**
+ * 
+ */
+public enum OTPType {
+
+	EMAIL,
+	SMS
+}

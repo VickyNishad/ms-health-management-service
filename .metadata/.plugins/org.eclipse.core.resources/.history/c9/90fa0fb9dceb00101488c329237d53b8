@@ -1,0 +1,84 @@
+/**
+ * 
+ */
+package com.health.controller;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.common.models.ApiResponse;
+import com.health.adapter.in.rest.dto.AvailabilityResponse;
+import com.health.adapter.in.rest.dto.DoctorAvailabilityRequest;
+import com.health.adapter.in.rest.dto.DoctorAvailabilityUpdateRequest;
+import com.health.adapter.in.rest.dto.DoctorLeaveRequest;
+import com.health.adapter.in.rest.dto.DoctorLeaveResponse;
+import com.health.adapter.in.rest.dto.DoctorProfileRequest;
+import com.health.adapter.in.rest.dto.DoctorProfileResponse;
+import com.health.adapter.in.rest.dto.MessageResponse;
+import com.health.application.port.in.DoctorUseCase;
+
+/**
+ * 
+ */
+@RestController
+@RequestMapping("/medicque/doctor")
+public class DoctorController {
+
+	@Autowired
+	private DoctorUseCase doctorUseCase;
+
+	@PostMapping("/add/profile-details")
+	public ResponseEntity<ApiResponse<MessageResponse>> createProfile(@RequestBody DoctorProfileRequest doctorProfileRequest ){
+		return doctorUseCase.saveProfile(doctorProfileRequest);
+	}
+	
+	@GetMapping("/get/profile-details/{doctorId}")
+	public ResponseEntity<ApiResponse<DoctorProfileResponse>> getProfile(@PathVariable(name = "doctorId") Long id){
+		return doctorUseCase.getProfile(id);
+	}
+	
+	@PostMapping("/add/leave-or-break")
+	public ResponseEntity<ApiResponse<MessageResponse>> insertDoctorLeaveOrBreak(@RequestBody DoctorLeaveRequest doctorLeaveRequest){
+		return doctorUseCase.createLeaveOrBreak(doctorLeaveRequest);
+	}
+	
+	@PostMapping("/update/leave-or-break/{leaveId}")
+	public ResponseEntity<ApiResponse<MessageResponse>> updateDoctorLeaveOrBreak(@PathVariable(name = "leaveId") Long id,@RequestBody DoctorLeaveRequest doctorLeaveRequest){
+		return doctorUseCase.updateLeaveOrBreak(id,doctorLeaveRequest);
+	}
+	
+	@GetMapping("/get/leave-or-break/{doctorId}")
+	public ResponseEntity<ApiResponse<List<DoctorLeaveResponse>>> getDoctorLeaves(@PathVariable(name = "doctorId") Long id){
+		return doctorUseCase.getDoctorLeaves(id);
+	}
+	
+	@PostMapping("/add/availability/{doctorId}/{clinicId}")
+	public ResponseEntity<ApiResponse<MessageResponse>> insertDoctorAvailablity(@PathVariable(name = "doctorId") Long doctorId,@PathVariable(name = "clinicId") Long clinicId ,@RequestBody DoctorAvailabilityRequest doctorAvailabilityRequest){
+		return doctorUseCase.insertDoctorAvailability(doctorId,clinicId,doctorAvailabilityRequest);
+	}
+	
+	@PostMapping("/update/availability/{doctorId}")
+	public ResponseEntity<ApiResponse<MessageResponse>> updateDoctorAvailablity(@PathVariable(name = "doctorId") Long id,@RequestBody DoctorAvailabilityUpdateRequest doctorAvailabilityUpdateRequest){
+		return doctorUseCase.updateDoctorAvailability(id,doctorAvailabilityUpdateRequest);
+	}
+	
+	@GetMapping("/get/availability/{doctorId}")
+	public ResponseEntity<ApiResponse<List<AvailabilityResponse>>> getAvailability(@PathVariable(name = "doctorId") Long id){
+		return doctorUseCase.getDoctorAvailability(id);
+	}
+	
+	@DeleteMapping("/delete/availability/{doctorId}/{availabilityId}")
+	public ResponseEntity<ApiResponse<MessageResponse>> deleteAvailability(@PathVariable(name = "doctorId") Long id,@PathVariable(name = "availabilityId") Long availabilityId){
+		return doctorUseCase.deleteAvailability(id,availabilityId);
+	}
+	
+}

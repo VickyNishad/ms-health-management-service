@@ -1,0 +1,10 @@
+package com.healthcare.interfaces;
+
+import java.util.Map;
+
+import com.healthcare.models.request.DBProcedureRequest;
+
+
+public interface TRepository {
+	public Map<String, Object> execute(DBProcedureRequest dbProcedureRequest);
+}

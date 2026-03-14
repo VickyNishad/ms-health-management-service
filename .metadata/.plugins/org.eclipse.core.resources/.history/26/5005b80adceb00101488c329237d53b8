@@ -1,0 +1,7 @@
+package com.health.domain.enums;
+
+public enum SlotStatus {
+    AVAILABLE,
+    BOOKED,
+    UNAVAILABLE
+}

@@ -1,0 +1,37 @@
+package com.medicque.adapter.out.persistence.jpa;
+
+import java.util.List;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import com.medicque.adapter.out.persistence.entity.DoctorAvailability;
+
+@Repository
+public interface JPADoctorAvailabilityRepository extends JpaRepository<DoctorAvailability, Long> {
+
+    // ✔ 1. Get availability by doctor + clinic (sorted)
+    List<DoctorAvailability> findByDoctor_DoctorIdAndClinic_ClinicIdOrderByDayOfWeekAscStartTimeAsc(
+            Long doctorId, Long clinicId);
+
+    // ✔ 2. Get availability by doctor + dayOfWeek
+    List<DoctorAvailability> findByDoctor_DoctorIdAndDayOfWeek(
+            Long doctorId, String dayOfWeek);
+
+    // ❌ 3. INVALID – Removed (no 'date' field in entity)
+    
+    List<DoctorAvailability> findByDoctor_DoctorIdOrderByDayOfWeekAscStartTimeAsc(Long doctorId);
+
+    // ✔ 4. Custom filtering by doctor + clinic + dayOfWeek
+    @Query("SELECT a FROM DoctorAvailability a " +
+            "WHERE a.doctor.doctorId = :doctorId " +
+            "AND a.clinic.clinicId = :clinicId " +
+            "AND a.dayOfWeek = :dayOfWeek")
+    List<DoctorAvailability> findByDoctorClinicAndDay(
+            @Param("doctorId") Long doctorId,
+            @Param("clinicId") Long clinicId,
+            @Param("dayOfWeek") String dayOfWeek
+    );
+}

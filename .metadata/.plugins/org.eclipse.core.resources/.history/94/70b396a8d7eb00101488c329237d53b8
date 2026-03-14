@@ -1,0 +1,20 @@
+/**
+ * 
+ */
+package com.medicque.application.port.out;
+
+import java.util.Optional;
+
+import com.medicque.adapter.out.persistence.entity.UserRegistration;
+import com.medicque.domain.model.UserRegistrationModel;
+
+/**
+ * 
+ */
+public interface UserRegistrationRepositoryPort {
+	
+	public Optional<UserRegistration> findByProviderLoginId(String providerLoginId);
+	public UserRegistration save(UserRegistrationModel model);
+	public Optional<UserRegistration> findById(Long id);
+
+}

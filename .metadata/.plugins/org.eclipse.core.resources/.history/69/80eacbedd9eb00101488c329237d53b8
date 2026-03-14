@@ -1,0 +1,45 @@
+/**
+ * 
+ */
+package com.common.service.impl;
+
+import com.common.service.ProcessService;
+
+/**
+ * @param <T>
+ * 
+ */
+public abstract class AbstractProcessService<T> implements ProcessService {
+	
+	protected int statusCode;
+	
+	protected String errorMessage;
+	
+	protected T successData;
+	
+	protected AbstractProcessService(int statusCode, String errorMessage , T successData) {
+		this.statusCode = statusCode;
+		this.errorMessage = errorMessage;
+		this.successData = successData;
+	}
+	
+	
+	@Override
+	public boolean is2xxSuccessful() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String getError() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public <T> T getSuccess() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

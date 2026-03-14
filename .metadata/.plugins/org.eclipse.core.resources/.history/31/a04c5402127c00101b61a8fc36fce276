@@ -1,0 +1,31 @@
+
+server:
+  port: 9090
+spring:
+  application:
+    name: ms-document-service
+  
+
+  datasource:
+    url: jdbc:mysql://15.206.127.144:3306/MasterDB
+    username: dev_user
+    password: DevSupport@123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  web:
+    resources:
+      add-mappings: false
+
+
+springdoc:
+  packages-to-scan: com.bittybrain.controller
+  paths-to-match: "/**"
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /docs
+
+
+

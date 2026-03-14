@@ -1,0 +1,69 @@
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+public class BlockSlotRequest {
+
+    private Long profileId;
+    private Long addressId;
+    private LocalDate blockDate;
+    private Integer isFullDay;   // 0 = partial, 1 = full day
+    private LocalTime fromTime;
+    private LocalTime toTime;
+    private String reason;
+
+    public Long getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(Long profileId) {
+        this.profileId = profileId;
+    }
+
+    public Long getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
+    }
+
+    public LocalDate getBlockDate() {
+        return blockDate;
+    }
+
+    public void setBlockDate(LocalDate blockDate) {
+        this.blockDate = blockDate;
+    }
+
+    public Integer getIsFullDay() {
+        return isFullDay;
+    }
+
+    public void setIsFullDay(Integer isFullDay) {
+        this.isFullDay = isFullDay;
+    }
+
+    public LocalTime getFromTime() {
+        return fromTime;
+    }
+
+    public void setFromTime(LocalTime fromTime) {
+        this.fromTime = fromTime;
+    }
+
+    public LocalTime getToTime() {
+        return toTime;
+    }
+
+    public void setToTime(LocalTime toTime) {
+        this.toTime = toTime;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+}

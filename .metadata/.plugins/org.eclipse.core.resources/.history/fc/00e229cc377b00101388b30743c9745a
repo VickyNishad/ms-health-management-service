@@ -1,0 +1,34 @@
+package com.bittybrain.usecase;
+
+import org.springframework.http.ResponseEntity;
+import com.bittybrain.model.GenericModel;
+
+public abstract class AbstractUseCase<T, DBRequest, IntermediateResponse> {
+
+    public ResponseEntity<?> handle(GenericModel<T> model) {
+        ResponseEntity<?> validation = validateInput(model);
+        if (!validation.getStatusCode().is2xxSuccessful())
+            return validation;
+
+        DBRequest dbRequest = buildDatabaseRequest(model);
+        IntermediateResponse response = execute(model, dbRequest);
+
+        Object httpPayload = createHttpRequestPayload(model, response);
+        Object externalServiceResponse = invokeExternalService(model, httpPayload);
+
+        return buildFinalResponse(model, externalServiceResponse);
+    }
+
+    // Abstract methods for subclasses to implement
+    protected abstract ResponseEntity<?> validateInput(GenericModel<T> model);
+
+    protected abstract DBRequest buildDatabaseRequest(GenericModel<T> model);
+
+    protected abstract IntermediateResponse execute(GenericModel<T> model, DBRequest dbRequest);
+
+    protected abstract Object createHttpRequestPayload(GenericModel<T> model, IntermediateResponse result);
+
+    protected abstract Object invokeExternalService(GenericModel<T> model, Object payload);
+
+    protected abstract ResponseEntity<?> buildFinalResponse(GenericModel<T> model, Object externalResponse);
+}

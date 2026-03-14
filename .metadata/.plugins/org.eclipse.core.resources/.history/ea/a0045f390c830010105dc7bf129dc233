@@ -1,0 +1,30 @@
+package com.document.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.S3Client;
+
+@Configuration
+public class S3BucketConfig {
+
+    private final S3BucketPro s3BucketPro;
+
+    public S3BucketConfig(S3BucketPro s3BucketPro) {
+        this.s3BucketPro = s3BucketPro;
+    }
+
+    @Bean
+    public S3Client s3Client() {
+        AwsBasicCredentials awsCreds = AwsBasicCredentials.create(
+        		s3BucketPro.getAccessKey(), 
+        		s3BucketPro.getSecretKey());
+
+        return S3Client.builder()
+                .region(Region.of(s3BucketPro.getRegion()))
+                .credentialsProvider(StaticCredentialsProvider.create(awsCreds))
+                .build();
+    }
+}

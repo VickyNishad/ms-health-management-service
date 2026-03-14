@@ -1,0 +1,145 @@
+/**
+ * 
+ */
+package com.healthcare.schedular;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.service.UpdateAddressServiceImpl;
+import com.healthcare.utils.TUtils;
+
+/**
+ * 
+ */
+@Service
+public class JobSchedular {
+
+    private final UpdateAddressServiceImpl updateAddressServiceImpl;
+	private static final Logger logger = LoggerFactory.getLogger(JobSchedular.class);
+
+	@Autowired
+	private TRepository tRepository;
+
+    JobSchedular(UpdateAddressServiceImpl updateAddressServiceImpl) {
+        this.updateAddressServiceImpl = updateAddressServiceImpl;
+    }
+
+	@SuppressWarnings("unchecked")
+	@Async
+	public void generateSlot() {
+
+		try {
+			Map<String, Object> misReq = new HashMap<>();
+			misReq.put("p_days", 7);
+			Map<String, Object> misRes = tRepository.execute(misReq, "", "USP_GetMissingDoctorSlots");
+
+			logger.info("JobSchedular misRes information : {}", misRes);
+
+			List<Map<String, Object>> misList = (List<Map<String, Object>>) misRes
+					.get(TConstants.ResultSet.RESULT_SET_1);
+
+			if (misList.size() > 0) {
+				for (Map<String, Object> ms : misList) {
+
+					System.out.println("generate slot from : " + ms);
+
+					Map<String, Object> slotReq = new HashMap<>();
+					slotReq.put("p_profile_id", TUtils.getStringValue(ms.get("ProfileId")));
+					slotReq.put("p_address_id", TUtils.getStringValue(ms.get("AddressId")));
+					slotReq.put("p_target_date", TUtils.getStringValue(ms.get("MissingDate")));
+
+					try {
+						Map<String, Object> slotRes = tRepository.execute(slotReq, "", "USP_InsertDoctorSlotsForDate");
+
+						logger.info("JobSchedular slotRes information : {}", slotRes);
+					} catch (Exception e) {
+						// TODO: handle exception
+						logger.info("Exception : ", e.getMessage());
+					}
+
+				}
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			logger.error("JobSchedular slotRes information : {}", e.getMessage());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+//	@Scheduled(cron = "0 * * * * *")
+	public void generateSlotDefault() {
+
+		try {
+			Map<String, Object> misReq = new HashMap<>();
+			misReq.put("p_days", 7);
+			Map<String, Object> misRes = tRepository.execute(misReq, "", "USP_GetMissingDoctorSlots");
+
+			logger.info("JobSchedular misRes information : {}", misRes);
+
+			List<Map<String, Object>> misList = (List<Map<String, Object>>) misRes
+					.get(TConstants.ResultSet.RESULT_SET_1);
+
+			if (misList.size() > 0) {
+				for (Map<String, Object> ms : misList) {
+
+					System.out.println("generate slot from : " + ms);
+
+					Map<String, Object> slotReq = new HashMap<>();
+					slotReq.put("p_profile_id", TUtils.getStringValue(ms.get("ProfileId")));
+					slotReq.put("p_address_id", TUtils.getStringValue(ms.get("AddressId")));
+					slotReq.put("p_target_date", TUtils.getStringValue(ms.get("MissingDate")));
+
+					try {
+						Map<String, Object> slotRes = tRepository.execute(slotReq, "", "USP_InsertDoctorSlotsForDate");
+
+						logger.info("JobSchedular slotRes information : {}", slotRes);
+					} catch (Exception e) {
+						// TODO: handle exception
+						logger.info("Exception : ", e.getMessage());
+					}
+
+				}
+			}
+
+		} catch (Exception e) {
+			// TODO: handle exception
+			logger.error("JobSchedular slotRes information : {}", e.getMessage());
+		}
+	}
+	
+	public String generateSlot(String profileId, String addressId, String date) {
+		try {
+
+
+			Map<String, Object> slotReq = new HashMap<>();
+			slotReq.put("p_profile_id", profileId);
+			slotReq.put("p_address_id", addressId);
+			slotReq.put("p_target_date", date);
+
+			try {
+				Map<String, Object> slotRes = tRepository.execute(slotReq, "", "USP_InsertDoctorSlotsForDate");
+
+				logger.info("JobSchedular slotRes information : {}", slotRes);
+			} catch (Exception e) {
+				// TODO: handle exception
+				logger.info("Exception : ", e.getMessage());
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			return e.getLocalizedMessage();
+		}
+		return "slot generate successfuly.";
+	}
+}

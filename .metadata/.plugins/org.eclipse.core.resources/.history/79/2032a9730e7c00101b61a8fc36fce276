@@ -1,0 +1,19 @@
+/**
+ * 
+ */
+package com.document.service;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.document.interfaces.AbstractUseCase;
+import com.document.models.request.DBProcedureRequest;
+import com.document.models.request.DocumentRequest;
+
+/**
+ * 
+ */
+@Service
+public class DocumetUploadServiceImpl extends AbstractUseCase<DocumentRequest, DBProcedureRequest, ResponseEntity<?>> {
+
+}

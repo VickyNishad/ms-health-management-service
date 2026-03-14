@@ -1,0 +1,192 @@
+package com.medicque.models;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity
+@Table(name = "LoginMaster")
+public class LoginMaster {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "LoginId")
+    private Long loginId;
+
+    @Column(name = "UserName", unique = true, length = 20)
+    private String userName;
+
+    @Column(name = "EmailId", unique = true, length = 50)
+    private String email;
+
+    @Column(name = "MobileNumber", unique = true, length = 10)
+    private String mobileNumber;
+
+    @Column(name = "Password")
+    private String passwordHash;
+
+    @Column(name = "Role", length = 30)
+    private String role;
+
+    @Column(name = "is2FAEnabled")
+    private Boolean is2FAEnabled = false;
+    
+    @Column(name = "isEmailVerified")
+    private Boolean isEmailVerified = false;
+    
+    
+    @Column(name = "isMobileVerified")
+    private Boolean isMobileVerified = false;
+
+    @Column(name = "CreatedOn")
+    private LocalDateTime createdOn = LocalDateTime.now();
+
+    @Column(name = "UpdatedOn")
+    private LocalDateTime updatedOn = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "loginMaster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ProviderDetails> providers;
+
+    @OneToMany(mappedBy = "loginMaster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<DeviceDetails> devices;
+
+    @OneToMany(mappedBy = "loginMaster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OTPDetails> otps;
+
+    @OneToOne(mappedBy = "loginMaster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private UserProfileDetails profile;
+
+    @OneToMany(mappedBy = "loginMaster", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<RefreshTokenDetails> refreshTokens;
+
+	public Long getLoginId() {
+		return loginId;
+	}
+
+	public void setLoginId(Long loginId) {
+		this.loginId = loginId;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getMobileNumber() {
+		return mobileNumber;
+	}
+
+	public void setMobileNumber(String mobileNumber) {
+		this.mobileNumber = mobileNumber;
+	}
+
+	public String getPasswordHash() {
+		return passwordHash;
+	}
+
+	public void setPasswordHash(String passwordHash) {
+		this.passwordHash = passwordHash;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public Boolean getIs2FAEnabled() {
+		return is2FAEnabled;
+	}
+
+	public void setIs2FAEnabled(Boolean is2faEnabled) {
+		is2FAEnabled = is2faEnabled;
+	}
+
+	public Boolean getIsEmailVerified() {
+		return isEmailVerified;
+	}
+
+	public void setIsEmailVerified(Boolean isEmailVerified) {
+		this.isEmailVerified = isEmailVerified;
+	}
+
+	public Boolean getIsMobileVerified() {
+		return isMobileVerified;
+	}
+
+	public void setIsMobileVerified(Boolean isMobileVerified) {
+		this.isMobileVerified = isMobileVerified;
+	}
+
+	public LocalDateTime getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(LocalDateTime createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public LocalDateTime getUpdatedOn() {
+		return updatedOn;
+	}
+
+	public void setUpdatedOn(LocalDateTime updatedOn) {
+		this.updatedOn = updatedOn;
+	}
+
+	public List<ProviderDetails> getProviders() {
+		return providers;
+	}
+
+	public void setProviders(List<ProviderDetails> providers) {
+		this.providers = providers;
+	}
+
+	public List<DeviceDetails> getDevices() {
+		return devices;
+	}
+
+	public void setDevices(List<DeviceDetails> devices) {
+		this.devices = devices;
+	}
+
+	public List<OTPDetails> getOtps() {
+		return otps;
+	}
+
+	public void setOtps(List<OTPDetails> otps) {
+		this.otps = otps;
+	}
+
+	public UserProfileDetails getProfile() {
+		return profile;
+	}
+
+	public void setProfile(UserProfileDetails profile) {
+		this.profile = profile;
+	}
+
+	public List<RefreshTokenDetails> getRefreshTokens() {
+		return refreshTokens;
+	}
+
+	public void setRefreshTokens(List<RefreshTokenDetails> refreshTokens) {
+		this.refreshTokens = refreshTokens;
+	}
+    
+    
+
+    // Getters and Setters
+}

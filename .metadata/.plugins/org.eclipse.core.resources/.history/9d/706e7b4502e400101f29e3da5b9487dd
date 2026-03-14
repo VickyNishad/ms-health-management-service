@@ -1,0 +1,11 @@
+/**
+ * 
+ */
+package com.healthcare.models.request;
+
+/**
+ * 
+ */
+public class FilterDataRequest {
+
+}

@@ -1,0 +1,10 @@
+package com.health.repository;
+
+import java.util.List;
+
+import com.health.adapter.out.persistence.entity.QualificationMaster;
+
+public interface QualificationMasterRepositoryPort {
+
+	public List<QualificationMaster> findAllById(List<Long> id);
+}

@@ -1,0 +1,23 @@
+package com.health.dto;
+
+import java.util.List;
+import java.util.Map;
+
+public class MenuConfig {
+    private List<MenuItem> allMenus;
+    private Map<String, List<String>> roleDefaultPermissions;
+	public List<MenuItem> getAllMenus() {
+		return allMenus;
+	}
+	public void setAllMenus(List<MenuItem> allMenus) {
+		this.allMenus = allMenus;
+	}
+	public Map<String, List<String>> getRoleDefaultPermissions() {
+		return roleDefaultPermissions;
+	}
+	public void setRoleDefaultPermissions(Map<String, List<String>> roleDefaultPermissions) {
+		this.roleDefaultPermissions = roleDefaultPermissions;
+	}
+    
+    
+}

@@ -1,0 +1,17 @@
+/**
+ * 
+ */
+package com.health.application.port.out;
+
+import java.util.Optional;
+
+import com.health.adapter.out.persistence.entity.Clinic;
+
+/**
+ * 
+ */
+public interface ClinicRepositoryPort {
+
+	public Clinic save(Clinic clinic);
+	public Optional<Clinic> findById(Long clinicId);
+}

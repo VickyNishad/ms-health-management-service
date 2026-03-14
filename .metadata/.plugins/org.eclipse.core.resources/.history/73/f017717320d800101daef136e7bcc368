@@ -1,0 +1,52 @@
+/**
+ * 
+ */
+package com.medicque.application.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.common.models.ApiResponse;
+import com.common.utility.ApiExecutionUtils;
+import com.medicque.adapter.in.rest.dto.MenuConfig;
+import com.medicque.config.MenuConfigLoader;
+
+/**
+ * 
+ */
+@Service
+public class MenuService {
+
+	private final MenuConfigLoader loader = new MenuConfigLoader();
+	
+	public ResponseEntity<ApiResponse<Map<String, Object>>> loadManu(String role){
+		ApiResponse<Map<String, Object>> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req->{}, ()->{
+			   MenuConfig config = loader.getConfig();
+		        List<String> permissions =
+		            config.getRoleDefaultPermissions().get(role);
+
+		        List<Map<String, String>> menus =
+		            config.getAllMenus().stream()
+		                .filter(m -> m.getAllowedRoles().contains(role))
+		                .filter(m -> permissions.contains(m.getPermissionKey()))
+		                .map(m -> Map.of(
+		                    "title", m.getTitle(),
+		                    "route", "/" + role + m.getBaseRoute(),
+		                    "permissionKey", m.getPermissionKey(),
+		                    "icon", m.getIcon()
+		                ))
+		                .toList();
+
+		        return Map.of(
+		            "role", role,
+		            "defaultPermissions", permissions,
+		            "menus", menus
+		        );
+		}, ApiResponse::success);
+		return new ResponseEntity<ApiResponse<Map<String,Object>>>(success,HttpStatus.OK);
+	}
+}

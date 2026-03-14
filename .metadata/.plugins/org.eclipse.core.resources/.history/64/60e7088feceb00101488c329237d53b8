@@ -1,0 +1,60 @@
+{
+  "allMenus": [
+    {
+      "key": "DASHBOARD",
+      "title": "Dashboard",
+      "baseRoute": "/dashboard",
+      "permissionKey": "DASH_VIEW",
+      "icon": "icon_dashboard",
+      "allowedRoles": ["admin", "doctor", "patient", "nurse", "staff"]
+    },
+    {
+      "key": "PROFILE",
+      "title": "Profile",
+      "baseRoute": "/profile",
+      "permissionKey": "PROFILE_VIEW",
+      "icon": "icon_person",
+      "allowedRoles": ["admin", "doctor", "patient", "nurse", "staff"]
+    },
+    {
+      "key": "APPOINTMENTS",
+      "title": "Appointments",
+      "baseRoute": "/appointments",
+      "permissionKey": "APPT_MANAGE",
+      "icon": "icon_calendar_today",
+      "allowedRoles": ["admin", "doctor", "patient", "nurse"]
+    },
+    {
+      "key": "PATIENTS",
+      "title": "Patients",
+      "baseRoute": "/patients",
+      "permissionKey": "PATIENT_VIEW",
+      "icon": "icon_folder_shared",
+      "allowedRoles": ["admin", "doctor", "nurse", "staff"]
+    },
+    {
+      "key": "SETTINGS",
+      "title": "Settings",
+      "baseRoute": "/settings",
+      "permissionKey": "SETTING_MANAGE",
+      "icon": "icon_settings",
+      "allowedRoles": ["admin"]
+    },
+    {
+      "key": "LOGIN",
+      "title": "Login",
+      "baseRoute": "/login",
+      "permissionKey": "LOGIN",
+      "icon": "icon_login",
+      "allowedRoles": ["guest", "admin", "doctor", "patient", "nurse", "staff"]
+    }
+  ],
+  "roleDefaultPermissions": {
+    "admin": ["DASH_VIEW","PROFILE_VIEW","APPT_MANAGE","PATIENT_VIEW","SETTING_MANAGE","LOGIN"],
+    "doctor": ["DASH_VIEW","PROFILE_VIEW","APPT_MANAGE","PATIENT_VIEW","LOGIN"],
+    "nurse": ["DASH_VIEW","PATIENT_VIEW","LOGIN"],
+    "patient": ["PROFILE_VIEW","APPT_MANAGE","LOGIN"],
+    "staff": ["DASH_VIEW","PATIENT_VIEW","LOGIN"],
+    "guest": ["LOGIN"]
+  }
+}

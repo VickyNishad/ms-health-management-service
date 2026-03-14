@@ -1,0 +1,96 @@
+package com.healthcare.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.exception.TException;
+import com.healthcare.interfaces.TAbstractUseCase;
+import com.healthcare.interfaces.TRepository;
+import com.healthcare.interfaces.usecase.BookAppointmentUseCase;
+import com.healthcare.models.GenericModel;
+import com.healthcare.models.request.AppointmentRequest;
+import com.healthcare.models.request.DBProcedureRequest;
+import com.healthcare.models.response.ResponseModel;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+@Service
+public class BookAppointmentServiceImpl extends TAbstractUseCase<AppointmentRequest, DBProcedureRequest, Map<String, Object>> implements BookAppointmentUseCase {
+
+	private TRepository tRepository;
+
+	public BookAppointmentServiceImpl(TRepository tRepository) {
+		this.tRepository = tRepository;
+	}
+	@Override
+	protected ResponseEntity<?> validateInput(GenericModel<AppointmentRequest> model) {
+		// TODO Auto-generated method stub
+		AppointmentRequest appointmentRequest = model.getRequest();
+		
+		TValidatiors.validateRequestedField("PatientId", TUtils.getStringValue(appointmentRequest.getPatientId()), true, false, false, false, null, 0, 0, true);
+		TValidatiors.validateRequestedField("SlotId",TUtils.getStringValue(appointmentRequest.getSlotId()), true, false, false, false, null, 0, 0, true);
+		TValidatiors.validateRequestedField("Note",appointmentRequest.getNotes(), true, false, false, false, null, 0, 0, true);
+
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	@Override
+	protected DBProcedureRequest buildDatabaseRequest(GenericModel<AppointmentRequest> model) {
+		// TODO Auto-generated method stub
+		DBProcedureRequest dbProcedureRequest = TUtils.getDatabaseRequest(model, TConstants.ParamProcess.APPOINTMENT_BOOK);
+
+		return dbProcedureRequest;
+	}
+
+	@Override
+	protected Map<String, Object> execute(GenericModel<AppointmentRequest> model, DBProcedureRequest dbRequest) {
+		// TODO Auto-generated method stub
+		try {
+			Map<String, Object> response = tRepository.execute(dbRequest);
+			if(TValidatiors.isNullOrEmpty(response) || !response.containsKey(TConstants.ResultSet.RESULT_SET_1)) {
+				throw new RuntimeException(TConstants.Error.RESULT_SET_NOT_FOUND);
+			}
+			return response;
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@Override
+	protected ResponseEntity<?> buildFinalResponse(GenericModel<AppointmentRequest> model, Map<String, Object> result) {
+		// TODO Auto-generated method stub
+		try {
+			ResponseModel responseModel = null;
+			String message = "";
+			List<Map<String, Object>> lists =  (List<Map<String, Object>>) result.get(TConstants.ResultSet.RESULT_SET_1);
+			if(TValidatiors.isNullOrEmpty(lists)) {
+				throw new DataNotFoundException(TConstants.Error.RESULT_SET_NOT_FOUND);
+			}
+			if(TUtils.getStringValue(lists.get(0).get(TConstants.Keys.RESULT)).equalsIgnoreCase(TConstants.Keys.ERROR)) {
+				message = TUtils.getStringValue(lists.get(0).get(TConstants.Keys.MESSAGE));
+				throw new RuntimeException(message);
+			}
+			message = TUtils.getStringValue(lists.get(0).get(TConstants.Keys.MESSAGE));
+			responseModel = new ResponseModel(TConstants.Success.SUCCESS, TUtils.getSuccess(lists));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+		} catch (DataNotFoundException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new TException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+}

@@ -1,0 +1,47 @@
+/**
+ * 
+ */
+package com.auth.service;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.auth.interfaces.TAbstractUseCase;
+import com.auth.interfaces.usecase.AuthTokenUseCase;
+import com.auth.models.GenericModel;
+import com.auth.models.request.AuthTokenRequest;
+import com.auth.models.request.DBProcedureRequest;
+
+/**
+ * 
+ */
+@Service
+public class AuthTokenServiceImpl extends TAbstractUseCase<AuthTokenRequest, DBProcedureRequest, ResponseEntity<?>> implements AuthTokenUseCase {
+
+	@Override
+	protected ResponseEntity<?> validateInput(GenericModel<AuthTokenRequest> model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected DBProcedureRequest buildDatabaseRequest(GenericModel<AuthTokenRequest> model) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected ResponseEntity<?> execute(GenericModel<AuthTokenRequest> model, DBProcedureRequest dbRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected ResponseEntity<?> buildFinalResponse(GenericModel<AuthTokenRequest> model, ResponseEntity<?> result) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	
+
+}

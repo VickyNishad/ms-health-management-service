@@ -1,0 +1,43 @@
+/**
+ * 
+ */
+package com.healthcare.controller;
+
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.healthcare.interfaces.usecase.GetMasterDataUseCase;
+import com.healthcare.models.request.MasterDataRequest;
+import com.healthcare.service.ManageSearchService;
+import com.healthcare.utils.TUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+/**
+ * 
+ */
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
+@RequestMapping(AuthController.BASE_URL+MasterController.BASE_URL)
+public class MasterController {
+
+	public static final String BASE_URL = "/master";
+	
+	private GetMasterDataUseCase getMasterDataUseCase;
+	private ManageSearchService manageSearchService;
+	
+	public MasterController(GetMasterDataUseCase getMasterDataUseCase,ManageSearchService manageSearchService) {
+		this.getMasterDataUseCase = getMasterDataUseCase;
+		this.manageSearchService = manageSearchService;
+	}
+	
+	@GetMapping
+	public ResponseEntity<?> getMasterData(@ParameterObject MasterDataRequest masterDataRequest, HttpServletRequest request) {
+	    return getMasterDataUseCase.handle(TUtils.getObjectFromRequest(masterDataRequest,request));
+	}
+
+}

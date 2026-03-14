@@ -1,0 +1,18 @@
+/**
+ * 
+ */
+package com.document.service;
+
+/**
+ * 
+ */
+public class NotificationClient {
+
+	public String sent() {
+		return "sent......";
+	}
+	
+	public String sent1() {
+		return "sent......";
+	}
+}

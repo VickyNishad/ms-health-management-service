@@ -1,0 +1,13 @@
+/**
+ * 
+ */
+package com.health.repository;
+
+import com.health.model.DoctorSpecialization;
+
+/**
+ * 
+ */
+public interface DoctorSpecializationRepositoryPort {
+	public DoctorSpecialization save(DoctorSpecialization doctorSpecialization);
+}

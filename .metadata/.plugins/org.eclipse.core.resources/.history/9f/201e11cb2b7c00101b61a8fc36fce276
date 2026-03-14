@@ -1,0 +1,42 @@
+aws:
+ access-key: AKIAV6BKDVVIXKM2VRNC
+ secret-key: 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
+ region: ap-south-1
+ s3:
+  bucket-name: backend-java-img
+  bucket-url: https://backend-java-img.s3.ap-south-1.amazonaws.com/ 
+
+
+server:
+  port: 9090
+spring:
+  application:
+    name: ms-document-service
+  servlet:
+    multipart:
+      max-file-size: 100MB     
+      max-request-size: 100MB
+
+  datasource:
+    url: jdbc:mysql://15.206.127.144:3306/MasterDB
+    username: dev_user
+    password: DevSupport@123
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  web:
+    resources:
+      add-mappings: false
+
+
+springdoc:
+  packages-to-scan: com.bittybrain.controller
+  paths-to-match: "/**"
+  api-docs:
+    enabled: true
+    path: /api-docs
+  swagger-ui:
+    enabled: true
+    path: /docs
+
+
+

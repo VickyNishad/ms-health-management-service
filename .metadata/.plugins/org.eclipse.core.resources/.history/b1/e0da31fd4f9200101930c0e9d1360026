@@ -1,0 +1,116 @@
+/**
+ * 
+ */
+package com.healthcare.service;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+
+import com.healthcare.constant.TConstants;
+import com.healthcare.exception.DataNotFoundException;
+import com.healthcare.exception.DatabaseException;
+import com.healthcare.exception.TException;
+import com.healthcare.interfaces.generic.GenericAbstractUseCase;
+import com.healthcare.interfaces.generic.GenericRepository;
+import com.healthcare.interfaces.usecase.GenerateSlotUseCase;
+import com.healthcare.models.enums.ActionType;
+import com.healthcare.models.generic.DatabaseProcedureRequest;
+import com.healthcare.models.generic.GenericRequestModel;
+import com.healthcare.models.request.GenerateSlotRequest;
+import com.healthcare.models.response.ResponseModel;
+import com.healthcare.utils.TConvertors;
+import com.healthcare.utils.TUtils;
+import com.healthcare.utils.TValidatiors;
+
+/**
+ * 
+ */
+@Service
+public class GenerateSlotServiceImpl extends GenericAbstractUseCase<GenerateSlotRequest, DatabaseProcedureRequest, Map<String, Object>> implements GenerateSlotUseCase {
+
+	private GenericRepository genericRepository;
+
+	public GenerateSlotServiceImpl(GenericRepository genericRepository) {
+		this.genericRepository = genericRepository;
+	}
+
+	@Override
+	protected void validateInput(GenericRequestModel<GenerateSlotRequest> model) {
+		// TODO Auto-generated method stub
+		GenerateSlotRequest generateSlotRequest = model.getRequest();
+		TValidatiors.validateRequestedField("doctorId", TUtils.getStringValue(generateSlotRequest.getDoctorId()), true, true, false, true, null, 1, 20, true);
+		TValidatiors.validateRequestedField("endDate", generateSlotRequest.getEndDate(), true, false, false, false, null, 0, 0, true);
+		TValidatiors.validateRequestedField("startDate", generateSlotRequest.getStartDate(), true, false, false, false, null, 0, 0, true);
+		TValidatiors.validateRequestedField("addressId", TUtils.getStringValue(generateSlotRequest.getAddressId()), true, true, false, true, null, 1, 20, true);
+		TValidatiors.validateRequestedField("slotDurationMinutes", TUtils.getStringValue(generateSlotRequest.getSlotDurationMinutes()), true, true, false, false, null, 0, 0, true);
+
+		TValidatiors.validateDate(generateSlotRequest.getEndDate(), TConstants.DateFormat.DDMMYYYY);
+		TValidatiors.validateDate(generateSlotRequest.getStartDate(), TConstants.DateFormat.DDMMYYYY);
+	}
+
+	@Override
+	protected DatabaseProcedureRequest buildDatabaseRequest(GenericRequestModel<GenerateSlotRequest> model) {
+		// TODO Auto-generated method stub
+		GenerateSlotRequest generateSlotRequest = model.getRequest();
+		String satrtDate = TConvertors.convertToYYYYMMDD(generateSlotRequest.getStartDate());
+		String endDate = TConvertors.convertToYYYYMMDD(generateSlotRequest.getEndDate()); 
+		
+		generateSlotRequest.setStartDate(satrtDate);
+		generateSlotRequest.setEndDate(endDate);
+		DatabaseProcedureRequest databaseProcedureRequest = TUtils.getDatabaseRequest(model,generateSlotRequest , ActionType.GENERATE_SLOT.toString());
+
+		return databaseProcedureRequest;
+	}
+
+	@Override
+	protected Map<String, Object> execute(GenericRequestModel<GenerateSlotRequest> model,
+			DatabaseProcedureRequest databaseProcedureRequest) {
+		// TODO Auto-generated method stub
+		try {
+			String message = "";
+			Map<String, Object> response = genericRepository.execute(databaseProcedureRequest);
+			if (TValidatiors.isNullOrEmpty(response) || !response.containsKey(TConstants.ResultSet.RESULT_SET_1)) {
+				throw new RuntimeException(TConstants.Error.RESULT_SET_NOT_FOUND);
+			}
+			List<Map<String, Object>> lists =  (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+			if(TValidatiors.isNullOrEmpty(lists)) {
+				throw new DataNotFoundException(TConstants.Error.RESULT_SET_NOT_FOUND);
+			}
+			if(TUtils.getStringValue(lists.get(0).get(TConstants.Keys.STATUS)).equalsIgnoreCase(TConstants.Keys.ERROR)) {
+				message = TUtils.getStringValue(lists.get(0).get(TConstants.Keys.MESSAGE));
+				throw new RuntimeException(message);
+			}
+			return response;
+		} catch (DatabaseException e) {
+			throw new DatabaseException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+
+	@Override
+	protected ResponseEntity<?> buildFinalResponse(GenericRequestModel<GenerateSlotRequest> model,
+			Map<String, Object> response) {
+		// TODO Auto-generated method stub
+		try {
+			ResponseModel responseModel = null;
+			List<Map<String, Object>> lists =  (List<Map<String, Object>>) response.get(TConstants.ResultSet.RESULT_SET_1);
+		
+			responseModel = new ResponseModel(TConstants.Keys.SUCCESS, TUtils.getSuccess(lists));
+			return new ResponseEntity<>(responseModel,HttpStatus.OK);
+		} catch (DataNotFoundException e) {
+			throw new DataNotFoundException(e.getMessage());
+		} catch (RuntimeException e) {
+			throw new TException(e.getMessage());
+		} catch (Exception e) {
+			throw new TException(TConstants.Error.TECHNICAL_ISSUE);
+		}
+	}
+	
+}

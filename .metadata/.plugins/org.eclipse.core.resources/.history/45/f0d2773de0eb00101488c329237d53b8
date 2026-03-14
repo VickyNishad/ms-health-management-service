@@ -1,0 +1,14 @@
+/**
+ * 
+ */
+package com.health.repository;
+
+import com.health.adapter.out.persistence.entity.DoctorQualification;
+
+/**
+ * 
+ */
+public interface DoctorQualificationRepositoryPort {
+
+	public DoctorQualification save(DoctorQualification doctorQualification);
+}

@@ -1,0 +1,29 @@
+/**
+ * 
+ */
+package com.health.service;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
+import com.health.models.ApiResponse;
+
+import com.health.dto.AvailabilityResponse;
+import com.health.dto.DoctorAvailabilityRequest;
+import com.health.dto.DoctorAvailabilityUpdateRequest;
+import com.health.dto.MessageResponse;
+
+
+/**
+ * 
+ */
+public interface AvailabilityService {
+
+	public ResponseEntity<ApiResponse<MessageResponse>> insertDoctorAvailability(Long doctorId, Long clinicId,DoctorAvailabilityRequest doctorAvailabilityRequest);
+	public ResponseEntity<ApiResponse<MessageResponse>> updateDoctorAvailability(Long doctorId,DoctorAvailabilityUpdateRequest doctorAvailabilityUpdateRequest);
+
+	public ResponseEntity<ApiResponse<List<AvailabilityResponse>>> getDoctorAvailability(Long doctorId);
+	
+	public ResponseEntity<ApiResponse<MessageResponse>> deleteAvailability(Long doctorId, Long availabilityId);
+}

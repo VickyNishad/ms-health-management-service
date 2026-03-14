@@ -1,0 +1,16 @@
+/**
+ * 
+ */
+package com.medicque.application.port.out;
+
+
+import java.util.List;
+import com.medicque.adapter.out.persistence.entity.SpecializationMaster;
+
+/**
+ * 
+ */
+public interface SpecializationMasterRepositoryPort {
+
+	List<SpecializationMaster> findAllById(List<Long> id);
+}

@@ -1,0 +1,61 @@
+/**
+ * 
+ */
+package com.healthcare.controller;
+
+import java.util.List;
+
+import org.springdoc.core.annotations.ParameterObject;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.healthcare.models.request.SearchQueryRequest;
+import com.healthcare.schedular.JobSchedular;
+import com.healthcare.service.ManageSearchService;
+import com.healthcare.utils.TUtils;
+
+import jakarta.servlet.http.HttpServletRequest;
+
+/**
+ * 
+ */
+@CrossOrigin(origins = "*", allowedHeaders = "*")
+@RestController
+@RequestMapping(AuthController.BASE_URL+SearchMasterController.BASE_URL)
+public class SearchMasterController {
+	
+	public static final String BASE_URL = "/search";
+
+	private JobSchedular jobSchedular;
+	private ManageSearchService manageSearchService;
+	
+	
+	public SearchMasterController(JobSchedular jobSchedular, ManageSearchService manageSearchService) {
+		this.jobSchedular = jobSchedular;
+		this.manageSearchService = manageSearchService;
+	}
+	
+	@GetMapping
+	public ResponseEntity<?> searchQuery(@ParameterObject SearchQueryRequest searchQueryRequest , HttpServletRequest request){
+		jobSchedular.generateSlot();
+		return manageSearchService.search(TUtils.getObjectFromRequest(searchQueryRequest, request));
+	}
+	
+	@GetMapping("/area/{city}")
+	public ResponseEntity<?> getAreaMaster(@PathVariable(name = "city") String city){		
+		return manageSearchService.getAreaMaster(city);
+	}
+	
+	
+	@GetMapping("/areaby/{areaName}")
+	public ResponseEntity<?> getAreaMasterBySearch(@PathVariable(name = "areaName") String areaName){
+		return manageSearchService.getAreaMasterBySearch(areaName);
+	}
+
+	
+}

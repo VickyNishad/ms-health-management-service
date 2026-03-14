@@ -1,0 +1,26 @@
+/**
+ * 
+ */
+package com.health.application.port.in;
+
+import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+
+import com.common.models.ApiResponse;
+import com.health.adapter.in.rest.dto.DoctorLeaveRequest;
+import com.health.adapter.in.rest.dto.DoctorLeaveResponse;
+import com.health.adapter.in.rest.dto.MessageResponse;
+import com.health.adapter.out.persistence.entity.DoctorLeave;
+
+/**
+ * 
+ */
+public interface UnAvailabilityUseCase {
+
+	public ResponseEntity<ApiResponse<MessageResponse>> createLeaveOrBreak(DoctorLeaveRequest doctorLeaveRequest);
+	public ResponseEntity<ApiResponse<MessageResponse>> updateLeaveOrBreak(Long leaveId,DoctorLeaveRequest doctorLeaveRequest);
+	public ResponseEntity<ApiResponse<MessageResponse>> createUpdateLeaveOrBreak(DoctorLeave existing,DoctorLeaveRequest doctorLeaveRequest);
+	public ResponseEntity<ApiResponse<List<DoctorLeaveResponse>>> getDoctorLeaves(Long doctorId);
+	
+}
