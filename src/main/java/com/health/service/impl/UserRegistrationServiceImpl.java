@@ -204,7 +204,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 	}
 
 	private void employeeRegistration(UserRegistrationRequest userRegistrationRequest) {
-		
+		System.out.println("Employee Registration Request");
 	}
 		
 	private UserRegistration userRegistration(UserRegistrationRequest userRegistrationRequest,RoleMaster roleMaster) {
