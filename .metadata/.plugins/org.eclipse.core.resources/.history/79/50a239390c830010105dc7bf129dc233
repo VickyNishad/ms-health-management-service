@@ -1,8 +1,0 @@
-package com.document.interfaces.usecase;
-
-import com.document.interfaces.UseCase;
-import com.document.models.request.UpdateDocumentRequest;
-
-public interface UpdateDocumentUseCase extends UseCase<UpdateDocumentRequest> {
-
-}

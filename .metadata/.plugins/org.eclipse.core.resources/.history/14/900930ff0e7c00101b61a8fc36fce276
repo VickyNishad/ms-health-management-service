@@ -1,7 +1,0 @@
-package com.document.interfaces;
-
-import java.util.Map;
-
-public interface DocumentRepository {
-	public Map<String, Object> execute(DBProcedureRequest dbProcedureRequest);
-}

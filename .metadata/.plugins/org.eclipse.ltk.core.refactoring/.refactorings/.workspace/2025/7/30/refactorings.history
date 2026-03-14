@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Delete 2 resources" deleteContents="true" description="Delete 2 resources" element1="/travel-backend" element2="/ms-travel-service" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="2" stamp="1753511162827"/>&#x0A;<refactoring comment="Delete resource &apos;ms-travel-service/src/main/resources/application-prod.yml&apos;" deleteContents="false" description="Delete resource &apos;ms-travel-service/src/main/resources/application-prod.yml&apos;" element1="/ms-travel-service/src/main/resources/application-prod.yml" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1753513548133"/>
-</session>

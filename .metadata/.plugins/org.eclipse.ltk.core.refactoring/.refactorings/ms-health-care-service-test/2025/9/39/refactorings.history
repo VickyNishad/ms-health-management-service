@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Copy element &apos;DeviceType.java&apos; to &apos;ms-health-care-service/src/main/java/com.healthcare.models&apos;&#x0D;&#x0A;- Original project: &apos;ms-health-care-service-test&apos;&#x0D;&#x0A;- Destination element: &apos;ms-health-care-service/src/main/java/com.healthcare.models&apos;&#x0D;&#x0A;- Original element: &apos;com.healthcare.models.enums.DeviceType.java&apos;" description="Copy compilation unit" destination="=ms-health-care-service/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.healthcare.models" element1="/src\/main\/java=/optional=/true=/=/maven.pomderived=/true=/&lt;com.healthcare.models.enums{DeviceType.java" files="0" flags="589830" folders="0" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1758446267605" units="1" version="1.0"/>
-</session>

@@ -1,4 +1,0 @@
-package com.document.interfaces;
-public interface DocumentRepository {
-	public ResponseEntity<?> execute(DBProcedureRequest dbProcedureRequest);
-}

@@ -1,5 +1,0 @@
-{"properties": [{
-  "name": "log.filename",
-  "type": "java.lang.String",
-  "description": "A description for 'log.filename'"
-}]}

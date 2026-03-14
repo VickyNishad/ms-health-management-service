@@ -1,4 +1,0 @@
-package com.notification.sdk.service;
-
-public interface IsRegisterUserUseCase extends UseCase<IsRegisterUserRequest> {
-}

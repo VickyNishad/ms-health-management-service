@@ -1,4 +1,0 @@
-package com.document.interfaces;
-public interface BittyBrainRepository {
-	public ResponseEntity<?> execute(DBProcedureRequest dbProcedureRequest);
-}

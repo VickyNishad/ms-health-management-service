@@ -1,8 +1,0 @@
-package com.document.interfaces.usecase;
-
-import com.document.interfaces.UseCase;
-import com.document.models.request.IsRegisterUserRequest;
-
-public interface TestUseCase extends UseCase<IsRegisterUserRequest> {
-
-}

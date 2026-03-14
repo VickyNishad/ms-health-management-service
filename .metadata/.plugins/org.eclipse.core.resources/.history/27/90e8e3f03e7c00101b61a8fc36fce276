@@ -1,5 +1,0 @@
-package com.document.interfaces.usecase;
-
-public interface IsRegisterUserUseCase {
-
-}
