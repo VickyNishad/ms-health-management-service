@@ -1,0 +1,45 @@
+package com.health.entity;
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "doctor_clinics", uniqueConstraints = { @UniqueConstraint(columnNames = { "doctor_id", "clinic_id" }) })
+public class DoctorClinic extends BaseEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
+
+	@ManyToOne
+	@JoinColumn(name = "doctor_id", nullable = false)
+	private Doctor doctor;
+
+	@ManyToOne
+	@JoinColumn(name = "clinic_id", nullable = false)
+	private Clinic clinic;
+
+	// ---------- Getters & Setters ----------
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public Doctor getDoctor() {
+		return doctor;
+	}
+
+	public void setDoctor(Doctor doctor) {
+		this.doctor = doctor;
+	}
+
+	public Clinic getClinic() {
+		return clinic;
+	}
+
+	public void setClinic(Clinic clinic) {
+		this.clinic = clinic;
+	}
+}
