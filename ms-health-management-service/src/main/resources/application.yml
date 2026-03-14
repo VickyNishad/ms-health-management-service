@@ -1,6 +1,0 @@
-spring:
-  application:
-    name: ms-health-management-service
-  profiles:
-    active:
-    - uat
