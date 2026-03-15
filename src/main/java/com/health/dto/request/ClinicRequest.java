@@ -14,6 +14,8 @@ public class ClinicRequest {
 
     private Double fee;
 
+    private int pinCode;
+
     private String locality;
 
     private String city;
@@ -86,5 +88,11 @@ public class ClinicRequest {
         this.city = city;
     }
 
+    public void setPinCode(int pinCode) {
+        this.pinCode = pinCode;
+    }
 
+    public int getPinCode() {
+        return pinCode;
+    }
 }

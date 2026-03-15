@@ -22,6 +22,12 @@ public class Clinic extends BaseEntity {
 	@Column(name = "fee")
 	private Double fee;
 
+	@Column(name = "pin_code")
+	private int pinCode;
+
+//	@Column(name = "doctor_id")
+//	private Long doctorId;
+
 	@Column(name = "locality")
 	private String locality;
 
@@ -106,4 +112,11 @@ public class Clinic extends BaseEntity {
 		this.state = state;
 	}
 
+	public void setPinCode(int pinCode) {
+		this.pinCode = pinCode;
+	}
+
+	public int getPinCode() {
+		return pinCode;
+	}
 }
