@@ -6,6 +6,7 @@ package com.health.service.impl;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import com.health.repository.UserRegistrationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,9 @@ public class UserProfileServiceImpl implements UserProfileService {
 	
 	@Autowired
 	private UserProfileRepository userProfileRepository;
+
+	@Autowired
+	private UserRegistrationRepository userRegistrationRepository;
 	
 	@Autowired
 	private KycStepService kycStepService;
@@ -76,9 +80,69 @@ public class UserProfileServiceImpl implements UserProfileService {
 	}
 
 	@Override
-	public void personalDetails(Long profileId, Long userId) {
-		// TODO Auto-generated method stub
-		
+	public ApiResponse<UserProfileDetails> personalDetails(Long userId, UserProfileDetails userProfileDetails) {
+
+        return ApiExecutionUtils.ApiExecutor.processRequest(
+                null,
+                req -> {},
+                () -> {
+                    Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
+                    if(user.isEmpty()) {
+                        throw new RuntimeException("User not found. Please create an account to proceed.");
+                    }
+
+                    Optional<UserProfileDetails> optionalUserProfileDetails =
+                            userProfileRepository.findByUserId(userId);
+
+                    UserProfileDetails profile;
+                    if (optionalUserProfileDetails.isPresent()) {
+                        // UPDATE
+                        profile = optionalUserProfileDetails.get();
+
+                    } else {
+                        // INSERT
+                        profile = userProfileDetails;
+                        profile.setUser(user.get());
+                        kycStepService.addStep(userId,3L);
+                    }
+
+                    return userProfileRepository.save(profile);
+
+                },
+                ApiResponse::success
+        );
 	}
+
+	/**
+	 * @param userId
+	 * @return
+	 */
+	@Override
+	public ApiResponse<UserProfileDetails> getUserProfileDetails(Long userId) {
+
+		return ApiExecutionUtils.ApiExecutor.processRequest(
+				null,
+				req -> {},
+				() -> {
+					Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
+					if(user.isEmpty()) {
+						throw new RuntimeException("User not found. Please create an account to proceed.");
+					}
+
+					Optional<UserProfileDetails> optionalUserProfileDetails =
+							userProfileRepository.findByUserId(userId);
+					if (optionalUserProfileDetails.isEmpty()){
+						throw new RuntimeException("User profile not found. Please create an account to proceed.");
+					}
+					UserProfileDetails profile = null;
+                    // UPDATE
+                    profile = optionalUserProfileDetails.get();
+
+                    return profile;
+
+				},
+				ApiResponse::success
+		);
+    }
 
 }

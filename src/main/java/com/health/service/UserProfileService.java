@@ -3,6 +3,7 @@
  */
 package com.health.service;
 
+import com.health.entity.UserProfileDetails;
 import org.springframework.http.ResponseEntity;
 
 import com.health.dto.request.ProfileDetailsRequest;
@@ -16,6 +17,7 @@ import com.health.models.ApiResponse;
 public interface UserProfileService {
 	
 	public ResponseEntity<ApiResponse<ProfileDetailsResponse>> createNewProfile(UserRegistration user,ProfileDetailsRequest profileDetailsRequest);
-	public void personalDetails(Long profileId,Long userId);
+	public ApiResponse<UserProfileDetails> personalDetails(Long userId,UserProfileDetails userProfileDetails);
+	public ApiResponse<UserProfileDetails> getUserProfileDetails(Long userId);
 
 }

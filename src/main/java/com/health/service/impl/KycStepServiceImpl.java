@@ -43,16 +43,16 @@ public class KycStepServiceImpl implements KycStepService {
 	@Override
 	public void addStep(Long userId, Long stepId) {
 		// TODO Auto-generated method stub
-		
-		Optional<UserRegistration> userOptional = userRegistrationRepository.findById(userId);
-		if(userOptional.isPresent()) {
-			
+
+		Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
+		if(user.isEmpty()) {
+			throw new RuntimeException("User not found. Please create an account to proceed.");
 		}
 		Optional<KycStepMaster> kycSteps = kycStepMasterRepository.findById(stepId);
 		
 		KycStepStatus kycStepStatus = new KycStepStatus();
 		kycStepStatus.setIsCompleted(true);
-		kycStepStatus.setUser(userOptional.get());
+		kycStepStatus.setUser(user.get());
 		kycStepStatus.setStep(kycSteps.get());
 		kycStepStatus.setCreatedAt(LocalDateTime.now());
 		kycStepStatus.setCreatedBy(userId.toString());
@@ -75,7 +75,7 @@ public class KycStepServiceImpl implements KycStepService {
 		ApiResponse<List<KycStepResponse>> success = ApiExecutionUtils.ApiExecutor.processRequest(userId, req -> {
 		}, () -> {
 			Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
-			if(!user.isPresent()) {
+			if(user.isEmpty()) {
 				throw new RuntimeException("User not found. Please create an account to proceed.");
 			}
 			
@@ -85,16 +85,12 @@ public class KycStepServiceImpl implements KycStepService {
 			
 			List<KycStepResponse> kycStepResponses = new ArrayList<>();
 			List<KycStepStatus> kycStepStatus = kycStepStatusReposotory.findByUser_Id(userId);
-			
-			switch (roleMaster.getRoleName()) {
-			case "DOCTOR" :
-				kycStepResponses = doctorSteps(userId,roleId,kycStepStatus);
-				break;
-				
-			default:
-				kycStepResponses = userSteps(userId,roleId,kycStepStatus);
-				break;
-			}
+
+            if (roleMaster.getId() == 3) {
+                kycStepResponses = doctorSteps(userId, roleId, kycStepStatus);
+            } else {
+                kycStepResponses = userSteps(userId, roleId, kycStepStatus);
+            }
 
 			return kycStepResponses;
 		}, ApiResponse::success);

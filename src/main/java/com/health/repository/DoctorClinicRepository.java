@@ -17,6 +17,6 @@ import com.health.entity.DoctorClinic;
  * 
  */
 @Repository
-public interface JPADoctorClinicRepository extends JpaRepository<DoctorClinic, Long> {
+public interface DoctorClinicRepository extends JpaRepository<DoctorClinic, Long> {
 	List<DoctorClinic> findByDoctor(Doctor doctor);
 }

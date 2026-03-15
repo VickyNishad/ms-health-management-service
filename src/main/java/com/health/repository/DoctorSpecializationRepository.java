@@ -13,6 +13,6 @@ import com.health.entity.DoctorSpecialization;
  * 
  */
 @Repository
-public interface JPADoctorSpecializationRepository extends JpaRepository<DoctorSpecialization, Long>{
-
+public interface DoctorSpecializationRepository extends JpaRepository<DoctorSpecialization, Long>{
+    void  deleteByDoctorId(Long doctorId);
 }

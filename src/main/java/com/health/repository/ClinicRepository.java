@@ -14,6 +14,6 @@ import com.health.entity.Clinic;
  * 
  */
 @Service
-public interface JPAClinicRepository extends JpaRepository<Clinic, Long> {
+public interface ClinicRepository extends JpaRepository<Clinic, Long> {
 
 }

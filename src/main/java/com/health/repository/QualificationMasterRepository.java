@@ -6,7 +6,7 @@ package com.health.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.health.entity.Doctor;
+import com.health.entity.QualificationMaster;
 
 
 
@@ -14,6 +14,6 @@ import com.health.entity.Doctor;
  * 
  */
 @Repository
-public interface JPADoctorRepository extends JpaRepository<Doctor, Long> {
+public interface QualificationMasterRepository extends JpaRepository<QualificationMaster, Long> {
 
 }

@@ -10,6 +10,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.health.dto.request.DoctorPersonalDetailsRequest;
+import com.health.entity.*;
+import com.health.repository.*;
+import com.health.service.KycStepService;
+import com.health.service.OTPService;
+import com.health.service.UserProfileService;
+import com.health.utility.ApiExecutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,16 +37,6 @@ import com.health.dto.DoctorLeaveResponse;
 import com.health.dto.DoctorProfileRequest;
 import com.health.dto.DoctorProfileResponse;
 import com.health.dto.DoctorProfileResponse.ClinicResponse;
-import com.health.entity.Clinic;
-import com.health.entity.Doctor;
-import com.health.entity.DoctorAvailability;
-import com.health.entity.DoctorClinic;
-import com.health.entity.DoctorLeave;
-import com.health.entity.DoctorQualification;
-import com.health.entity.DoctorSpecialization;
-import com.health.entity.QualificationMaster;
-import com.health.entity.SpecializationMaster;
-import com.health.entity.UserRegistration;
 import com.health.models.ApiResponse;
 import com.health.dto.MessageResponse;
 import com.health.service.DoctorService;
@@ -50,69 +47,126 @@ import com.health.service.DoctorService;
 @Service
 public class DoctorServiceImpl implements DoctorService {
 
+	@Autowired
+	private UserRegistrationRepository userRegistrationRepository;
+
+	@Autowired
+	private KycStepService kycStepService;
+
+	@Autowired
+	private UserProfileService userProfileService;
+
+	@Autowired
+	private DoctorRepository doctorRepository;
+
+	@Autowired
+	private QualificationMasterRepository qualificationMasterRepository;
+
+	@Autowired
+	private  DoctorQualificationRepository doctorQualificationRepository;
+
+	@Autowired
+	private SpecializationMasterRepository specializationMasterRepository;
+
+	@Autowired
+	private DoctorSpecializationRepository doctorSpecializationRepository;
+	/**
+	 * @param userId
+	 * @param doctorPersonalDetailsRequest
+	 * @return
+	 */
 	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> saveProfile(DoctorProfileRequest doctorProfileRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	public ResponseEntity<ApiResponse<MessageResponse>> personalDetails(Long userId, DoctorPersonalDetailsRequest doctorPersonalDetailsRequest) {
+
+		ApiResponse<MessageResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(null,req -> {
+
+		},() -> {
+			// check user exist or not
+			Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
+			if(user.isEmpty()) {
+				throw new RuntimeException("User not found. Please create an account to proceed.");
+			}
+
+			ApiResponse<UserProfileDetails> apiResponse = userProfileService.getUserProfileDetails(userId);
+			if (!apiResponse.isSuccess()) {
+				throw new RuntimeException("User profile not found. Please create an account to proceed.");
+			}
+			UserProfileDetails userProfileDetails = apiResponse.getData();
+			userProfileDetails.setAge(doctorPersonalDetailsRequest.getAge());
+			userProfileDetails.setGender(doctorPersonalDetailsRequest.getGender());
+			userProfileDetails.setEmailId(doctorPersonalDetailsRequest.getEmailId());
+			userProfileDetails.setUpdatedAt(LocalDateTime.now());
+			userProfileDetails.setUpdatedBy(userId.toString());
+
+			ApiResponse<UserProfileDetails> userProfileDetailsApiResponse = userProfileService.personalDetails(userId,userProfileDetails);
+			System.out.println(userProfileDetailsApiResponse.getMessage());
+
+			// insert doctor personal details
+
+			Doctor doctor = new Doctor();
+			doctor.setUser(user.get());
+			doctor.setNeekName(doctorPersonalDetailsRequest.getNeekName());
+			doctor.setName(doctorPersonalDetailsRequest.getName());
+			doctor.setRegistrationNumber(doctorPersonalDetailsRequest.getRegistrationNumber());
+			doctor.setTotalExperience(doctorPersonalDetailsRequest.getTotalExperience());
+			doctor.setIsActive(true);
+			doctor.setCreatedAt(LocalDateTime.now());
+			doctor.setCreatedBy(userId.toString());
+			doctor.setUpdatedAt(LocalDateTime.now());
+			doctor.setUpdatedBy(userId.toString());
+
+			List<Doctor> doctors = doctorRepository.findByUserId(userId);
+			if(!doctors.isEmpty()) {
+				doctor.setId(doctors.getFirst().getId());
+			}
+
+			doctor = doctorRepository.save(doctor);
+
+			// insert qualification
+			// insert specialization
+
+
+					if (doctorPersonalDetailsRequest.getSpecializations() != null) {
+						// 1. Delete old specialization of doctor
+						doctorSpecializationRepository.deleteByDoctorId(doctor.getId());
+						// 2. Fetch new specialization record
+						List<SpecializationMaster> specializationMasters = specializationMasterRepository
+								.findAllById(doctorPersonalDetailsRequest.getSpecializations());
+
+						for (SpecializationMaster s : specializationMasters) {
+							DoctorSpecialization ds = new DoctorSpecialization();
+							ds.setDoctor(doctor);
+							ds.setSpecialization(s);
+							ds.setCreatedBy("");
+							ds.setIsActive(true);
+							doctorSpecializationRepository.save(ds);
+						}
+					}
+
+					// Step 5: Save DoctorQualifications
+					if (doctorPersonalDetailsRequest.getQualifications() != null) {
+						// 1. Delete old qualification of doctor
+						doctorQualificationRepository.deleteByDoctorId(doctor.getId());
+
+						// 2. Fetch new qualification
+						List<QualificationMaster> quals = qualificationMasterRepository
+								.findAllById(doctorPersonalDetailsRequest.getQualifications());
+						for (QualificationMaster q : quals) {
+							DoctorQualification dq = new DoctorQualification();
+							dq.setDoctor(doctor);
+							dq.setQualification(q);
+							dq.setCreatedBy("");
+							dq.setIsActive(true);
+							doctorQualificationRepository.save(dq);
+						}
+					}
+
+			return new MessageResponse("Personal Details Successfully Saved");
+		},ApiResponse::success);
+
+		return new ResponseEntity<ApiResponse<MessageResponse>>(success,HttpStatus.OK);
 	}
 
-	@Override
-	public ResponseEntity<ApiResponse<DoctorProfileResponse>> getProfile(Long doctorId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> createLeaveOrBreak(DoctorLeaveRequest doctorLeaveRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> updateLeaveOrBreak(Long leaveId,
-			DoctorLeaveRequest doctorLeaveRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> createUpdateLeaveOrBreak(DoctorLeave existing,
-			DoctorLeaveRequest doctorLeaveRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<List<DoctorLeaveResponse>>> getDoctorLeaves(Long doctorId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> insertDoctorAvailability(Long doctorId, Long clinicId,
-			DoctorAvailabilityRequest doctorAvailabilityRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> updateDoctorAvailability(Long doctorId,
-			DoctorAvailabilityUpdateRequest doctorAvailabilityUpdateRequest) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<List<AvailabilityResponse>>> getDoctorAvailability(Long doctorId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> deleteAvailability(Long doctorId, Long availabilityId) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 //	@Autowired
 //	private UserRegistrationRepository useRepositoryPort;

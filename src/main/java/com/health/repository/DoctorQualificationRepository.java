@@ -6,7 +6,7 @@ package com.health.repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.health.entity.QualificationMaster;
+import com.health.entity.DoctorQualification;
 
 
 
@@ -14,6 +14,7 @@ import com.health.entity.QualificationMaster;
  * 
  */
 @Repository
-public interface JPAQualificationMasterRepository extends JpaRepository<QualificationMaster, Long> {
+public interface DoctorQualificationRepository extends JpaRepository<DoctorQualification, Long> {
 
+    void  deleteByDoctorId(Long doctorId);
 }

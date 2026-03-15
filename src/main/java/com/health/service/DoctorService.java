@@ -5,6 +5,7 @@ package com.health.service;
 
 import java.util.List;
 
+import com.health.dto.request.DoctorPersonalDetailsRequest;
 import org.springframework.http.ResponseEntity;
 
 import com.health.models.ApiResponse;
@@ -25,19 +26,22 @@ import com.health.entity.DoctorLeave;
  */
 public interface DoctorService {
 
-	public ResponseEntity<ApiResponse<MessageResponse>> saveProfile(DoctorProfileRequest doctorProfileRequest);
-	public ResponseEntity<ApiResponse<DoctorProfileResponse>> getProfile(Long doctorId);
-	
-	public ResponseEntity<ApiResponse<MessageResponse>> createLeaveOrBreak(DoctorLeaveRequest doctorLeaveRequest);
-	public ResponseEntity<ApiResponse<MessageResponse>> updateLeaveOrBreak(Long leaveId,DoctorLeaveRequest doctorLeaveRequest);
-	public ResponseEntity<ApiResponse<MessageResponse>> createUpdateLeaveOrBreak(DoctorLeave existing,DoctorLeaveRequest doctorLeaveRequest);
-	public ResponseEntity<ApiResponse<List<DoctorLeaveResponse>>> getDoctorLeaves(Long doctorId);
-	
-	public ResponseEntity<ApiResponse<MessageResponse>> insertDoctorAvailability(Long doctorId, Long clinicId,DoctorAvailabilityRequest doctorAvailabilityRequest);
-	public ResponseEntity<ApiResponse<MessageResponse>> updateDoctorAvailability(Long doctorId,DoctorAvailabilityUpdateRequest doctorAvailabilityUpdateRequest);
+//	public ResponseEntity<ApiResponse<MessageResponse>> saveProfile(DoctorProfileRequest doctorProfileRequest);
+//	public ResponseEntity<ApiResponse<DoctorProfileResponse>> getProfile(Long doctorId);
+//
+//	public ResponseEntity<ApiResponse<MessageResponse>> createLeaveOrBreak(DoctorLeaveRequest doctorLeaveRequest);
+//	public ResponseEntity<ApiResponse<MessageResponse>> updateLeaveOrBreak(Long leaveId,DoctorLeaveRequest doctorLeaveRequest);
+//	public ResponseEntity<ApiResponse<MessageResponse>> createUpdateLeaveOrBreak(DoctorLeave existing,DoctorLeaveRequest doctorLeaveRequest);
+//	public ResponseEntity<ApiResponse<List<DoctorLeaveResponse>>> getDoctorLeaves(Long doctorId);
+//
+//	public ResponseEntity<ApiResponse<MessageResponse>> insertDoctorAvailability(Long doctorId, Long clinicId,DoctorAvailabilityRequest doctorAvailabilityRequest);
+//	public ResponseEntity<ApiResponse<MessageResponse>> updateDoctorAvailability(Long doctorId,DoctorAvailabilityUpdateRequest doctorAvailabilityUpdateRequest);
+//
+//	public ResponseEntity<ApiResponse<List<AvailabilityResponse>>> getDoctorAvailability(Long doctorId);
+//
+//	public ResponseEntity<ApiResponse<MessageResponse>> deleteAvailability(Long doctorId, Long availabilityId);
 
-	public ResponseEntity<ApiResponse<List<AvailabilityResponse>>> getDoctorAvailability(Long doctorId);
-	
-	public ResponseEntity<ApiResponse<MessageResponse>> deleteAvailability(Long doctorId, Long availabilityId);
+	// DoctorPersonalDetailsRequest
+	public ResponseEntity<ApiResponse<MessageResponse>> personalDetails(Long userId,DoctorPersonalDetailsRequest doctorPersonalDetailsRequest);
 
 }

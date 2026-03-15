@@ -164,11 +164,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 		
 		UserRegistration userRegistration = userRegistration(userRegistrationRequest,roleMaster);
 		userRegistration = userRegistrationRepository.save(userRegistration);
-		
-		/**
-		 * Mark Registration step is completed
-		 */
-		Long userId = userRegistration.getId();
+
+        Long userId = userRegistration.getId();
 		Long stepId = 1L;
 		kycStepService.addStep(userId, stepId);
 		
@@ -247,7 +244,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 		ResponseEntity<ApiResponse<ProfileDetailsResponse>> apiResponseEntity = userProfileService.createNewProfile(userRegistration, profileDetailsRequest);
 		ApiResponse<ProfileDetailsResponse> apiResponse = apiResponseEntity.getBody();
 		ProfileDetailsResponse profileDetailsResponse = apiResponse.getData();
-		
+
 		return profileDetailsResponse;
 	}
 }
