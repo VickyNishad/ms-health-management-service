@@ -184,9 +184,9 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 		RoleMaster roleMaster = optionalRoleMaster.get();
 
 		String password = userRegistrationRequest.getPassword();
-		String ecnryptPassword = HealthUtils.encryptPassword(password);
+		String encryptPassword = HealthUtils.encryptPassword(password);
 
-		userRegistrationRequest.setPassword(ecnryptPassword);
+		userRegistrationRequest.setPassword(encryptPassword);
 
 		UserRegistration userRegistration = userRegistration(userRegistrationRequest, roleMaster);
 		userRegistration = userRegistrationRepository.save(userRegistration);

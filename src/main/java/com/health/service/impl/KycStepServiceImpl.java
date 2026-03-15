@@ -144,7 +144,7 @@ public class KycStepServiceImpl implements KycStepService {
 
 	        KycStepResponse response = new KycStepResponse();
 	        boolean isCompleted = false;
-	        Integer kycStepId = null;
+			Integer kycStepId = 0;
 
 	        for (KycStepStatus stepStatus : kycStepStatus) {
 
