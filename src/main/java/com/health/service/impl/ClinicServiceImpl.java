@@ -115,8 +115,6 @@ public class ClinicServiceImpl implements ClinicService {
     }
 
     /**
-     * @param clinicId
-     * @return
      */
     @Override
     public ApiResponse<Clinic> findById(Long clinicId) {

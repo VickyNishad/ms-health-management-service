@@ -45,7 +45,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		}, () -> {
 			
 			Optional<UserRegistration> optionUser = userRegistrationRepository.findByMobileNumber(loginRequest.getProviderLoginId());
-			if(!optionUser.isPresent()) {
+			if(optionUser.isEmpty()) {
 				throw new RuntimeException("User not found. Please create an account to proceed.");
 			}
 			UserResponse userResponse = new UserResponse();

@@ -245,6 +245,16 @@ public class DoctorServiceImpl implements DoctorService {
             if (optionalClinic.isEmpty()) {
                 throw new RuntimeException("Clinic not found with this clinicId :"+clinicId);
             }
+
+			ApiResponse<List<ClinicDetailsDto>> listApiResponse = clinicService.findClinicByDoctorId(clinicId);
+			if (listApiResponse.getData().isEmpty()) {
+				throw new RuntimeException("Doctor Clinic not found with this clinicId :"+clinicId);
+			}
+			List<ClinicDetailsDto> clinicDetailsDtos = listApiResponse.getData();
+			if (!(clinicDetailsDtos.size() > 1)) {
+				throw new RuntimeException("You cannot delete this clinic, at least 1 clinic is mandatory");
+			}
+
             ApiResponse<MessageResponse> apiResponse = clinicService.deleteClinicById(clinicId);
             return apiResponse.getData();
                 },ApiResponse::success);
