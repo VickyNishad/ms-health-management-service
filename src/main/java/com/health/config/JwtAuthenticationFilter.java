@@ -42,7 +42,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             "/medicque/menu/**",
             "/api/v1/master/**",
             "/api/v1/otp/**",
-            "/api/v1/doctor/**"
+            "/api/v1/doctor/**",
+            "/api/v1/clinic/**"
     };
 
     public JwtAuthenticationFilter(JwtUtils jwtUtils) {
