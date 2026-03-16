@@ -70,14 +70,6 @@ public class DoctorServiceImpl implements DoctorService {
 	@Autowired
 	private DoctorSpecializationRepository doctorSpecializationRepository;
 
-	@Autowired
-	private ClinicService clinicService;
-
-	@Autowired
-	private ClinicRepository clinicRepository;
-
-	@Autowired
-	private DoctorClinicRepository doctorClinicRepository;
 
 	/**
      */
@@ -166,7 +158,7 @@ public class DoctorServiceImpl implements DoctorService {
 			return new MessageResponse("Personal Details Successfully Saved");
 		},ApiResponse::success);
 
-		return new ResponseEntity<ApiResponse<MessageResponse>>(success,HttpStatus.OK);
+		return new ResponseEntity<>(success, HttpStatus.OK);
 	}
 
 }

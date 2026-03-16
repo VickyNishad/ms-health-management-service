@@ -6,6 +6,7 @@ package com.health.service.impl;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import com.health.enums.LoginType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -78,7 +79,7 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 			}
 			return userRegisteredResponse;
 		}, ApiResponse::success);
-		return new ResponseEntity<ApiResponse<UserRegisteredResponse>>(success, HttpStatus.OK);
+		return new ResponseEntity<>(success, HttpStatus.OK);
 	}
 
 	@Override
@@ -148,20 +149,47 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 					}
 					return userRes;
 				}, ApiResponse::success);
-		return new ResponseEntity<ApiResponse<UserResponse>>(success, HttpStatus.OK);
+		return new ResponseEntity<>(success, HttpStatus.OK);
 	}
-	
+
+	/**
+	 */
+	@Override
+	public ApiResponse<UserResponse> googleRegister(UserRegistrationRequest userRegistrationRequest) {
+
+        return ApiExecutionUtils.ApiExecutor.processRequest(userRegistrationRequest,
+                req -> {
+
+                }, () -> {
+                    UserResponse userRes = new UserResponse();
+
+                    Optional<UserRegistration> user = userRegistrationRepository.findBysocialId(userRegistrationRequest.getSocialId());
+                    if(user.isPresent()) {
+                        throw new RuntimeException("You already have an account. Please log in to continue.");
+                    }
+
+                    if (userRegistrationRequest.getRoleId() == 4) {
+                        userRes = userRegistration( userRegistrationRequest ,false);
+                    }else  {
+                        throw new RuntimeException("Only patients/user can login with google");
+                    }
+                    return userRes;
+                }, ApiResponse::success);
+	}
+
 	private UserResponse userRegistration(UserRegistrationRequest userRegistrationRequest,boolean isPresent) {
 		Long roleId = (long) userRegistrationRequest.getRoleId();
 		
 		Optional<RoleMaster> optionalRoleMaster = roleMasterRepository.findById(roleId);
 		RoleMaster roleMaster = optionalRoleMaster.get();
-		
-		String password = userRegistrationRequest.getPassword();
-		String ecnryptPassword = HealthUtils.encryptPassword(password);
-		
-		userRegistrationRequest.setPassword(ecnryptPassword);
-		
+
+		LoginType loginType = userRegistrationRequest.getLoginType();
+		if(loginType.equals(LoginType.MANUAL)) {
+			String password = userRegistrationRequest.getPassword();
+			String encryptPassword = HealthUtils.encryptPassword(password);
+			userRegistrationRequest.setPassword(encryptPassword);
+		}
+
 		UserRegistration userRegistration = userRegistration(userRegistrationRequest,roleMaster);
 		userRegistration = userRegistrationRepository.save(userRegistration);
 

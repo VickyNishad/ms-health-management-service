@@ -5,6 +5,8 @@ package com.health.dto.request;
 
 import com.health.enums.LoginType;
 
+import java.util.Objects;
+
 /**
  * 
  */
@@ -18,9 +20,19 @@ public class UserRegistrationRequest {
 	private LoginType loginType;
 	private String password;
 	private int roleId;
+	private Object data;
+
+	public UserRegistrationRequest(
+			String socialId, LoginType loginType, int roleId, Object data) {
+		super();
+		this.socialId = socialId;
+		this.loginType = loginType;
+		this.roleId = roleId;
+		this.data = data;
+	}
 
 	public UserRegistrationRequest(String userName, String emailId, String mobileNumber, String empCode,
-			String socialId, LoginType loginType, String password, int roleId) {
+	                               String socialId, LoginType loginType, String password, int roleId) {
 		super();
 		this.userName = userName;
 		this.emailId = emailId;
@@ -30,6 +42,14 @@ public class UserRegistrationRequest {
 		this.loginType = loginType;
 		this.password = password;
 		this.roleId = roleId;
+	}
+
+	public Object getData() {
+		return data;
+	}
+
+	public void setData(Object data) {
+		this.data = data;
 	}
 
 	public String getUserName() {

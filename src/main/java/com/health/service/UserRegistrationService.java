@@ -22,5 +22,7 @@ public interface UserRegistrationService {
 	public ResponseEntity<ApiResponse<UserRegisteredResponse>> isRegister(String providerLofinId);
 	public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(ResetPasswordRequest restPasswordRequest);
 	public ResponseEntity<ApiResponse<UserResponse>> register(UserRegistrationRequest userRegistrationRequest);
-	
+	public ApiResponse<UserResponse> googleRegister(UserRegistrationRequest userRegistrationRequest);
+
+
 }

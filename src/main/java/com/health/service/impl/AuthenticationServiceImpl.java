@@ -3,8 +3,12 @@
  */
 package com.health.service.impl;
 
+import java.util.Objects;
 import java.util.Optional;
 
+import com.health.dto.request.UserRegistrationRequest;
+import com.health.dto.response.ProfileDetailsResponse;
+import com.health.service.UserRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,9 +41,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	
 	@Autowired
 	private UserProfileRepository userProfileRepository;
+
+	@Autowired
+	private UserRegistrationService userRegistrationService;
 	
 	@Override
-	public ResponseEntity<ApiResponse<UserResponse>> autenticate(LoginRequest loginRequest) {
+	public ResponseEntity<ApiResponse<UserResponse>> authenticate(LoginRequest loginRequest) {
 		// TODO Auto-generated method stub
 		ApiResponse<UserResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(loginRequest, req -> {
 		}, () -> {
@@ -59,9 +66,39 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			return userResponse;
 		}, ApiResponse::success);
 
-		return new ResponseEntity<ApiResponse<UserResponse>>(success , HttpStatus.OK);
+		return new ResponseEntity<>(success, HttpStatus.OK);
 	}
-	
+
+	/**
+	 */
+	@Override
+	public ApiResponse<UserResponse> googleAuthenticate(UserRegistrationRequest userRegistrationRequest) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+					Optional<UserRegistration> optionUser = userRegistrationRepository.findBysocialId(userRegistrationRequest.getSocialId());
+					if(optionUser.isPresent()) {
+                        return userResponse(optionUser.get());
+					}
+				ApiResponse<UserResponse> apiResponse =	userRegistrationService.googleRegister(userRegistrationRequest);
+                    return apiResponse.getData();
+				},
+				ApiResponse::success);
+	}
+
+	private UserResponse userResponse(UserRegistration userRegistration) {
+
+		UserResponse userResponse = new UserResponse();
+		userResponse.setId(userRegistration.getId());
+		userResponse.setUserId(userRegistration.getId());
+		userResponse.setIsRegistered(false);
+		userResponse.setRoleId(userRegistration.getRole().getId());
+		userResponse.setRole(userRegistration.getRole().getRoleName());
+		userResponse.setUserName(userRegistration.getUserName());
+		userResponse.setIsActive(true);
+		return userResponse;
+	}
+
 	private UserResponse userAuthentication(UserRegistration user , LoginRequest loginRequest ) {
 		String role = user.getRole().getRoleName();
 		
@@ -69,7 +106,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		RoleMaster roleMaster = optional.get();
 		String requestRole = roleMaster.getRoleName();
 		
-		if(user.getRole().getId() != loginRequest.getRoleId()) {			
+		if(!Objects.equals(user.getRole().getId(), loginRequest.getRoleId())) {
 			throw new RuntimeException("Role mismatch. You are registered as a "+role+" and cannot login as a "+requestRole+".");
 		}
 		

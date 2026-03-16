@@ -5,6 +5,7 @@ package com.health.controller;
 
 import java.util.List;
 
+import com.health.dto.request.SocialLoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-import com.health.dto.DoctorSignUpRequest;
 import com.health.dto.MessageResponse;
 import com.health.dto.ResetPasswordRequest;
 import com.health.dto.SignInRequest;
@@ -28,7 +28,6 @@ import com.health.dto.response.KycStepResponse;
 import com.health.dto.response.UserRegisteredResponse;
 import com.health.dto.response.UserResponse;
 import com.health.enums.LoginType;
-import com.health.enums.Role;
 import com.health.models.ApiResponse;
 import com.health.service.AuthenticationService;
 import com.health.service.KycStepService;
@@ -79,7 +78,7 @@ public class AuthController {
 	@PostMapping("/user/login")
 	public ResponseEntity<ApiResponse<UserResponse>> patientLogin(@RequestBody SignInRequest request) {
 		LoginRequest loginRequest = new LoginRequest(request.getProviderLoginId(), request.getPassword(), 4L);
-		return authenticationService.autenticate(loginRequest);
+		return authenticationService.authenticate(loginRequest);
 	}
 
 	@PostMapping("/doctors/signup")
@@ -92,7 +91,7 @@ public class AuthController {
 	@PostMapping("/employees/login")
 	public ResponseEntity<ApiResponse<UserResponse>> employeeLogin(@RequestBody SignInRequest request) {
 		LoginRequest loginRequest = new LoginRequest(request.getProviderLoginId(), request.getPassword(), 2L);
-		return authenticationService.autenticate(loginRequest);
+		return authenticationService.authenticate(loginRequest);
 	}
 
 	@PostMapping("/user/otp/send")
@@ -105,9 +104,10 @@ public class AuthController {
 		return loginService.login(request);
 	}
 
-	@PostMapping("/login/social/{providerLoginId}")
-	public ResponseEntity<UserRegisteredResponse> socialLogin(@PathVariable String providerLoginId) {
-		return null;
+	@PostMapping("/login/google")
+	public ApiResponse<UserResponse> googleLogin(@RequestBody SocialLoginRequest socialLoginRequest) {
+		UserRegistrationRequest userRegistrationRequest = new UserRegistrationRequest(socialLoginRequest.getSocialId(),LoginType.GOOGLE,4,socialLoginRequest.getData());
+		return authenticationService.googleAuthenticate(userRegistrationRequest);
 	}
 	
 	@GetMapping("/user/steps/{userId}")
