@@ -12,11 +12,7 @@ public class TokenModel {
 	private String role;
 	private String loginType;
 	private String refCode;
-	private Long patientId;
-	private Long doctorId;
 	private Long userId;
-	
-	
 
 	public TokenModel(String userName, String role, String loginType, String refCode) {
 		super();
@@ -26,42 +22,18 @@ public class TokenModel {
 		this.refCode = refCode;
 	}
 
-	
-	public Long getPatientId() {
-		return patientId;
-	}
-
-
-	public void setPatientId(Long patientId) {
-		this.patientId = patientId;
-	}
-
-
-	public Long getDoctorId() {
-		return doctorId;
-	}
-
-
-	public void setDoctorId(Long doctorId) {
-		this.doctorId = doctorId;
-	}
-
-
 	public Long getUserId() {
 		return userId;
 	}
-
 
 	public void setUserId(Long userId) {
 		this.userId = userId;
 	}
 
-
 	public TokenModel() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-
 
 	public String getUserName() {
 		return userName;

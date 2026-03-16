@@ -13,5 +13,5 @@ import com.health.dto.TokenResponse;
 public interface JwtService {
 
 	TokenResponse generateToken(TokenModel model);
-	TokenResponse refereshToken(String refereshToken);
+	TokenResponse refreshToken(String refreshToken);
 }

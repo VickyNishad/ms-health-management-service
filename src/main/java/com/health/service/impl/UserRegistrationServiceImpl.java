@@ -6,7 +6,9 @@ package com.health.service.impl;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import com.health.domain.model.TokenModel;
 import com.health.enums.LoginType;
+import com.health.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +27,6 @@ import com.health.entity.UserRegistration;
 import com.health.models.ApiResponse;
 import com.health.repository.RoleMasterRepository;
 import com.health.repository.UserRegistrationRepository;
-import com.health.service.KycStepService;
-import com.health.service.OTPService;
-import com.health.service.UserProfileService;
-import com.health.service.UserRegistrationService;
 import com.health.utility.ApiExecutionUtils;
 import com.health.utility.HealthUtils;
 
@@ -52,6 +50,9 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 	
 	@Autowired
 	private OTPService otpService;
+
+	@Autowired
+	private JwtService jwtService;
 
 
 	@Override
@@ -251,6 +252,12 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 	
 	private UserResponse userResponse(UserRegistration userRegistration,ProfileDetailsResponse profileDetailsResponse) {
 
+		TokenModel tokenModel = new TokenModel();
+		tokenModel.setUserId(userRegistration.getId());
+		tokenModel.setUserName(userRegistration.getUserName());
+		tokenModel.setLoginType(userRegistration.getLoginType());
+		tokenModel.setRole(userRegistration.getRole().getRoleName());
+
 		UserResponse userResponse = new UserResponse();
 		userResponse.setId(profileDetailsResponse.getId());
 		userResponse.setUserId(userRegistration.getId());
@@ -259,6 +266,8 @@ public class UserRegistrationServiceImpl implements UserRegistrationService {
 		userResponse.setRole(userRegistration.getRole().getRoleName());
 		userResponse.setUserName(userRegistration.getUserName());
 		userResponse.setIsActive(true);
+		userResponse.setTokenResponse(jwtService.generateToken(tokenModel));
+
 		return userResponse;
 	}
 

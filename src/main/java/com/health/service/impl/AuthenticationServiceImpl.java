@@ -6,8 +6,10 @@ package com.health.service.impl;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.health.domain.model.TokenModel;
 import com.health.dto.request.UserRegistrationRequest;
 import com.health.dto.response.ProfileDetailsResponse;
+import com.health.service.JwtService;
 import com.health.service.UserRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,6 +46,9 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	@Autowired
 	private UserRegistrationService userRegistrationService;
+
+	@Autowired
+	private JwtService  jwtService;
 	
 	@Override
 	public ResponseEntity<ApiResponse<UserResponse>> authenticate(LoginRequest loginRequest) {
@@ -55,7 +60,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 			if(optionUser.isEmpty()) {
 				throw new RuntimeException("User not found. Please create an account to proceed.");
 			}
-			UserResponse userResponse = new UserResponse();
+			UserResponse userResponse;
 			UserRegistration user = optionUser.get();
 			if(loginRequest.getRoleId() == 4) {
 				userResponse = userAuthentication(user,loginRequest);
@@ -88,6 +93,12 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 	private UserResponse userResponse(UserRegistration userRegistration) {
 
+		TokenModel tokenModel = new TokenModel();
+		tokenModel.setUserId(userRegistration.getId());
+		tokenModel.setUserName(userRegistration.getUserName());
+		tokenModel.setLoginType(userRegistration.getLoginType());
+		tokenModel.setRole(userRegistration.getRole().getRoleName());
+
 		UserResponse userResponse = new UserResponse();
 		userResponse.setId(userRegistration.getId());
 		userResponse.setUserId(userRegistration.getId());
@@ -96,6 +107,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		userResponse.setRole(userRegistration.getRole().getRoleName());
 		userResponse.setUserName(userRegistration.getUserName());
 		userResponse.setIsActive(true);
+		userResponse.setTokenResponse(jwtService.generateToken(tokenModel));
 		return userResponse;
 	}
 
@@ -139,7 +151,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	private UserResponse userResponse(UserProfileDetails userProfileDetails , UserRegistration user) {
-		
+
+		TokenModel tokenModel = new TokenModel();
+		tokenModel.setUserId(userProfileDetails.getId());
+		tokenModel.setUserName(userProfileDetails.getName());
+		tokenModel.setLoginType(user.getLoginType());
+		tokenModel.setRole(user.getRole().getRoleName());
+
 		UserResponse userResponse = new UserResponse();
 		userResponse.setId(userProfileDetails.getId());
 		userResponse.setUserId(user.getId());
@@ -149,6 +167,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		userResponse.setUserName(user.getUserName());
 		userResponse.setIsActive(true);
 		userResponse.setLoginType(user.getLoginType());
+		userResponse.setTokenResponse(jwtService.generateToken(tokenModel));
 		
 		return userResponse;
 		

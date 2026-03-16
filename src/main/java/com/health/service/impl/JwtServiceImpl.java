@@ -19,7 +19,7 @@ import com.health.utility.JwtUtils;
 @Service
 public class JwtServiceImpl implements JwtService {
 
-	private JwtUtils jwtUtils;
+	private final JwtUtils jwtUtils;
 
 	public JwtServiceImpl(JwtUtils jwtUtils) {
 		this.jwtUtils = jwtUtils;
@@ -30,15 +30,15 @@ public class JwtServiceImpl implements JwtService {
 		// TODO Auto-generated method stub
 		Map<String, Object> claim = Convertors.convertObjectToMap(model);
 		String accessToken = jwtUtils.generateAccessToken(model.getUserName(), claim);
-		String refereshToken = jwtUtils.generateRefreshToken(model.getUserName(), claim);
-		return new TokenResponse(accessToken, refereshToken, "Bearer", JwtUtils.getExpiry("1").toString(),
+		String refreshToken = jwtUtils.generateRefreshToken(model.getUserName(), claim);
+		return new TokenResponse(accessToken, refreshToken, "Bearer", JwtUtils.getExpiry("1").toString(),
 				JwtUtils.getExpiry("2").toString());
 	}
 
 	@Override
-	public TokenResponse refereshToken(String refereshToken) {
+	public TokenResponse refreshToken(String refreshToken) {
 		// TODO Auto-generated method stub
-		
+
 //		if (!jwtUtils.validateRefreshToken(refreshToken)) {
 //	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
 //	    }

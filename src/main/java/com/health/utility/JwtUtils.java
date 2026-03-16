@@ -14,7 +14,8 @@ import javax.crypto.SecretKey;
 public class JwtUtils {
 	
 	private final String SECRET_KEY = "FDJKFGDGFDKHJSGFLDKGFLDSGLDAGLDS563948648URUIT7435843HFJKDGSJ";
-	private static final long ACCESS_TOKEN_VALIDITY_MS = 15 * 60 * 1000; // 15 minutes
+//	private static final long ACCESS_TOKEN_VALIDITY_MS = 15 * 60 * 1000; // 15 minutes
+private static final long ACCESS_TOKEN_VALIDITY_MS = 24 * 60 * 60 * 1000; // 24 hours
 	private static final long REFRESH_TOKEN_VALIDITY_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
 	private final SecretKey secretKey = Keys.hmacShaKeyFor(SECRET_KEY.getBytes(StandardCharsets.UTF_8));
