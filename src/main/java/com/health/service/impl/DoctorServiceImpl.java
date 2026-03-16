@@ -128,10 +128,6 @@ public class DoctorServiceImpl implements DoctorService {
 
 			doctor = doctorRepository.save(doctor);
 
-			// insert qualification
-			// insert specialization
-
-
 					if (doctorPersonalDetailsRequest.getSpecializations() != null) {
 						// 1. Delete old specialization of doctor
 						doctorSpecializationRepository.deleteByDoctorId(doctor.getId());
@@ -171,100 +167,6 @@ public class DoctorServiceImpl implements DoctorService {
 		},ApiResponse::success);
 
 		return new ResponseEntity<ApiResponse<MessageResponse>>(success,HttpStatus.OK);
-	}
-
-	/**
-	 */
-	@Override
-	public ApiResponse<List<ClinicDetailsDto>> createClinic(Long userId, DoctorClinicRequest doctorClinicRequest) {
-
-		return ApiExecutionUtils.ApiExecutor.processRequest(null,req ->{},
-				()->{
-			// validate user
-					Optional<UserRegistration> optionalUserRegistration = userRegistrationRepository.findById(userId);
-					if (optionalUserRegistration.isEmpty()) {
-						throw new RuntimeException("User not found with this userId :"+userId);
-					}
-
-					// check doctor profile create or not
-					List<Doctor> doctors = doctorRepository.findByUserId(userId);
-					if (doctors.isEmpty()) {
-						throw new RuntimeException("Doctor not found with this userId :"+userId);
-					}
-					// check doctor clinic present or not
-					List<DoctorClinic> doctorClinics = doctorClinicRepository.findByDoctor(doctors.getFirst());
-					// delete old doctor clinic and save new clinic
-					if (!doctorClinics.isEmpty()) {
-                        doctorClinicRepository.deleteAll(doctorClinics);
-					}
-
-					// save clinic as new every time
-					List<DoctorClinic> dClinics;
-					dClinics = getDoctorClinics(doctors.getFirst(),doctorClinicRequest);
-                    doctorClinicRepository.saveAll(dClinics);
-
-					if (doctorClinics.isEmpty()) {
-						// save kyc status
-						kycStepService.addStep(userId,4L);
-					}
-			ApiResponse<List<ClinicDetailsDto>> apiResponse = clinicService.findClinicByDoctorId(userId);
-			return apiResponse.getData();
-		},ApiResponse::success);
-	}
-
-	private  List<DoctorClinic> getDoctorClinics(Doctor doctor,DoctorClinicRequest doctorClinicRequest) {
-		List<Long> clinicIds = doctorClinicRequest.getClinicIds();
-		List<DoctorClinic> doctorClinics = new ArrayList<>();
-		for (Long clinicId : clinicIds) {
-			DoctorClinic doctorClinic = new DoctorClinic();
-			ApiResponse<Clinic> apiResponse = clinicService.findById(clinicId);
-			Clinic clinic = apiResponse.getData();
-			doctorClinic.setClinic(clinic);
-			doctorClinic.setDoctor(doctor);
-			doctorClinics.add(doctorClinic);
-			doctorClinic.setCreatedAt(LocalDateTime.now());
-			doctorClinic.setCreatedBy(doctor.getUser().getId().toString());
-			doctorClinic.setUpdatedAt(LocalDateTime.now());
-			doctorClinic.setUpdatedBy(doctor.getUser().getId().toString());
-		}
-		return doctorClinics;
-	}
-
-	/**
-	 */
-	@Override
-	public ApiResponse<MessageResponse> deleteClinicById(Long userId, Long clinicId) {
-        return ApiExecutionUtils.ApiExecutor.processRequest(null,
-                req ->{},
-                ()->{
-            Optional<UserRegistration> optionalUserRegistration = userRegistrationRepository.findById(userId);
-            if (optionalUserRegistration.isPresent()) {
-                throw new RuntimeException("User not found with this userId :"+userId);
-            }
-            Optional<Clinic> optionalClinic = clinicRepository.findById(clinicId);
-            if (optionalClinic.isEmpty()) {
-                throw new RuntimeException("Clinic not found with this clinicId :"+clinicId);
-            }
-
-			ApiResponse<List<ClinicDetailsDto>> listApiResponse = clinicService.findClinicByDoctorId(clinicId);
-			if (listApiResponse.getData().isEmpty()) {
-				throw new RuntimeException("Doctor Clinic not found with this clinicId :"+clinicId);
-			}
-			List<ClinicDetailsDto> clinicDetailsDtos = listApiResponse.getData();
-			if (!(clinicDetailsDtos.size() > 1)) {
-				throw new RuntimeException("You cannot delete this clinic, at least 1 clinic is mandatory");
-			}
-
-            ApiResponse<MessageResponse> apiResponse = clinicService.deleteClinicById(clinicId);
-            return apiResponse.getData();
-                },ApiResponse::success);
-	}
-
-	/**
-	 */
-	@Override
-	public ApiResponse<List<ClinicDetailsDto>> findClinicByDoctorId(Long userId) {
-		return clinicService.findClinicByDoctorId(userId);
 	}
 
 }

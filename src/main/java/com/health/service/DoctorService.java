@@ -20,8 +20,5 @@ import com.health.dto.MessageResponse;
 public interface DoctorService {
 	// DoctorPersonalDetailsRequest
 	ResponseEntity<ApiResponse<MessageResponse>> personalDetails(Long userId,DoctorPersonalDetailsRequest doctorPersonalDetailsRequest);
-	ApiResponse<List<ClinicDetailsDto>> createClinic(Long userId , DoctorClinicRequest doctorClinicRequest);
-	ApiResponse<MessageResponse> deleteClinicById(Long userId , Long clinicId);
-	ApiResponse<List<ClinicDetailsDto>> findClinicByDoctorId(Long userId);
 
 }

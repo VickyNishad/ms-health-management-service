@@ -1,11 +1,16 @@
 package com.health.controller;
 
+import com.health.dto.MessageResponse;
 import com.health.dto.request.ClinicRequest;
+import com.health.dto.request.DoctorClinicRequest;
+import com.health.dto.response.ClinicDetailsDto;
 import com.health.entity.Clinic;
 import com.health.models.ApiResponse;
 import com.health.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/clinic")
@@ -14,13 +19,29 @@ public class ClinicController {
     @Autowired
     private ClinicService clinicService;
 
-    @PostMapping()
-    public ApiResponse<Clinic> clinics(@RequestBody ClinicRequest clinicRequest) {
-        return clinicService.createClinic(clinicRequest);
+    @PostMapping("/{userId}/add")
+    public ApiResponse<Clinic> clinics(@PathVariable Long userId, @RequestBody ClinicRequest clinicRequest) {
+        return clinicService.createClinic(userId,clinicRequest);
     }
 
     @PostMapping("/{clinicId}/update")
     public ApiResponse<Clinic> updateClinics(@PathVariable Long clinicId, @RequestBody ClinicRequest clinicRequest) {
         return clinicService.updateClinicById(clinicId,clinicRequest);
+    }
+
+    @GetMapping("/{userId}/{clinicId}/delete/clinic")
+    public ApiResponse<MessageResponse> deleteClinic(@PathVariable Long userId, @PathVariable Long clinicId){
+        return clinicService.deleteClinicById(userId,clinicId);
+    }
+
+    // clinic details
+    @PostMapping("/{userId}/clinics")
+    public ApiResponse<List<ClinicDetailsDto>> clinics(@PathVariable Long userId, @RequestBody DoctorClinicRequest doctorClinicRequest) {
+        return clinicService.createDoctorClinic(userId,doctorClinicRequest);
+    }
+
+    @GetMapping("/{userId}/clinics")
+    public ApiResponse<List<ClinicDetailsDto>> getClinics(@PathVariable Long userId){
+        return clinicService.findClinicByDoctorId(userId);
     }
 }

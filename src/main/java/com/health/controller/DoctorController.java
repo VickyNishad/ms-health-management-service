@@ -36,21 +36,9 @@ public class DoctorController {
 		return doctorService.personalDetails(userId,doctorPersonalDetailsRequest);
 	}
 
-	// clinic details
-	@PostMapping("/{userId}/clinics")
-	public ApiResponse<List<ClinicDetailsDto>> clinics(@PathVariable Long userId, @RequestBody DoctorClinicRequest doctorClinicRequest) {
-		return doctorService.createClinic(userId,doctorClinicRequest);
-	}
 
-	@GetMapping("/{userId}/clinics")
-	public ApiResponse<List<ClinicDetailsDto>> getClinics(@PathVariable Long userId){
-		return doctorService.findClinicByDoctorId(userId);
-	}
 
-	@GetMapping("/{userId}/{clinicId}/delete/clinic")
-	public ApiResponse<MessageResponse> deleteClinic(@PathVariable Long userId, @PathVariable Long clinicId){
-		return doctorService.deleteClinicById(userId,clinicId);
-	}
+
 
 	// document details
 

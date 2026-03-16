@@ -2,27 +2,37 @@ package com.health.service.impl;
 
 import com.health.dto.MessageResponse;
 import com.health.dto.request.ClinicRequest;
+import com.health.dto.request.DoctorClinicRequest;
 import com.health.dto.response.ClinicDetailsDto;
 import com.health.entity.Clinic;
 import com.health.entity.Doctor;
 import com.health.entity.DoctorClinic;
+import com.health.entity.UserRegistration;
 import com.health.models.ApiResponse;
 import com.health.repository.ClinicRepository;
 import com.health.repository.DoctorClinicRepository;
 import com.health.repository.DoctorRepository;
+import com.health.repository.UserRegistrationRepository;
 import com.health.service.ClinicService;
+import com.health.service.DoctorService;
+import com.health.service.KycStepService;
 import com.health.utility.ApiExecutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class ClinicServiceImpl implements ClinicService {
+
+    @Autowired
+    private UserRegistrationRepository userRegistrationRepository;
 
     @Autowired
     private DoctorRepository doctorRepository;
@@ -33,17 +43,69 @@ public class ClinicServiceImpl implements ClinicService {
     @Autowired
     private DoctorClinicRepository doctorClinicRepository;
 
+    @Autowired
+    @Lazy
+    private DoctorService doctorService;
+
+    @Autowired
+    private KycStepService kycStepService;
+
     /**
      */
     @Override
-    public ApiResponse<Clinic> createClinic(ClinicRequest clinic) {
+    public ApiResponse<Clinic> createClinic(Long userId,ClinicRequest clinic) {
 
         return ApiExecutionUtils.ApiExecutor.processRequest(null, req ->{},
                 () -> {
             Clinic c = getClinic(null, clinic);
             c = clinicRepository.save(c);
+            List<Long> clinicIds = new ArrayList<>();
+            clinicIds.add(c.getId());
+                    DoctorClinicRequest doctorClinicRequest = new DoctorClinicRequest();
+                    doctorClinicRequest.setClinicIds(clinicIds);
+                    ApiResponse<List<ClinicDetailsDto>> apiResponse = createDoctorClinic(userId,doctorClinicRequest);
+                    System.out.println(apiResponse.getMessage());
             return  c;
         },ApiResponse::success);
+    }
+
+    /**
+     */
+    @Override
+    public ApiResponse<List<ClinicDetailsDto>> createDoctorClinic(Long userId, DoctorClinicRequest doctorClinicRequest) {
+
+        return ApiExecutionUtils.ApiExecutor.processRequest(null,req ->{},
+                ()->{
+                    // validate user
+                    Optional<UserRegistration> optionalUserRegistration = userRegistrationRepository.findById(userId);
+                    if (optionalUserRegistration.isEmpty()) {
+                        throw new RuntimeException("User not found with this userId :"+userId);
+                    }
+
+                    // check doctor profile create or not
+                    List<Doctor> doctors = doctorRepository.findByUserId(userId);
+                    if (doctors.isEmpty()) {
+                        throw new RuntimeException("Doctor not found with this userId :"+userId);
+                    }
+                    // check doctor clinic present or not
+                    List<DoctorClinic> doctorClinics = doctorClinicRepository.findByDoctor(doctors.getFirst());
+                    // delete old doctor clinic and save new clinic
+//                    if (!doctorClinics.isEmpty()) {
+//                        doctorClinicRepository.deleteAll(doctorClinics);
+//                    }
+
+                    // save clinic as new every time
+//                    List<DoctorClinic> dClinics;
+//                    dClinics = getDoctorClinics(doctors.getFirst(),doctorClinicRequest);
+//                    doctorClinicRepository.saveAll(dClinics);
+
+                    if (doctorClinics.isEmpty()) {
+                        // save kyc status
+                        kycStepService.addStep(userId,4L);
+                    }
+                    ApiResponse<List<ClinicDetailsDto>> apiResponse = findClinicByDoctorId(userId);
+                    return apiResponse.getData();
+                },ApiResponse::success);
     }
 
     /**
@@ -97,6 +159,43 @@ public class ClinicServiceImpl implements ClinicService {
     /**
      */
     @Override
+    public ApiResponse<MessageResponse> deleteClinicById(Long userId, Long clinicId) {
+        return ApiExecutionUtils.ApiExecutor.processRequest(null,
+                req ->{},
+                ()->{
+                    Optional<UserRegistration> optionalUserRegistration = userRegistrationRepository.findById(userId);
+                    if (optionalUserRegistration.isEmpty()) {
+                        throw new RuntimeException("User not found with this userId :"+userId);
+                    }
+                    Optional<Clinic> optionalClinic = clinicRepository.findById(clinicId);
+                    if (optionalClinic.isEmpty()) {
+                        throw new RuntimeException("Clinic not found with this clinicId :"+clinicId);
+                    }
+
+                    ApiResponse<List<ClinicDetailsDto>> listApiResponse = findClinicByDoctorId(userId);
+                    if (listApiResponse.getData().isEmpty()) {
+                        throw new RuntimeException("Doctor Clinic not found with this clinicId :"+clinicId);
+                    }
+                    List<ClinicDetailsDto> clinicDetailsDtos = listApiResponse.getData();
+                    if (!(clinicDetailsDtos.size() > 1)) {
+                        throw new RuntimeException("You cannot delete this clinic, at least 1 clinic is mandatory");
+                    }
+
+                    // Delete Doctor Clinic by DoctorClinicId
+                    for (ClinicDetailsDto clinicDetailsDto : clinicDetailsDtos) {
+                        if (Objects.equals(clinicDetailsDto.getId(), clinicId)) {
+                            doctorClinicRepository.deleteById(clinicDetailsDto.getDoctorClinicId());
+                        }
+                    }
+
+                    ApiResponse<MessageResponse> apiResponse = deleteClinicById(clinicId);
+                    return apiResponse.getData();
+                },ApiResponse::success);
+    }
+
+    /**
+     */
+    @Override
     public ApiResponse<List<ClinicDetailsDto>> findClinicByDoctorId(Long userId) {
 
         return ApiExecutionUtils.ApiExecutor.processRequest(null,
@@ -131,6 +230,7 @@ public class ClinicServiceImpl implements ClinicService {
     private static ClinicDetailsDto getClinicDetailsDto(DoctorClinic dc) {
         Clinic c = dc.getClinic();
         ClinicDetailsDto clinicDetailsDto = new ClinicDetailsDto();
+        clinicDetailsDto.setDoctorClinicId(dc.getId());
         clinicDetailsDto.setId(dc.getClinic().getId());
         clinicDetailsDto.setClinicName(c.getClinicName());
         clinicDetailsDto.setAddress(c.getAddress());
@@ -143,5 +243,23 @@ public class ClinicServiceImpl implements ClinicService {
         clinicDetailsDto.setLocality(c.getLocality());
         clinicDetailsDto.setCountry(c.getCountry());
         return clinicDetailsDto;
+    }
+
+    private  List<DoctorClinic> getDoctorClinics(Doctor doctor,DoctorClinicRequest doctorClinicRequest) {
+        List<Long> clinicIds = doctorClinicRequest.getClinicIds();
+        List<DoctorClinic> doctorClinics = new ArrayList<>();
+        for (Long clinicId : clinicIds) {
+            DoctorClinic doctorClinic = new DoctorClinic();
+            ApiResponse<Clinic> apiResponse = findById(clinicId);
+            Clinic clinic = apiResponse.getData();
+            doctorClinic.setClinic(clinic);
+            doctorClinic.setDoctor(doctor);
+            doctorClinics.add(doctorClinic);
+            doctorClinic.setCreatedAt(LocalDateTime.now());
+            doctorClinic.setCreatedBy(doctor.getUser().getId().toString());
+            doctorClinic.setUpdatedAt(LocalDateTime.now());
+            doctorClinic.setUpdatedBy(doctor.getUser().getId().toString());
+        }
+        return doctorClinics;
     }
 }

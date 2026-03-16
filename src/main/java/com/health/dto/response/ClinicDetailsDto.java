@@ -3,7 +3,7 @@ package com.health.dto.response;
 public class ClinicDetailsDto {
 
     private Long id;
-
+    private Long doctorClinicId;
     private String clinicName;
 
     private String address;
@@ -21,6 +21,14 @@ public class ClinicDetailsDto {
     private String state;
 
     private String country;
+
+    public void setDoctorClinicId(Long doctorClinicId) {
+        this.doctorClinicId = doctorClinicId;
+    }
+
+    public Long getDoctorClinicId() {
+        return doctorClinicId;
+    }
 
     public String getContactNumber() {
         return contactNumber;

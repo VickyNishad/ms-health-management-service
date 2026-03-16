@@ -29,11 +29,6 @@ public class MasterController {
 	
 	@Autowired
 	private RoleMasterRepository roleMasterRepository;
-	
-//	@GetMapping("/role")
-//	public List<RoleMaster> roles(){
-//		return roleMasterRepository.findAll();
-//	}
 
 	@GetMapping("/role")
 	public ResponseEntity<ApiResponse<List<RoleMaster>>> roles(){
