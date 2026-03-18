@@ -3,12 +3,13 @@
  */
 package com.health.controller;
 
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.health.dto.MessageResponse;
+import com.health.dto.request.ProfileDetailsRequest;
+import com.health.entity.UserProfileDetails;
+import com.health.models.ApiResponse;
+import com.health.service.UserProfileService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 
@@ -17,24 +18,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/user")
 public class UserProfileController {
+
+	@Autowired
+	private UserProfileService userProfileService;
 	
-	@GetMapping
-	public void user() {
-		
+	@GetMapping("/{userId}/profile")
+	public ApiResponse<UserProfileDetails> user(@PathVariable Long userId) {
+		return userProfileService.getUserProfileDetails(userId);
 	}
-	
-	@PostMapping
-	public void users() {
-		
+
+	@PostMapping("/update/{userId}/profile")
+	public ApiResponse<MessageResponse> userUpdate(@PathVariable Long userId, @RequestBody ProfileDetailsRequest profileDetailsRequest) {
+		return userProfileService.updateProfile(userId,profileDetailsRequest);
 	}
-	
-	@PostMapping("/update")
-	public void userUpdate() {
-		
-	}
-	
-	@DeleteMapping
-	public void delete() {
-		
-	}
+
 }

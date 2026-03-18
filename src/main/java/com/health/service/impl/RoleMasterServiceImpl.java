@@ -35,11 +35,10 @@ public class RoleMasterServiceImpl implements RoleMasterService {
 	public ResponseEntity<ApiResponse<List<RoleMaster>>> findAll() {
 		// TODO Auto-generated method stub
 		ApiResponse<List<RoleMaster>> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
-		}, () -> {		
-			List<RoleMaster> roleMaster = roleMasterRepository.findAll();
-			return roleMaster;
+		}, () -> {
+            return roleMasterRepository.findAll();
 		}, ApiResponse::success);
-		return new ResponseEntity<ApiResponse<List<RoleMaster>>>(success, HttpStatus.OK);
+		return new ResponseEntity<>(success, HttpStatus.OK);
 	}
 
 	@Override
@@ -52,10 +51,9 @@ public class RoleMasterServiceImpl implements RoleMasterService {
 			if(user.isPresent()) {
 				throw new RuntimeException("User not found. Please create an account to proceed.");
 			}
-			List<RoleMaster> roleMaster = roleMasterRepository.findAll();
-			return roleMaster;
+            return roleMasterRepository.findAll();
 		}, ApiResponse::success);
-		return new ResponseEntity<ApiResponse<List<RoleMaster>>>(success, HttpStatus.OK);
+		return new ResponseEntity<>(success, HttpStatus.OK);
 	}
 
 }
