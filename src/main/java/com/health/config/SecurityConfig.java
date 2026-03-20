@@ -23,7 +23,8 @@ public class SecurityConfig {
         "/webjars/**",
         "/api-docs/**",
             "/api/v1/doctor/**",
-            "/api/v1/clinic/**"
+            "/api/v1/clinic/**",
+            "/api/v1/search/**"
         
     };
 
