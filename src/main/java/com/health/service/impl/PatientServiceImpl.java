@@ -3,16 +3,20 @@
  */
 package com.health.service.impl;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import com.health.dto.request.PatientRequest;
+import com.health.dto.response.PatientDto;
+import com.health.repository.PatientRepository;
+import com.health.repository.UserRegistrationRepository;
+import com.health.utility.ApiExecutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
-import com.health.domain.model.PatientModel;
-import com.health.dto.AddPatientRequest;
 import com.health.dto.MessageResponse;
 import com.health.entity.Patient;
 import com.health.entity.UserRegistration;
@@ -24,122 +28,173 @@ import com.health.service.PatientService;
  */
 @Service
 public class PatientServiceImpl implements PatientService {
-//	
-//	@Autowired
-//	private PatientRepository patientRepository;
-//	
-//	@Autowired
-//	private UserRegistrationRepository useRepositoryPort;
+
+	@Autowired
+	private UserRegistrationRepository userRegistrationRepository;
+
+	@Autowired
+	private PatientRepository  patientRepository;
 
 	@Override
-	public ResponseEntity<ApiResponse<Patient>> addPatient(Long userId, AddPatientRequest addPatientRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	public ApiResponse<PatientDto> createNewPatient(Long userId, PatientRequest patientRequest) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					if(userRegistration.isEmpty()) {
+						throw new RuntimeException("User not found");
+					}
+					UserRegistration user = userRegistration.get();
+					Patient patient = new Patient();
+
+					patient.setName(patientRequest.getName());
+					patient.setGender(patientRequest.getGender());
+					patient.setAge(patientRequest.getAge());
+ 					patient.setDescription(patientRequest.getDescription());
+					patient.setEmailId(patientRequest.getEmailId());
+					patient.setMobileNumber(patientRequest.getMobileNumber());
+					patient.setRelation(patientRequest.getRelation());
+					patient.setCreatedAt(LocalDateTime.now());
+					patient.setCreatedBy(userId.toString());
+					patient.setIsActive(true);
+					patient.setUser(user);
+
+					patient = patientRepository.save(patient);
+			return new PatientDto(
+					patient.getId(),
+					patient.getUser().getId(),
+					patient.getName(),
+					patient.getGender(),
+					patient.getAge(),
+					patient.getRelation(),
+					patient.getMobileNumber(),
+					patient.getEmailId(),
+					patient.getDescription()
+			);
+				},
+				ApiResponse::success);
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<List<Patient>>> getPatient(Long userId) {
-		// TODO Auto-generated method stub
-		return null;
+	public ApiResponse<List<PatientDto>> getPatients(Long userId) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+
+					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					if(userRegistration.isEmpty()) {
+						throw new RuntimeException("User not found");
+					}
+
+				List<Patient> patients = patientRepository.findAllByUserIdAndIsActiveTrue(userId);
+					return patients.stream().map(p -> new PatientDto(
+							p.getId(),
+							p.getUser().getId(),
+							p.getName(),
+							p.getGender(),
+							p.getAge(),
+							p.getRelation(),
+							p.getMobileNumber(),
+							p.getEmailId(),
+							p.getDescription()
+					)).collect(Collectors.toList());
+				},
+				ApiResponse::success);
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<Patient>> modifyPatient(Long userId, Long patientId,
-			AddPatientRequest addPatientRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	public ApiResponse<PatientDto> getPatient(Long patientId) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+
+					Optional<Patient> optionalPatient = patientRepository.findById(patientId);
+					if(optionalPatient.isEmpty()) {
+						throw new RuntimeException("Patient not found");
+					}
+					Patient patient = optionalPatient.get();
+					patient = patientRepository.save(patient);
+					return new PatientDto(
+							patient.getId(),
+							patient.getUser().getId(),
+							patient.getName(),
+							patient.getGender(),
+							patient.getAge(),
+							patient.getRelation(),
+							patient.getMobileNumber(),
+							patient.getEmailId(),
+							patient.getDescription()
+					);
+				},
+				ApiResponse::success);
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> removePatient(Long userId, Long patientId) {
-		// TODO Auto-generated method stub
-		return null;
+	public ApiResponse<PatientDto> updatePatient(Long userId, Long patientId, PatientRequest patientRequest) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					if(userRegistration.isEmpty()) {
+						throw new RuntimeException("User not found");
+					}
+					UserRegistration user = userRegistration.get();
+
+					Optional<Patient> optionalPatient = patientRepository.findById(patientId);
+					if(optionalPatient.isEmpty()) {
+						throw new RuntimeException("Patient not found");
+					}
+					Patient patient = optionalPatient.get();
+					patient.setName(patientRequest.getName());
+					patient.setGender(patientRequest.getGender());
+					patient.setAge(patientRequest.getAge());
+					patient.setDescription(patientRequest.getDescription());
+					patient.setEmailId(patientRequest.getEmailId());
+					patient.setMobileNumber(patientRequest.getMobileNumber());
+					patient.setRelation(patientRequest.getRelation());
+					patient.setUpdatedBy(userId.toString());
+					patient.setUpdatedAt(LocalDateTime.now());
+					patient.setIsActive(true);
+					patient.setUser(user);
+
+					patient = patientRepository.save(patient);
+					return new PatientDto(
+							patient.getId(),
+							patient.getUser().getId(),
+							patient.getName(),
+							patient.getGender(),
+							patient.getAge(),
+							patient.getRelation(),
+							patient.getMobileNumber(),
+							patient.getEmailId(),
+							patient.getDescription()
+					);
+				},
+				ApiResponse::success);
 	}
 
-//	@Override
-//	public ResponseEntity<ApiResponse<Patient>> addPatient(Long userId, AddPatientRequest addPatientRequest) {
-//		// TODO Auto-generated method stub
-//		ApiResponse<Patient> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
-//		}, () -> {
-//
-//			// 2. Validate Patient
-//			UserRegistration user = useRepositoryPort.findById(userId)
-//					.orElseThrow(() -> new RuntimeException("User not found"));
-//			
-//			PatientModel patientModel = new PatientModel();
-//			patientModel.setAge(addPatientRequest.getAge());
-//			patientModel.setContactNumber(addPatientRequest.getContactNumber());
-//			patientModel.setGender(addPatientRequest.getGender());
-//			patientModel.setPatientName(addPatientRequest.getPatientName());
-//			patientModel.setRelationship(addPatientRequest.getRelationship());
-//			patientModel.setCreatedBy(user.getUserId().toString());
-//			
-//			patientModel.setPatientId(null);
-//			patientModel.setUser(user);
-//
-//			Patient patient = patientRepository.save(patientModel);
-//			return patient;
-//		}, ApiResponse::success);
-//		
-//		return new ResponseEntity<ApiResponse<Patient>>(success, HttpStatus.OK);
-//	}
-//
-//	@Override
-//	public ResponseEntity<ApiResponse<List<Patient>>> getPatient(Long userId) {
-//		// TODO Auto-generated method stub
-//		ApiResponse<List<Patient>> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
-//		}, () -> {
-//			List<Patient> patients = patientRepository.findByUser_UserIdAndIsActive(userId, true);
-//			return patients;
-//		}, ApiResponse::success);
-//		return new ResponseEntity<ApiResponse<List<Patient>>>(success, HttpStatus.OK);
-//	}
-//
-//	@Override
-//	public ResponseEntity<ApiResponse<Patient>> modifyPatient(Long userId, Long patientId,
-//			AddPatientRequest addPatientRequest) {
-//		// TODO Auto-generated method stub
-//		ApiResponse<Patient> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
-//		}, () -> {
-//
-//			// 2. Validate Patient
-//			UserRegistration user = useRepositoryPort.findById(userId)
-//					.orElseThrow(() -> new RuntimeException("User not found"));
-//			
-//			@SuppressWarnings("unused")
-//			Patient existPatient = patientRepository.findById(patientId)
-//					.orElseThrow(() -> new RuntimeException("Patient not found"));
-//			
-//			PatientModel patientModel = new PatientModel();
-//			patientModel.setAge(addPatientRequest.getAge());
-//			patientModel.setContactNumber(addPatientRequest.getContactNumber());
-//			patientModel.setGender(addPatientRequest.getGender());
-//			patientModel.setPatientName(addPatientRequest.getPatientName());
-//			patientModel.setRelationship(addPatientRequest.getRelationship());
-//			patientModel.setUpdatedBy(user.getUserId().toString());
-//			patientModel.setPatientId(patientId);
-//			patientModel.setUser(user);
-//
-//			Patient patient = patientRepository.save(patientModel);
-//			return patient;
-//		}, ApiResponse::success);
-//		
-//		return new ResponseEntity<ApiResponse<Patient>>(success, HttpStatus.OK);
-//	}
-//
-//	@Override
-//	public ResponseEntity<ApiResponse<MessageResponse>> removePatient(Long userId, Long patientId) {
-//		// TODO Auto-generated method stub
-//		ApiResponse<MessageResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req->{}, ()->{
-//			@SuppressWarnings("unused")
-//			UserRegistration user = useRepositoryPort.findById(userId)
-//					.orElseThrow(() -> new RuntimeException("User not found"));
-//			
-//			patientRepository.deleteById(patientId);
-//			return new MessageResponse("Patient removed successfuly.");
-//		}, ApiResponse::success);
-//		
-//		return new ResponseEntity<ApiResponse<MessageResponse>>(success, HttpStatus.OK);
-//	}
+	@Override
+	public ApiResponse<MessageResponse> removePatient(Long userId, Long patientId) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
 
+					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					if(userRegistration.isEmpty()) {
+						throw new RuntimeException("User not found");
+					}
+
+					Optional<Patient> optionalPatient = patientRepository.findById(patientId);
+					if(optionalPatient.isEmpty()) {
+						throw new RuntimeException("Patient not found");
+					}
+					Patient patient = optionalPatient.get();
+					patient.setIsActive(false);
+					patient.setUpdatedBy(userId.toString());
+					patient.setUpdatedAt(LocalDateTime.now());
+					patientRepository.save(patient);
+			return new MessageResponse("Patient has been removed");
+				},
+				ApiResponse::success);
+	}
 }

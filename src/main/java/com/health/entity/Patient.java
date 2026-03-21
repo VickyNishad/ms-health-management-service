@@ -24,7 +24,7 @@ public class Patient extends BaseEntity {
 	@Column(name = "age", nullable = true)
 	private Integer age;
 
-	@Column(nullable = false)
+	@Column(nullable = true)
 	private String relation;
 
 	@Column(name = "mobile_number", nullable = true)

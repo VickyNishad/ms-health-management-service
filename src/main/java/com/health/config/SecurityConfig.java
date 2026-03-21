@@ -33,7 +33,8 @@ public class SecurityConfig {
     	"/api/v1/master/**",
     	"/medicque/menu/**",
     	"/api/v1/otp/**",
-            "/api/v1/kyc/**"
+            "/api/v1/kyc/**",
+            "/api/v1/patient/**"
 
     };
 
