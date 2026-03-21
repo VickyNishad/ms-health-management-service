@@ -250,6 +250,8 @@ public class DoctorServiceImpl implements DoctorService {
 					List<DoctorClinicAvailability> availabilities = doctorClinicAvailabilityRepository.findByDoctorClinicId(doctorClinicId);
 					return availabilities.stream().map(a -> new DoctorClinicAvailabilityDto(
 							a.getId(),
+							a.getDoctorClinic().getClinic().getId(),
+							a.getDoctorClinic().getDoctor().getId(),
 							a.getDayOfWeek(),
 							a.getStartTime(),
 							a.getEndTime()
@@ -288,6 +290,8 @@ public class DoctorServiceImpl implements DoctorService {
 						List<DoctorClinicAvailabilityDto> dtoList = availabilities.stream()
 								.map(a -> new DoctorClinicAvailabilityDto(
 										a.getId(),
+										a.getDoctorClinic().getClinic().getId(),
+										a.getDoctorClinic().getDoctor().getId(),
 										a.getDayOfWeek(),
 										a.getStartTime(),
 										a.getEndTime()

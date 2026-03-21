@@ -8,12 +8,16 @@ import java.time.LocalTime;
 
 public class DoctorClinicAvailabilityDto {
     private Long id;
+    private Long clinicId;
+    private Long doctorId;
     private DayOfWeek dayOfWeek;
     private LocalTime startTime;
     private LocalTime endTime;
 
-    public DoctorClinicAvailabilityDto(Long id, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
+    public DoctorClinicAvailabilityDto(Long id, Long clinicId, Long doctorId, DayOfWeek dayOfWeek, LocalTime startTime, LocalTime endTime) {
         this.id = id;
+        this.clinicId = clinicId;
+        this.doctorId = doctorId;
         this.dayOfWeek = dayOfWeek;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -26,6 +30,22 @@ public class DoctorClinicAvailabilityDto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getClinicId() {
+        return clinicId;
+    }
+
+    public void setClinicId(Long clinicId) {
+        this.clinicId = clinicId;
+    }
+
+    public Long getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(Long doctorId) {
+        this.doctorId = doctorId;
     }
 
     public DayOfWeek getDayOfWeek() {

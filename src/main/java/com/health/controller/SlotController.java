@@ -3,6 +3,7 @@
  */
 package com.health.controller;
 
+import com.health.dto.response.SlotSummary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,7 +29,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/medicque/slot")
+@RequestMapping("/api/v1/slot")
 public class SlotController {
 
 	@Autowired
@@ -41,11 +42,9 @@ public class SlotController {
 	 * ResponseEntity<ApiResponse<MessageResponse>> generateNext7DaysSlots(Long
 	 * doctorId, Long clinicId);
 	 */
-	@PostMapping("/generate/{doctorId}/{clinicId}")
-	public ResponseEntity<ApiResponse<MessageResponse>> generateNext7DaysSlots(@PathVariable Long doctorId,
-			@PathVariable Long clinicId) {
-		ResponseEntity<ApiResponse<MessageResponse>> response = slotService.generateNext7DaysSlots(doctorId, clinicId);
-		return response;
+	@PostMapping("/generate/{userId}/{doctorId}")
+	public ApiResponse<MessageResponse> generateNext7DaysSlots(@PathVariable Long userId,@PathVariable Long doctorId) {
+		return slotService.generateNext7DaysSlots(userId,doctorId);
 	}
 
 	// 2. GET: Get Slots (Note: This method's return type is void in the request,
@@ -57,12 +56,12 @@ public class SlotController {
 	 * for public use, its return type should be changed to ResponseEntity. Maps to:
 	 * public void getSlots(Long doctorId, Long clinicId, LocalDate date);
 	 */
-//	@GetMapping("/trigger/{doctorId}/{clinicId}/{date}")
-//	public void getSlots(@PathVariable Long doctorId, @PathVariable Long clinicId,@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-//		// This method is called, but returns no HTTP response body (200 OK with no body)
-//		// If an exception occurs in the service, Spring will handle the error response.
-//		slotService.getSlots(doctorId, clinicId, date);
-//	}
+	@GetMapping("/{doctorId}/{clinicId}/{date}")
+	public ApiResponse<List<SlotSummary>> getSlots(@PathVariable Long doctorId, @PathVariable Long clinicId, @PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+		// This method is called, but returns no HTTP response body (200 OK with no body)
+		// If an exception occurs in the service, Spring will handle the error response.
+		return slotService.getSlots(doctorId, clinicId, date);
+	}
 
 	// 3. GET: Get Slot Summary
 	/**
@@ -71,27 +70,27 @@ public class SlotController {
 	 * getSlotSummary(Long doctorId, Long clinicId);
 	 */
 	@GetMapping("/summary/{doctorId}/{clinicId}")
-	public ResponseEntity<ApiResponse<List<SlotSummaryDTO>>> getSlotSummary(@PathVariable Long doctorId,
+	public ApiResponse<List<SlotSummary>> getSlotSummary(@PathVariable Long doctorId,
 			@PathVariable Long clinicId) {
-		ResponseEntity<ApiResponse<List<SlotSummaryDTO>>> response = slotService.getSlotSummary(doctorId, clinicId);
-		return response;
+		return slotService.getSlotSummary(doctorId, clinicId);
+
 	}
 
-	// 4. GET: Get Slots by Doctor, Clinic, and Date
-	/**
-	 * Retrieves detailed list of time slots for a specific date. Maps to: public
-	 * ResponseEntity<ApiResponse<List<SlotDTO>>> getSlotsByDoctorClinicAndDate(Long
-	 * doctorId, Long clinicId, LocalDate date);
-	 */
-	@GetMapping("/{doctorId}/{clinicId}/{date}")
-	public ResponseEntity<ApiResponse<List<SlotDTO>>> getSlotsByDoctorClinicAndDate(
-			@Parameter(description = "Unique ID of the doctor", example = "101", required = true) @PathVariable Long doctorId,
-
-			@Parameter(description = "Unique ID of the clinic", example = "501", required = true) @PathVariable Long clinicId,
-			@Parameter(description = "Appointment date in ISO format (yyyy-MM-dd)", example = "2025-01-15", required = true, schema = @Schema(type = "string", format = "date")) 
-			@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-		ResponseEntity<ApiResponse<List<SlotDTO>>> response = slotService.getSlotsByDoctorClinicAndDate(doctorId,
-				clinicId, date);
-		return response;
-	}
+//	// 4. GET: Get Slots by Doctor, Clinic, and Date
+//	/**
+//	 * Retrieves detailed list of time slots for a specific date. Maps to: public
+//	 * ResponseEntity<ApiResponse<List<SlotDTO>>> getSlotsByDoctorClinicAndDate(Long
+//	 * doctorId, Long clinicId, LocalDate date);
+//	 */
+//	@GetMapping("/{doctorId}/{clinicId}/{date}")
+//	public ResponseEntity<ApiResponse<List<SlotDTO>>> getSlotsByDoctorClinicAndDate(
+//			@Parameter(description = "Unique ID of the doctor", example = "101", required = true) @PathVariable Long doctorId,
+//
+//			@Parameter(description = "Unique ID of the clinic", example = "501", required = true) @PathVariable Long clinicId,
+//			@Parameter(description = "Appointment date in ISO format (yyyy-MM-dd)", example = "2025-01-15", required = true, schema = @Schema(type = "string", format = "date"))
+//			@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+//		ResponseEntity<ApiResponse<List<SlotDTO>>> response = slotService.getSlotsByDoctorClinicAndDate(doctorId,
+//				clinicId, date);
+//		return response;
+//	}
 }

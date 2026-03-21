@@ -3,30 +3,31 @@
  */
 package com.health.service.impl;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.health.dto.response.DoctorClinicAvailabilityDto;
+import com.health.dto.response.SlotSummary;
+import com.health.entity.Doctor;
+import com.health.entity.DoctorSlot;
+import com.health.entity.UserRegistration;
+import com.health.repository.DoctorRepository;
+import com.health.repository.DoctorSlotRepository;
+import com.health.repository.UserRegistrationRepository;
+import com.health.service.DoctorService;
+import com.health.utility.ApiExecutionUtils;
+import com.health.utility.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
 import com.health.dto.MessageResponse;
-import com.health.dto.SlotDTO;
-import com.health.dto.SlotSummaryDTO;
-import com.health.entity.DoctorAvailability;
-import com.health.entity.DoctorLeave;
-import com.health.entity.DoctorSlot;
 import com.health.models.ApiResponse;
-import com.health.repository.JPADoctorSlotRepository;
 import com.health.service.SlotService;
 
 import jakarta.transaction.Transactional;
@@ -38,38 +39,143 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class SlotServiceImpl implements SlotService {
 
-//	@Autowired
-//	private DoctorLeaveRepository doctorLeaveRepository;
-//
-//	@Autowired
-//	public DoctorAvailabilityRepository doctorAvailabilityRepository;
+	@Autowired
+	private UserRegistrationRepository userRegistrationRepository;
 
-//	@Autowired
-//	public JPADoctorSlotRepository japDoctorSlotRepository;
+	@Autowired
+	private DoctorRepository doctorRepository;
+
+	@Autowired
+	private DoctorSlotRepository doctorSlotRepository;
+
+	@Autowired
+	private DoctorService doctorService;
 
 	@Override
-	public ResponseEntity<ApiResponse<MessageResponse>> generateNext7DaysSlots(Long doctorId, Long clinicId) {
+	public ApiResponse<MessageResponse> generateNext7DaysSlots(Long userId,Long doctorId) {
 		// TODO Auto-generated method stub
-		return null;
+
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+			       // check user active or register
+					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					if(userRegistration.isEmpty()) {
+						throw new RuntimeException("User not found");
+					}
+
+					// check doctor active or created
+					Optional<Doctor> doctor = doctorRepository.findById(doctorId);
+					if(doctor.isEmpty()) {
+						throw new RuntimeException("Doctor not found");
+					}
+
+					// check doctor available or not
+					Long doctor_user_id = doctor.get().getId();
+					ApiResponse<List<DoctorClinicAvailabilityDto>> apiResponse = doctorService.getAvailability(doctor_user_id);
+					if (!apiResponse.isSuccess()) {
+						throw new RuntimeException(apiResponse.getMessage());
+					}
+					// get doctor clinic availability
+					List<DoctorClinicAvailabilityDto> doctorClinicAvailabilityDtos = apiResponse.getData();
+					for (DoctorClinicAvailabilityDto dto : doctorClinicAvailabilityDtos) {
+
+						// first check slot available for same date and time
+						// if return false then generate slot
+						LocalDate date = DateUtils.getNextOrSame(dto.getDayOfWeek());
+						System.out.println("date: " + date);
+						DayOfWeek dayOfWeek = dto.getDayOfWeek();
+						LocalTime startTime = dto.getStartTime();
+						LocalTime endTime = dto.getEndTime();
+						Long clinic_id = dto.getClinicId();
+
+						boolean existSlot = doctorSlotRepository.existsByDoctorIdAndClinicIdAndSlotDateAndSlotStartTimeAndSlotEndTime(doctorId, clinic_id, date, startTime, endTime);
+						if(!existSlot) {
+
+							// generate slot
+							DoctorSlot doctorSlot = new DoctorSlot();
+							doctorSlot.setDoctorId(doctorId);
+							doctorSlot.setClinicId(clinic_id);
+							doctorSlot.setSlotDate(date);
+							doctorSlot.setSlotStartTime(startTime);
+							doctorSlot.setSlotEndTime(endTime);
+							doctorSlot.setCreatedAt(LocalDateTime.now());
+							doctorSlot.setCreatedBy(userId.toString());
+							doctorSlotRepository.save(doctorSlot);
+						} else {
+							System.out.println("------------------------");
+							System.out.println("existSlot: " + existSlot);
+							System.out.println("date: " + date);
+						}
+
+					}
+
+					return new MessageResponse("Slot generated successfully");
+				},
+				ApiResponse::success);
 	}
 
 	@Override
-	public void getSlots(Long doctorId, Long clinicId, LocalDate date) {
+	public ApiResponse<List<SlotSummary>> getSlots(Long doctorId, Long clinicId, LocalDate date) {
 		// TODO Auto-generated method stub
-		
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+					// check doctor active or created
+					Optional<Doctor> doctor = doctorRepository.findById(doctorId);
+					if(doctor.isEmpty()) {
+						throw new RuntimeException("Doctor not found");
+					}
+					System.out.println("date : "+date);
+					List<DoctorSlot> doctorSlots = doctorSlotRepository.findByDoctorIdAndClinicIdAndSlotDate(doctorId, clinicId, date);
+					return doctorSlots.stream().map(s -> new SlotSummary(
+							s.getId(),
+							s.getSlotDate(),
+							s.getSlotStartTime(),
+							s.getSlotEndTime(),
+							s.getStatus()
+					)).collect(Collectors.toList());
+				},
+				ApiResponse::success);
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<List<SlotSummaryDTO>>> getSlotSummary(Long doctorId, Long clinicId) {
+	public ApiResponse<List<SlotSummary>> getSlotSummary(Long doctorId, Long clinicId) {
 		// TODO Auto-generated method stub
-		return null;
+		return getListApiResponse(doctorId, clinicId);
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<List<SlotDTO>>> getSlotsByDoctorClinicAndDate(Long doctorId, Long clinicId,
+	public ApiResponse<List<SlotSummary>> getSlotsByDoctorClinicAndDate(Long doctorId, Long clinicId,
 			LocalDate date) {
 		// TODO Auto-generated method stub
-		return null;
+		return getListApiResponse(doctorId, clinicId);
+	}
+
+	private ApiResponse<List<SlotSummary>> getListApiResponse(Long doctorId, Long clinicId) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+
+					// check doctor active or created
+					Optional<Doctor> doctor = doctorRepository.findById(doctorId);
+					if(doctor.isEmpty()) {
+						throw new RuntimeException("Doctor not found");
+					}
+					LocalDate today = LocalDate.now();
+					System.out.println("date : "+today);
+					List<DoctorSlot> slots = doctorSlotRepository
+							.findByDoctorIdAndClinicIdAndSlotDateGreaterThanEqualAndIsBookedFalse(
+									doctorId, clinicId, today);
+					return slots.stream().map(s -> new SlotSummary(
+							s.getId(),
+							s.getSlotDate(),
+							s.getSlotStartTime(),
+							s.getSlotEndTime(),
+							s.getStatus()
+					)).collect(Collectors.toList());
+				},
+				ApiResponse::success);
 	}
 
 //	@Override

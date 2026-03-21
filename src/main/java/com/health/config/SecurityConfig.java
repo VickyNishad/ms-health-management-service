@@ -34,7 +34,8 @@ public class SecurityConfig {
     	"/medicque/menu/**",
     	"/api/v1/otp/**",
             "/api/v1/kyc/**",
-            "/api/v1/patient/**"
+            "/api/v1/patient/**",
+            "/api/v1/slot/**"
 
     };
 
