@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Convertors {
 
-    private static ObjectMapper objectMapper = new ObjectMapper(); // Use static objectMapper for performance reasons
+    private static final ObjectMapper objectMapper = new ObjectMapper(); // Use static objectMapper for performance reasons
 
     /**
      * Converts an object to a Map.
@@ -55,7 +55,7 @@ public class Convertors {
     
     public static int getIntValue(Object value) {
         if (value == null) {
-            return 0; 
+            return 0;
         }
 
         try {
@@ -64,13 +64,13 @@ public class Convertors {
             } else if (value instanceof String) {
                 return Integer.parseInt((String) value);
             } else if (value instanceof Number) {
-                return ((Number) value).intValue(); 
+                return ((Number) value).intValue();
             } else {
                 return Integer.parseInt(value.toString());
             }
         } catch (NumberFormatException e) {
             System.err.println("Unable to convert to int: " + value);
-            return 0; 
+            return 0;
         }
     }
     

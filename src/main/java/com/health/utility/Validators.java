@@ -41,12 +41,12 @@ public class Validators {
         if (value instanceof Map) {
             return ((Map<?, ?>) value).isEmpty();
         }
-        
+
         // Check for Optional
         if (value instanceof Optional) {
-            return !((Optional<?>) value).isPresent();
+            return ((Optional<?>) value).isEmpty();
         }
-        
+
         // Check for Array (Handles both primitive and object arrays)
         if (value.getClass().isArray()) {
             return java.lang.reflect.Array.getLength(value) == 0;
@@ -312,7 +312,4 @@ public class Validators {
             max, 
             false);
     }
-    
-    
-
 }
