@@ -3,6 +3,7 @@
  */
 package com.health.service.impl;
 
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -10,10 +11,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.health.dto.request.ClinicRequest;
-import com.health.dto.request.DoctorClinicRequest;
+import com.health.dto.request.AvailabilityRequest;
 import com.health.dto.request.DoctorPersonalDetailsRequest;
-import com.health.dto.response.ClinicDetailsDto;
+import com.health.dto.response.DoctorClinicAvailabilityDto;
 import com.health.dto.response.DoctorPersonalDetailsDto;
 import com.health.dto.response.MasterSummary;
 import com.health.entity.*;
@@ -25,21 +25,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 
-
-import com.health.domain.model.DoctorAvailabilityModel;
-import com.health.domain.model.DoctorLeaveModel;
-import com.health.domain.model.DoctorModel;
-import com.health.dto.AvailabilityResponse;
-import com.health.dto.DoctorAvailabilityRequest;
-import com.health.dto.DoctorAvailabilityUpdateRequest;
-import com.health.dto.DoctorLeaveRequest;
-import com.health.dto.DoctorLeaveResponse;
-import com.health.dto.DoctorProfileRequest;
-import com.health.dto.DoctorProfileResponse;
-import com.health.dto.DoctorProfileResponse.ClinicResponse;
 import com.health.models.ApiResponse;
 import com.health.dto.MessageResponse;
 
@@ -59,6 +46,12 @@ public class DoctorServiceImpl implements DoctorService {
 	private DoctorRepository doctorRepository;
 
 	@Autowired
+	private DoctorClinicRepository doctorClinicRepository;
+
+	@Autowired
+	private KycStepService kycStepService;
+
+	@Autowired
 	private QualificationMasterRepository qualificationMasterRepository;
 
 	@Autowired
@@ -69,6 +62,9 @@ public class DoctorServiceImpl implements DoctorService {
 
 	@Autowired
 	private DoctorSpecializationRepository doctorSpecializationRepository;
+
+	@Autowired
+	private DoctorClinicAvailabilityRepository doctorClinicAvailabilityRepository;
 
 
 	/**
@@ -183,6 +179,145 @@ public class DoctorServiceImpl implements DoctorService {
                     return getDoctorPersonalDetailsDto(doctors, userProfileDetails);
 				},
 				ApiResponse::success);
+	}
+
+	@Override
+	public ApiResponse<MessageResponse> createAvailability(Long userId,Long clinicId,AvailabilityRequest request) {
+	return ApiExecutionUtils.ApiExecutor.processRequest(null,
+			req ->{},
+			()->{
+				List<Doctor> doctors = doctorRepository.findByUserId(userId);
+				if (doctors.isEmpty()) {
+					throw new RuntimeException("Doctor not found. Please create an account to proceed.");
+				}
+
+				Doctor doctor = doctors.getFirst();
+				List<DoctorClinic> doctorClinics = doctorClinicRepository.findByDoctor(doctor);
+				if (doctorClinics.isEmpty()) {
+					throw new RuntimeException("Doctor Clinics not found. Please create an account to proceed.");
+				}
+				Long doctorClinicId = 0L;
+				for (DoctorClinic clinic : doctorClinics) {
+					if(clinic.getClinic().getId().equals(clinicId)) {
+						doctorClinicId = clinic.getId();
+					}
+				}
+				validateAvailability(doctorClinicId,request.getDayOfWeek(),request.getStartTime(),request.getEndTime());
+				List<DoctorClinicAvailability> availabilities =
+						doctorClinicAvailabilityRepository.findByDoctorClinicId(doctorClinicId);
+
+				for (DoctorClinic doctorClinic : doctorClinics) {
+					if (doctorClinic.getClinic().getId().equals(clinicId)) {
+						DoctorClinicAvailability availability = new DoctorClinicAvailability();
+						availability.setDoctorClinic(doctorClinic);
+						availability.setDayOfWeek(request.getDayOfWeek());
+						availability.setStartTime(request.getStartTime());
+						availability.setEndTime(request.getEndTime());
+						availability.setIsActive(true);
+						doctorClinicAvailabilityRepository.save(availability);
+					}
+				}
+				if (availabilities.isEmpty()){
+					kycStepService.addStep(userId,5L);
+				}
+				return new MessageResponse("Clinic Availability Created Successfully");
+			},
+			ApiResponse::success);
+	}
+
+	@Override
+	public ApiResponse<List<DoctorClinicAvailabilityDto>> getAvailabilityClinicId(Long userId, Long clinicId) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+					List<Doctor> doctors = doctorRepository.findByUserId(userId);
+					if (doctors.isEmpty()) {
+						throw new RuntimeException("Doctor not found. Please create an account to proceed.");
+					}
+
+					Doctor doctor = doctors.getFirst();
+					List<DoctorClinic> doctorClinics = doctorClinicRepository.findByDoctor(doctor);
+					if (doctorClinics.isEmpty()) {
+						throw new RuntimeException("Doctor Clinics not found. Please create an account to proceed.");
+					}
+
+					Long doctorClinicId = 0L;
+					for (DoctorClinic clinic : doctorClinics) {
+						if(clinic.getClinic().getId().equals(clinicId)) {
+							doctorClinicId = clinic.getId();
+						}
+					}
+					List<DoctorClinicAvailability> availabilities = doctorClinicAvailabilityRepository.findByDoctorClinicId(doctorClinicId);
+					return availabilities.stream().map(a -> new DoctorClinicAvailabilityDto(
+							a.getId(),
+							a.getDayOfWeek(),
+							a.getStartTime(),
+							a.getEndTime()
+
+					) ).collect(Collectors.toList());
+
+				},
+				ApiResponse::success);
+	}
+
+	@Override
+	public ApiResponse<List<DoctorClinicAvailabilityDto>> getAvailability(Long userId) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{},
+				()->{
+					List<Doctor> doctors = doctorRepository.findByUserId(userId);
+					if (doctors.isEmpty()) {
+						throw new RuntimeException("Doctor not found. Please create an account to proceed.");
+					}
+
+					Doctor doctor = doctors.getFirst();
+					List<DoctorClinic> doctorClinics = doctorClinicRepository.findByDoctor(doctor);
+					if (doctorClinics.isEmpty()) {
+						throw new RuntimeException("Doctor Clinics not found. Please create an account to proceed.");
+					}
+
+					List<DoctorClinicAvailabilityDto> availabilityDtoList = new ArrayList<>();
+
+					for (DoctorClinic clinic : doctorClinics) {
+
+						Long doctorClinicId = clinic.getId();
+
+						List<DoctorClinicAvailability> availabilities =
+								doctorClinicAvailabilityRepository.findByDoctorClinicId(doctorClinicId);
+
+						List<DoctorClinicAvailabilityDto> dtoList = availabilities.stream()
+								.map(a -> new DoctorClinicAvailabilityDto(
+										a.getId(),
+										a.getDayOfWeek(),
+										a.getStartTime(),
+										a.getEndTime()
+								))
+								.toList();
+
+						availabilityDtoList.addAll(dtoList); // 🔥 important
+
+					}
+					return availabilityDtoList;
+				},
+				ApiResponse::success);
+	}
+
+	public void validateAvailability(Long doctorClinicId, DayOfWeek day,
+	                                 LocalTime start, LocalTime end) {
+
+		List<DoctorClinicAvailability> list =
+				doctorClinicAvailabilityRepository.findByDoctorClinicIdAndDayOfWeekAndIsActiveTrue(doctorClinicId, day);
+
+		for (DoctorClinicAvailability existing : list) {
+
+			boolean isOverlapping =
+					start.isBefore(existing.getEndTime()) &&
+							end.isAfter(existing.getStartTime());
+
+			if (isOverlapping) {
+				throw new RuntimeException("Time slot overlaps with existing availability");
+			}
+		}
 	}
 
 	@NonNull

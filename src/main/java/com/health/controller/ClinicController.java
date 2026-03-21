@@ -28,7 +28,7 @@ public class ClinicController {
         return clinicService.updateClinicById(clinicId,clinicRequest);
     }
 
-    @GetMapping("/{userId}/{clinicId}/delete/clinic")
+    @GetMapping("/{userId}/{clinicId}/delete")
     public ApiResponse<MessageResponse> deleteClinic(@PathVariable Long userId, @PathVariable Long clinicId){
         return clinicService.deleteClinicById(userId,clinicId);
     }

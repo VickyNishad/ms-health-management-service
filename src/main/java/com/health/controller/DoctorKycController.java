@@ -1,9 +1,11 @@
 package com.health.controller;
 
 import com.health.dto.MessageResponse;
+import com.health.dto.request.AvailabilityRequest;
 import com.health.dto.request.DoctorClinicRequest;
 import com.health.dto.request.DoctorPersonalDetailsRequest;
 import com.health.dto.response.ClinicDetailsDto;
+import com.health.dto.response.DoctorClinicAvailabilityDto;
 import com.health.dto.response.DoctorPersonalDetailsDto;
 import com.health.dto.response.KycStepResponse;
 import com.health.models.ApiResponse;
@@ -48,5 +50,15 @@ public class DoctorKycController {
     @PostMapping("/{userId}/clinics")
     public ApiResponse<List<ClinicDetailsDto>> clinics(@PathVariable Long userId, @RequestBody DoctorClinicRequest doctorClinicRequest) {
         return clinicService.createDoctorClinic(userId,doctorClinicRequest);
+    }
+
+    @PostMapping("/{userId}/{clinicId}/availability")
+    public ApiResponse<MessageResponse> createAvailability(@PathVariable Long userId, Long clinicId, AvailabilityRequest request) {
+        return doctorService.createAvailability(userId,clinicId,request);
+    }
+
+    @GetMapping("/{userId}/availability")
+    public ApiResponse<List<DoctorClinicAvailabilityDto>> getAvailabilityClinicId(@PathVariable Long userId) {
+        return doctorService.getAvailability(userId);
     }
 }

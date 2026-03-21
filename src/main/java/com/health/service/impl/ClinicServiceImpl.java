@@ -23,10 +23,8 @@ import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ClinicServiceImpl implements ClinicService {
@@ -94,14 +92,34 @@ public class ClinicServiceImpl implements ClinicService {
 //                        doctorClinicRepository.deleteAll(doctorClinics);
 //                    }
 
-                    // save clinic as new every time
-//                    List<DoctorClinic> dClinics;
-//                    dClinics = getDoctorClinics(doctors.getFirst(),doctorClinicRequest);
-//                    doctorClinicRepository.saveAll(dClinics);
-
-                    if (doctorClinics.isEmpty()) {
+                    if(doctorClinics.isEmpty()){
+                        List<DoctorClinic> dClinics;
+                        dClinics = getDoctorClinics(doctors.getFirst(),doctorClinicRequest);
+                        doctorClinicRepository.saveAll(dClinics);
                         // save kyc status
                         kycStepService.addStep(userId,4L);
+                        ApiResponse<List<ClinicDetailsDto>> apiResponse = findClinicByDoctorId(userId);
+                        return apiResponse.getData();
+                    }
+
+                    Set<Long> existingClinicIds = doctorClinics.stream()
+                            .map(d -> d.getClinic().getId())
+                            .collect(Collectors.toSet());
+
+                    List<Long> reqClinicIds = doctorClinicRequest.getClinicIds();
+
+                    if (reqClinicIds == null || reqClinicIds.isEmpty()) {
+                        throw new RuntimeException("Enter valid clinic ids");
+                    }
+
+                    List<Long> newClinicIds = reqClinicIds.stream()
+                            .filter(id -> !existingClinicIds.contains(id))
+                            .collect(Collectors.toList());
+                    if(!newClinicIds.isEmpty()){
+                        doctorClinicRequest.setClinicIds(newClinicIds);
+                        List<DoctorClinic> dClinics;
+                        dClinics = getDoctorClinics(doctors.getFirst(),doctorClinicRequest);
+                        doctorClinicRepository.saveAll(dClinics);
                     }
                     ApiResponse<List<ClinicDetailsDto>> apiResponse = findClinicByDoctorId(userId);
                     return apiResponse.getData();
@@ -251,6 +269,9 @@ public class ClinicServiceImpl implements ClinicService {
         for (Long clinicId : clinicIds) {
             DoctorClinic doctorClinic = new DoctorClinic();
             ApiResponse<Clinic> apiResponse = findById(clinicId);
+            if (!apiResponse.isSuccess()) {
+               throw new RuntimeException("Clinic not found with clinicId: " + clinicId);
+            }
             Clinic clinic = apiResponse.getData();
             doctorClinic.setClinic(clinic);
             doctorClinic.setDoctor(doctor);
