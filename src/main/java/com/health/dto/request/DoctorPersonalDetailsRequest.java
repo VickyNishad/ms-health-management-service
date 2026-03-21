@@ -11,7 +11,7 @@ public class DoctorPersonalDetailsRequest {
     private String mobileNumber;
     private String emailId;
     private String registrationNumber;
-    private  int totalExperience;
+    private int totalExperience;
     private List<Long> qualifications;
     private String neekName;
     private List<Long> specializations;

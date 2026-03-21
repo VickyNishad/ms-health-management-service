@@ -14,6 +14,8 @@ import com.health.dto.request.ClinicRequest;
 import com.health.dto.request.DoctorClinicRequest;
 import com.health.dto.request.DoctorPersonalDetailsRequest;
 import com.health.dto.response.ClinicDetailsDto;
+import com.health.dto.response.DoctorPersonalDetailsDto;
+import com.health.dto.response.MasterSummary;
 import com.health.entity.*;
 import com.health.repository.*;
 import com.health.service.*;
@@ -21,6 +23,7 @@ import com.health.utility.ApiExecutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,16 +44,13 @@ import com.health.models.ApiResponse;
 import com.health.dto.MessageResponse;
 
 /**
- * 
+ *
  */
 @Service
 public class DoctorServiceImpl implements DoctorService {
 
 	@Autowired
 	private UserRegistrationRepository userRegistrationRepository;
-
-	@Autowired
-	private KycStepService kycStepService;
 
 	@Autowired
 	private UserProfileService userProfileService;
@@ -159,6 +159,77 @@ public class DoctorServiceImpl implements DoctorService {
 		},ApiResponse::success);
 
 		return new ResponseEntity<>(success, HttpStatus.OK);
+	}
+
+	@Override
+	public ApiResponse<DoctorPersonalDetailsDto> getPersonalDetails(Long userId) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null,
+				req ->{
+
+				},
+				()->{
+					// check user exist or not
+					Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
+					if(user.isEmpty()) {
+						throw new RuntimeException("User not found. Please create an account to proceed.");
+					}
+					ApiResponse<UserProfileDetails> apiResponse = userProfileService.getUserProfileDetails(userId);
+					if (!apiResponse.isSuccess()) {
+						throw new RuntimeException("User profile not found. Please create an account to proceed.");
+					}
+					UserProfileDetails userProfileDetails = apiResponse.getData();
+
+					List<Doctor> doctors = doctorRepository.findByUserId(userId);
+                    return getDoctorPersonalDetailsDto(doctors, userProfileDetails);
+				},
+				ApiResponse::success);
+	}
+
+	@NonNull
+	private DoctorPersonalDetailsDto getDoctorPersonalDetailsDto(List<Doctor> doctors, UserProfileDetails userProfileDetails) {
+		if (doctors.isEmpty()) {
+			throw new RuntimeException("Doctor not found. Please create an account to proceed.");
+		}
+
+		Doctor doctor = doctors.getFirst();
+
+		DoctorPersonalDetailsDto dto = new DoctorPersonalDetailsDto();
+		dto.setDoctorId(doctor.getId());
+		dto.setName(doctor.getName());
+		dto.setNeekName(doctor.getNeekName());
+		dto.setMobileNumber(userProfileDetails.getMobileNumber());
+		dto.setEmailId(userProfileDetails.getEmailId());
+		dto.setAge(userProfileDetails.getAge());
+		dto.setGender(userProfileDetails.getGender());
+		dto.setRegistrationNumber(doctor.getRegistrationNumber());
+		dto.setTotalExperience(doctor.getTotalExperience());
+		dto.setQualifications(getQualifications(doctor));
+		dto.setSpecializations(getSpecializations(doctor));
+		return dto;
+	}
+
+	private List<MasterSummary> getQualifications(Doctor doctor){
+		List<DoctorQualification> qualifications = doctorQualificationRepository.findByDoctorId(doctor.getId());
+
+		return qualifications.stream()
+				.map(d -> new MasterSummary(
+						d.getId(),
+						d.getQualification().getQualificationName(),
+						d.getQualification().getDescription()
+				))
+				.collect(Collectors.toList());
+	}
+
+	private List<MasterSummary> getSpecializations(Doctor doctor){
+		List<DoctorSpecialization> specializations = doctorSpecializationRepository.findByDoctorId(doctor.getId());
+
+		return specializations.stream()
+				.map(d -> new MasterSummary(
+						d.getId(),
+						d.getSpecialization().getSpecializationName(),
+						d.getSpecialization().getDescription()
+				))
+				.collect(Collectors.toList());
 	}
 
 }

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import com.health.entity.DoctorQualification;
 
+import java.util.List;
 
 
 /**
@@ -17,4 +18,5 @@ import com.health.entity.DoctorQualification;
 public interface DoctorQualificationRepository extends JpaRepository<DoctorQualification, Long> {
 
     void  deleteByDoctorId(Long doctorId);
+    List<DoctorQualification> findByDoctorId(Long doctorId);
 }

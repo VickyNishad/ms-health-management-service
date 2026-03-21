@@ -3,8 +3,6 @@
  */
 package com.health.controller;
 
-import java.util.List;
-
 import com.health.dto.request.SocialLoginRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import com.health.dto.MessageResponse;
 import com.health.dto.ResetPasswordRequest;
 import com.health.dto.SignInRequest;
@@ -24,13 +21,11 @@ import com.health.dto.TokenResponse;
 import com.health.dto.request.LoginRequest;
 import com.health.dto.request.UserRegistrationRequest;
 import com.health.dto.request.UserSignUpRequest;
-import com.health.dto.response.KycStepResponse;
 import com.health.dto.response.UserRegisteredResponse;
 import com.health.dto.response.UserResponse;
 import com.health.enums.LoginType;
 import com.health.models.ApiResponse;
 import com.health.service.AuthenticationService;
-import com.health.service.KycStepService;
 import com.health.service.LoginService;
 import com.health.service.SignUpService;
 import com.health.service.UserRegistrationService;
@@ -54,9 +49,7 @@ public class AuthController {
 
 	@Autowired
 	private LoginService loginService;
-	
-	@Autowired
-	private KycStepService kycStepService;
+
 
 	@GetMapping("/user/{providerLoginId}")
 	public ResponseEntity<ApiResponse<UserRegisteredResponse>> isRegisteredUser(@PathVariable String providerLoginId) {
@@ -88,7 +81,7 @@ public class AuthController {
 		return userRegistrationService.register(userRegistrationRequest);
 	}
 
-	@PostMapping("/employees/login")
+	@PostMapping("/emp/login")
 	public ResponseEntity<ApiResponse<UserResponse>> employeeLogin(@RequestBody SignInRequest request) {
 		LoginRequest loginRequest = new LoginRequest(request.getProviderLoginId(), request.getPassword(), 2L);
 		return authenticationService.authenticate(loginRequest);
@@ -108,10 +101,5 @@ public class AuthController {
 	public ApiResponse<UserResponse> googleLogin(@RequestBody SocialLoginRequest socialLoginRequest) {
 		UserRegistrationRequest userRegistrationRequest = new UserRegistrationRequest(socialLoginRequest.getSocialId(),LoginType.GOOGLE,4,socialLoginRequest.getData());
 		return authenticationService.googleAuthenticate(userRegistrationRequest);
-	}
-	
-	@GetMapping("/user/steps/{userId}")
-	public ResponseEntity<ApiResponse<List<KycStepResponse>>> allSteps(@PathVariable(name = "userId") Long userId) {
-		return kycStepService.allSteps(userId);
 	}
 }

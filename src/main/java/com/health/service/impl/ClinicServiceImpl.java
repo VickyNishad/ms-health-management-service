@@ -245,7 +245,7 @@ public class ClinicServiceImpl implements ClinicService {
         return clinicDetailsDto;
     }
 
-    private  List<DoctorClinic> getDoctorClinics(Doctor doctor,DoctorClinicRequest doctorClinicRequest) {
+    private List<DoctorClinic> getDoctorClinics(Doctor doctor,DoctorClinicRequest doctorClinicRequest) {
         List<Long> clinicIds = doctorClinicRequest.getClinicIds();
         List<DoctorClinic> doctorClinics = new ArrayList<>();
         for (Long clinicId : clinicIds) {
