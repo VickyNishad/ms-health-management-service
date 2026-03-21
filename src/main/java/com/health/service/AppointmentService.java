@@ -18,7 +18,6 @@ import com.health.models.ApiResponse;
  */
 public interface AppointmentService {
 
-	
 	public ResponseEntity<ApiResponse<MessageResponse>> bookAppointment(Long userId,AppointmentBookingRequest request);
 
 	public ResponseEntity<ApiResponse<List<Appointment>>> findAllAppointmentsByUser(Long userId);

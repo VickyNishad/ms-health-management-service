@@ -28,9 +28,6 @@ public class Appointment extends BaseEntity {
 	@JoinColumn(name = "doctor_slot_id", nullable = false)
 	private DoctorSlot doctorSlot;
 
-	@Column(name = "clinic_id", nullable = false)
-	private Long clinicId;
-
 	@Column(name = "appointment_date", nullable = false)
 	private LocalDate appointmentDate;
 
@@ -39,8 +36,6 @@ public class Appointment extends BaseEntity {
 
 	@Column(name = "token_number")
 	private Integer tokenNumber;
-
-	/* ---------- STATUS ---------- */
 
 	@Column(name = "slot_status", length = 20)
 	private String slotStatus; // BOOKED / CANCELLED
@@ -86,14 +81,6 @@ public class Appointment extends BaseEntity {
 
 	public void setDoctorSlot(DoctorSlot doctorSlot) {
 		this.doctorSlot = doctorSlot;
-	}
-
-	public Long getClinicId() {
-		return clinicId;
-	}
-
-	public void setClinicId(Long clinicId) {
-		this.clinicId = clinicId;
 	}
 
 	public LocalDate getAppointmentDate() {

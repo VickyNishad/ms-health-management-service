@@ -28,9 +28,6 @@ public class DoctorSlot extends BaseEntity {
 	@Column(name = "slot_end_time")
 	private LocalTime slotEndTime;
 
-	@Column(name = "token_number")
-	private Integer token;
-
 	@Column(name = "status")
 	private String status; // AVAILABLE, BREAK, LUNCH, LEAVE, BOOKED
 
@@ -85,14 +82,6 @@ public class DoctorSlot extends BaseEntity {
 		this.slotEndTime = slotEndTime;
 	}
 
-	public Integer getToken() {
-		return token;
-	}
-
-	public void setToken(Integer token) {
-		this.token = token;
-	}
-
 	public String getStatus() {
 		return status;
 	}
@@ -108,6 +97,5 @@ public class DoctorSlot extends BaseEntity {
 	public void setIsBooked(Boolean isBooked) {
 		this.isBooked = isBooked;
 	}
-
 
 }
