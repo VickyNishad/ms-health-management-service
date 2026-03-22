@@ -156,7 +156,6 @@ public class SlotServiceImpl implements SlotService {
 		return ApiExecutionUtils.ApiExecutor.processRequest(null,
 				req ->{},
 				()->{
-
 					// check doctor active or created
 					Optional<Doctor> doctor = doctorRepository.findById(doctorId);
 					if(doctor.isEmpty()) {
