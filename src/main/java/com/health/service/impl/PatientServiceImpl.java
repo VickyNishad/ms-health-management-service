@@ -46,6 +46,15 @@ public class PatientServiceImpl implements PatientService {
 					}
 					UserRegistration user = userRegistration.get();
 					Patient patient = new Patient();
+					Optional<Patient> optionalPatient = patientRepository.findByUserIdAndRelationAndName(userId,patientRequest.getRelation(),patientRequest.getName());
+					if(optionalPatient.isPresent()) {
+						patient = optionalPatient.get();
+						patient.setUpdatedAt(LocalDateTime.now());
+						patient.setUpdatedBy(userId.toString());
+					} else {
+						patient.setCreatedAt(LocalDateTime.now());
+						patient.setCreatedBy(userId.toString());
+					}
 
 					patient.setName(patientRequest.getName());
 					patient.setGender(patientRequest.getGender());
@@ -54,8 +63,7 @@ public class PatientServiceImpl implements PatientService {
 					patient.setEmailId(patientRequest.getEmailId());
 					patient.setMobileNumber(patientRequest.getMobileNumber());
 					patient.setRelation(patientRequest.getRelation());
-					patient.setCreatedAt(LocalDateTime.now());
-					patient.setCreatedBy(userId.toString());
+
 					patient.setIsActive(true);
 					patient.setUser(user);
 

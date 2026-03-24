@@ -60,6 +60,7 @@ package com.health.utility;
  */
 
 
+import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -67,6 +68,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -123,7 +125,7 @@ public class ApiExecutionUtils {
 						? responseBuilder.apply(data)
 						: ApiResponse.success(data);
 			} catch (Exception e) {
-				
+
 				logger.error("API processRequest failed after {} ms: {}", System.currentTimeMillis() - startTime, e.getMessage());
 				return ApiResponse.error(e.getMessage());
 			}

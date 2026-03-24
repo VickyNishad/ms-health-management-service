@@ -2,7 +2,7 @@ package com.health.dto.response;
 
 public class PatientDto {
 
-    private Long id;
+    private Long patientId;
     private Long userId;
     private String name;
 
@@ -18,8 +18,8 @@ public class PatientDto {
 
     private String description;
 
-    public PatientDto(Long id, Long userId, String name, String gender, Integer age, String relation, String mobileNumber, String emailId, String description) {
-        this.id = id;
+    public PatientDto(Long patientId, Long userId, String name, String gender, Integer age, String relation, String mobileNumber, String emailId, String description) {
+        this.patientId = patientId;
         this.userId = userId;
         this.name = name;
         this.gender = gender;
@@ -31,12 +31,12 @@ public class PatientDto {
     }
 
 
-    public Long getId() {
-        return id;
+    public void setPatientId(Long patientId) {
+        this.patientId = patientId;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public Long getPatientId() {
+        return patientId;
     }
 
     public Long getUserId() {

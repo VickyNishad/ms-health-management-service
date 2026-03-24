@@ -3,7 +3,7 @@ package com.health.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "patients", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "relation" }) })
+@Table(name = "patients", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "relation" ,"name"}) })
 public class Patient extends BaseEntity {
 
 	@Id

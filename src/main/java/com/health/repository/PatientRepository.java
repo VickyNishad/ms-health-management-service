@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import com.health.entity.Patient;
 
 import java.util.List;
+import java.util.Optional;
 
 
 /**
@@ -19,4 +20,5 @@ import java.util.List;
 public interface PatientRepository extends JpaRepository<Patient, Long> {
     List<Patient> findAllByUserId(Long userId);
     List<Patient> findAllByUserIdAndIsActiveTrue(Long userId);
+    Optional<Patient> findByUserIdAndRelationAndName(Long userId, String relation, String name);
 }

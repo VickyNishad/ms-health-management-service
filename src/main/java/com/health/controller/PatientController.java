@@ -38,18 +38,18 @@ public class PatientController {
 		return patientService.getPatients(userId);
 	}
 
-	@GetMapping("/{id}")
-	public ApiResponse<PatientDto> getPatient(@PathVariable Long id ){
-		return patientService.getPatient(id);
+	@GetMapping("/{patientId}")
+	public ApiResponse<PatientDto> getPatient(@PathVariable Long patientId ){
+		return patientService.getPatient(patientId);
 	}
 
-	@PostMapping("/{userId}/{id}/update")
-	public ApiResponse<PatientDto> updatePatient(@PathVariable Long userId,@PathVariable Long id ,PatientRequest patientRequest){
-		return patientService.updatePatient(userId,id,patientRequest);
+	@PostMapping("/{userId}/{patientId}/update")
+	public ApiResponse<PatientDto> updatePatient(@PathVariable Long userId,@PathVariable Long patientId ,PatientRequest patientRequest){
+		return patientService.updatePatient(userId,patientId,patientRequest);
 	}
 
-	@GetMapping("/{userId}/{id}/delete")
-	public ApiResponse<MessageResponse> removePatient(@PathVariable Long userId ,@PathVariable Long id){
-		return patientService.removePatient(userId,id);
+	@GetMapping("/{userId}/{patientId}/delete")
+	public ApiResponse<MessageResponse> removePatient(@PathVariable Long userId ,@PathVariable Long patientId){
+		return patientService.removePatient(userId,patientId);
 	}
 }

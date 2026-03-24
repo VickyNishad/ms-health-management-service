@@ -6,6 +6,7 @@ package com.health.exception;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
@@ -46,4 +47,29 @@ public class GlobalExceptionHandler {
 
        return new ResponseEntity<>(ApiResponse.error(ex.getLocalizedMessage()), HttpStatus.OK);
    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<Object> handleDuplicate(DataIntegrityViolationException ex) {
+
+        String message = "Duplicate or invalid data";
+
+        String rootMsg = ex.getRootCause() != null
+                ? ex.getRootCause().getMessage()
+                : ex.getMessage();
+
+        if (rootMsg != null && rootMsg.contains("Duplicate entry")) {
+
+            String value = rootMsg.split("'")[1]; // extract duplicate value
+
+            message = "Duplicate entry: " + value;
+        }
+
+        return ResponseEntity.badRequest().body(
+                Map.of(
+                        "success", false,
+                        "message", message,
+                        "data", null
+                )
+        );
+    }
 }
