@@ -10,7 +10,7 @@ import java.time.LocalDate;
  */
 public class ProfileDetailsResponse {
 
-	private Long id;
+	private Long userid;
 	private String name;
 	private Integer age;
 	private String gender;
@@ -21,12 +21,12 @@ public class ProfileDetailsResponse {
 	private Boolean isEmailVerified = false;
 	private Boolean isMobileVerified = false;
 
-	public Long getId() {
-		return id;
+	public Long getUserid() {
+		return userid;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setUserid(Long userid) {
+		this.userid = userid;
 	}
 
 	public String getName() {

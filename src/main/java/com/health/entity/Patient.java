@@ -13,7 +13,7 @@ public class Patient extends BaseEntity {
 //	@ManyToOne(fetch = FetchType.LAZY)
 	@ManyToOne
 	@JoinColumn(name = "user_id", nullable = false)
-	private UserRegistration user;
+	private User user;
 
 	@Column(name = "name", nullable = false)
 	private String name;
@@ -44,11 +44,11 @@ public class Patient extends BaseEntity {
 		this.id = id;
 	}
 
-	public UserRegistration getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(UserRegistration user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 

@@ -37,7 +37,7 @@ import com.health.dto.MessageResponse;
 public class DoctorServiceImpl implements DoctorService {
 
 	@Autowired
-	private UserRegistrationRepository userRegistrationRepository;
+	private UserRepository userRepository;
 
 	@Autowired
 	private UserProfileService userProfileService;
@@ -76,23 +76,23 @@ public class DoctorServiceImpl implements DoctorService {
 
 		},() -> {
 			// check user exist or not
-			Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
+			Optional<User> user = userRepository.findById(userId);
 			if(user.isEmpty()) {
 				throw new RuntimeException("User not found. Please create an account to proceed.");
 			}
 
-			ApiResponse<UserProfileDetails> apiResponse = userProfileService.getUserProfileDetails(userId);
+			ApiResponse<UserProfile> apiResponse = userProfileService.getUserProfileDetails(userId);
 			if (!apiResponse.isSuccess()) {
 				throw new RuntimeException("User profile not found. Please create an account to proceed.");
 			}
-			UserProfileDetails userProfileDetails = apiResponse.getData();
-			userProfileDetails.setAge(doctorPersonalDetailsRequest.getAge());
-			userProfileDetails.setGender(doctorPersonalDetailsRequest.getGender());
-			userProfileDetails.setEmailId(doctorPersonalDetailsRequest.getEmailId());
-			userProfileDetails.setUpdatedAt(LocalDateTime.now());
-			userProfileDetails.setUpdatedBy(userId.toString());
+			UserProfile userProfile = apiResponse.getData();
+			userProfile.setAge(doctorPersonalDetailsRequest.getAge());
+			userProfile.setGender(doctorPersonalDetailsRequest.getGender());
+			userProfile.setEmailId(doctorPersonalDetailsRequest.getEmailId());
+			userProfile.setUpdatedAt(LocalDateTime.now());
+			userProfile.setUpdatedBy(userId.toString());
 
-			ApiResponse<UserProfileDetails> userProfileDetailsApiResponse = userProfileService.personalDetails(userId,userProfileDetails);
+			ApiResponse<UserProfile> userProfileDetailsApiResponse = userProfileService.personalDetails(userId, userProfile);
 			System.out.println(userProfileDetailsApiResponse.getMessage());
 
 			// insert doctor personal details
@@ -165,18 +165,18 @@ public class DoctorServiceImpl implements DoctorService {
 				},
 				()->{
 					// check user exist or not
-					Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
+					Optional<User> user = userRepository.findById(userId);
 					if(user.isEmpty()) {
 						throw new RuntimeException("User not found. Please create an account to proceed.");
 					}
-					ApiResponse<UserProfileDetails> apiResponse = userProfileService.getUserProfileDetails(userId);
+					ApiResponse<UserProfile> apiResponse = userProfileService.getUserProfileDetails(userId);
 					if (!apiResponse.isSuccess()) {
 						throw new RuntimeException("User profile not found. Please create an account to proceed.");
 					}
-					UserProfileDetails userProfileDetails = apiResponse.getData();
+					UserProfile userProfile = apiResponse.getData();
 
 					List<Doctor> doctors = doctorRepository.findByUserId(userId);
-                    return getDoctorPersonalDetailsDto(doctors, userProfileDetails);
+                    return getDoctorPersonalDetailsDto(doctors, userProfile);
 				},
 				ApiResponse::success);
 	}
@@ -325,7 +325,7 @@ public class DoctorServiceImpl implements DoctorService {
 	}
 
 	@NonNull
-	private DoctorPersonalDetailsDto getDoctorPersonalDetailsDto(List<Doctor> doctors, UserProfileDetails userProfileDetails) {
+	private DoctorPersonalDetailsDto getDoctorPersonalDetailsDto(List<Doctor> doctors, UserProfile userProfile) {
 		if (doctors.isEmpty()) {
 			throw new RuntimeException("Doctor not found. Please create an account to proceed.");
 		}
@@ -336,10 +336,10 @@ public class DoctorServiceImpl implements DoctorService {
 		dto.setDoctorId(doctor.getId());
 		dto.setName(doctor.getName());
 		dto.setNeekName(doctor.getNeekName());
-		dto.setMobileNumber(userProfileDetails.getMobileNumber());
-		dto.setEmailId(userProfileDetails.getEmailId());
-		dto.setAge(userProfileDetails.getAge());
-		dto.setGender(userProfileDetails.getGender());
+		dto.setMobileNumber(userProfile.getMobileNumber());
+		dto.setEmailId(userProfile.getEmailId());
+		dto.setAge(userProfile.getAge());
+		dto.setGender(userProfile.getGender());
 		dto.setRegistrationNumber(doctor.getRegistrationNumber());
 		dto.setTotalExperience(doctor.getTotalExperience());
 		dto.setQualifications(getQualifications(doctor));

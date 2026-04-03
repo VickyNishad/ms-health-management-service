@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * 
  */
 public enum Provider {
-	GOOGLE, FACEBOOK, ALLPLE, GITHUB, OTP;
+	GOOGLE, FACEBOOK, APPLE, GITHUB, OTP;
 
 	@JsonCreator
 	public static Provider fromValue(String value) {

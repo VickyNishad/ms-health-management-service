@@ -36,7 +36,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 	
 //	@Autowired
-//	private UserRegistrationRepository useRepositoryPort;
+//	private UserRepository useRepositoryPort;
 //
 //	@Autowired
 //	private AppointmentRepository appointmentRepository;
@@ -58,7 +58,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 //		}, () -> {
 //
 //			// 1. Validate Doctor
-//			UserRegistration user = useRepositoryPort.findById(userId)
+//			User user = useRepositoryPort.findById(userId)
 //					.orElseThrow(() -> new RuntimeException("User not found"));
 //			
 //			Doctor doctor = doctorRepository.findById(request.getDoctorId())
@@ -133,7 +133,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 //			ApiResponse<List<Appointment>> success = ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
 //			}, () -> {
 //				
-//				UserRegistration user = useRepositoryPort.findById(userId)
+//				User user = useRepositoryPort.findById(userId)
 //						.orElseThrow(() -> new RuntimeException("User not found"));
 //				
 //				return appointmentRepository.findAllAppointmentsByUser(userId);

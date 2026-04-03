@@ -8,7 +8,7 @@ import com.health.dto.TokenResponse;
 /**
  * 
  */
-public class UserResponse {
+public class UserResponseDTO {
 
 	private Long id;
 	private Long userId;

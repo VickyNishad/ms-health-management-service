@@ -19,7 +19,7 @@ public class KycStepStatus extends BaseEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	private UserRegistration user;
+	private User user;
 
 	@ManyToOne
 	@JoinColumn(name = "step_id")
@@ -36,11 +36,11 @@ public class KycStepStatus extends BaseEntity {
 		this.id = id;
 	}
 
-	public UserRegistration getUser() {
+	public User getUser() {
 		return user;
 	}
 
-	public void setUser(UserRegistration user) {
+	public void setUser(User user) {
 		this.user = user;
 	}
 

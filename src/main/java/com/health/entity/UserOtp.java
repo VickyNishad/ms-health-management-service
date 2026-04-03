@@ -10,8 +10,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "otp_master")
-public class OtpMaster extends BaseEntity {
+@Table(name = "user_otp")
+public class UserOtp extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -10,8 +10,9 @@ import java.util.stream.Collectors;
 
 import com.health.dto.request.PatientRequest;
 import com.health.dto.response.PatientDto;
+import com.health.entity.User;
 import com.health.repository.PatientRepository;
-import com.health.repository.UserRegistrationRepository;
+import com.health.repository.UserRepository;
 import com.health.utility.ApiExecutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,6 @@ import org.springframework.stereotype.Service;
 
 import com.health.dto.MessageResponse;
 import com.health.entity.Patient;
-import com.health.entity.UserRegistration;
 import com.health.models.ApiResponse;
 import com.health.service.PatientService;
 
@@ -30,7 +30,7 @@ import com.health.service.PatientService;
 public class PatientServiceImpl implements PatientService {
 
 	@Autowired
-	private UserRegistrationRepository userRegistrationRepository;
+	private UserRepository userRepository;
 
 	@Autowired
 	private PatientRepository  patientRepository;
@@ -40,11 +40,11 @@ public class PatientServiceImpl implements PatientService {
 		return ApiExecutionUtils.ApiExecutor.processRequest(null,
 				req ->{},
 				()->{
-					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					Optional<User> userRegistration = userRepository.findById(userId);
 					if(userRegistration.isEmpty()) {
 						throw new RuntimeException("User not found");
 					}
-					UserRegistration user = userRegistration.get();
+					User user = userRegistration.get();
 					Patient patient = new Patient();
 					Optional<Patient> optionalPatient = patientRepository.findByUserIdAndRelationAndName(userId,patientRequest.getRelation(),patientRequest.getName());
 					if(optionalPatient.isPresent()) {
@@ -89,7 +89,7 @@ public class PatientServiceImpl implements PatientService {
 				req ->{},
 				()->{
 
-					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					Optional<User> userRegistration = userRepository.findById(userId);
 					if(userRegistration.isEmpty()) {
 						throw new RuntimeException("User not found");
 					}
@@ -142,11 +142,11 @@ public class PatientServiceImpl implements PatientService {
 		return ApiExecutionUtils.ApiExecutor.processRequest(null,
 				req ->{},
 				()->{
-					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					Optional<User> userRegistration = userRepository.findById(userId);
 					if(userRegistration.isEmpty()) {
 						throw new RuntimeException("User not found");
 					}
-					UserRegistration user = userRegistration.get();
+					User user = userRegistration.get();
 
 					Optional<Patient> optionalPatient = patientRepository.findById(patientId);
 					if(optionalPatient.isEmpty()) {
@@ -187,7 +187,7 @@ public class PatientServiceImpl implements PatientService {
 				req ->{},
 				()->{
 
-					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					Optional<User> userRegistration = userRepository.findById(userId);
 					if(userRegistration.isEmpty()) {
 						throw new RuntimeException("User not found");
 					}

@@ -9,7 +9,7 @@ package com.health.dto;
 public class TokenResponse {
 
 	private String accessToken;
-	private String refereshToken;
+	private String refreshToken;
 	private String tokenType = "Bearer";
 	private String accessTokenExpiresAt;
 	private String refreshTokenExpiresAt;
@@ -22,12 +22,12 @@ public class TokenResponse {
 		this.accessToken = accessToken;
 	}
 
-	public String getRefereshToken() {
-		return refereshToken;
+	public String getRefreshToken() {
+		return refreshToken;
 	}
 
-	public void setRefereshToken(String refereshToken) {
-		this.refereshToken = refereshToken;
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
 	}
 
 	public String getTokenType() {
@@ -54,11 +54,11 @@ public class TokenResponse {
 		this.refreshTokenExpiresAt = refreshTokenExpiresAt;
 	}
 
-	public TokenResponse(String accessToken, String refereshToken, String tokenType, String accessTokenExpiresAt,
-			String refreshTokenExpiresAt) {
+	public TokenResponse(String accessToken, String refreshToken, String tokenType, String accessTokenExpiresAt,
+	                     String refreshTokenExpiresAt) {
 		super();
 		this.accessToken = accessToken;
-		this.refereshToken = refereshToken;
+		this.refreshToken = refreshToken;
 		this.tokenType = tokenType;
 		this.accessTokenExpiresAt = accessTokenExpiresAt;
 		this.refreshTokenExpiresAt = refreshTokenExpiresAt;

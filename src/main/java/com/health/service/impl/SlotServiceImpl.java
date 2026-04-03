@@ -15,10 +15,10 @@ import com.health.dto.response.DoctorClinicAvailabilityDto;
 import com.health.dto.response.SlotSummary;
 import com.health.entity.Doctor;
 import com.health.entity.DoctorSlot;
-import com.health.entity.UserRegistration;
+import com.health.entity.User;
 import com.health.repository.DoctorRepository;
 import com.health.repository.DoctorSlotRepository;
-import com.health.repository.UserRegistrationRepository;
+import com.health.repository.UserRepository;
 import com.health.service.DoctorService;
 import com.health.utility.ApiExecutionUtils;
 import com.health.utility.DateUtils;
@@ -40,7 +40,7 @@ import jakarta.transaction.Transactional;
 public class SlotServiceImpl implements SlotService {
 
 	@Autowired
-	private UserRegistrationRepository userRegistrationRepository;
+	private UserRepository userRepository;
 
 	@Autowired
 	private DoctorRepository doctorRepository;
@@ -59,7 +59,7 @@ public class SlotServiceImpl implements SlotService {
 				req ->{},
 				()->{
 			       // check user active or register
-					Optional<UserRegistration> userRegistration = userRegistrationRepository.findById(userId);
+					Optional<User> userRegistration = userRepository.findById(userId);
 					if(userRegistration.isEmpty()) {
 						throw new RuntimeException("User not found");
 					}

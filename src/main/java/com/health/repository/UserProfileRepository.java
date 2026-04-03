@@ -5,16 +5,15 @@ package com.health.repository;
 
 import java.util.Optional;
 
+import com.health.entity.UserProfile;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
-import com.health.entity.UserProfileDetails;
 
 /**
  * 
  */
 @Repository
-public interface UserProfileRepository extends JpaRepository<UserProfileDetails, Long> {
+public interface UserProfileRepository extends JpaRepository<UserProfile, Long> {
 
-	Optional<UserProfileDetails> findByUserId(Long userId);
+	Optional<UserProfile> findByUserId(Long userId);
 }

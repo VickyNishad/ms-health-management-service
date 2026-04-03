@@ -21,18 +21,18 @@ public class SearchServiceImpl implements SearchService {
 
     @Override
     public ApiResponse<Page<DoctorSearchSummary>> searchFullText(String keyword, int page, int size) {
-        return ApiExecutionUtils.ApiExecutor.processRequest(null,req ->{
+        return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
 
             if (keyword == null || keyword.trim().isEmpty()) {
                 throw new RuntimeException("Keyword must not be empty");
             }
-        },()->{
+        }, () -> {
             Pageable pageable = PageRequest.of(
                     page,
                     size,
-                    Sort.by(Sort.Direction.DESC,"total_experience")
+                    Sort.by(Sort.Direction.DESC, "total_experience")
             );
-            Page<DoctorSearchIndex> pageResult = doctorSearchIndexRepository.searchFullText(keyword,pageable);
+            Page<DoctorSearchIndex> pageResult = doctorSearchIndexRepository.searchFullText(keyword, pageable);
 
             return pageResult.map(d -> new DoctorSearchSummary(
                     d.getName(),
@@ -46,6 +46,6 @@ public class SearchServiceImpl implements SearchService {
                     d.getClinicAddress(),
                     d.getAvailable()
             ));
-        },ApiResponse::success);
+        }, ApiResponse::success);
     }
 }

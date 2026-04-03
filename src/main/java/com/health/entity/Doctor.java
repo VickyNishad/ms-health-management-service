@@ -2,7 +2,6 @@ package com.health.entity;
 
 import jakarta.persistence.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -16,7 +15,7 @@ public class Doctor extends BaseEntity {
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false)
-    private UserRegistration user;
+    private User user;
     
     @Column(name = "name")
     private String name;
@@ -62,7 +61,7 @@ public class Doctor extends BaseEntity {
         return name;
     }
 
-    public UserRegistration getUser() {
+    public User getUser() {
         return user;
     }
 
@@ -106,7 +105,7 @@ public class Doctor extends BaseEntity {
         this.totalExperience = totalExperience;
     }
 
-    public void setUser(UserRegistration user) {
+    public void setUser(User user) {
         this.user = user;
     }
 

@@ -4,15 +4,9 @@ import com.health.dto.MessageResponse;
 import com.health.dto.request.ClinicRequest;
 import com.health.dto.request.DoctorClinicRequest;
 import com.health.dto.response.ClinicDetailsDto;
-import com.health.entity.Clinic;
-import com.health.entity.Doctor;
-import com.health.entity.DoctorClinic;
-import com.health.entity.UserRegistration;
+import com.health.entity.*;
 import com.health.models.ApiResponse;
-import com.health.repository.ClinicRepository;
-import com.health.repository.DoctorClinicRepository;
-import com.health.repository.DoctorRepository;
-import com.health.repository.UserRegistrationRepository;
+import com.health.repository.*;
 import com.health.service.ClinicService;
 import com.health.service.DoctorService;
 import com.health.service.KycStepService;
@@ -30,7 +24,7 @@ import java.util.stream.Collectors;
 public class ClinicServiceImpl implements ClinicService {
 
     @Autowired
-    private UserRegistrationRepository userRegistrationRepository;
+    private UserRepository userRepository;
 
     @Autowired
     private DoctorRepository doctorRepository;
@@ -75,7 +69,7 @@ public class ClinicServiceImpl implements ClinicService {
         return ApiExecutionUtils.ApiExecutor.processRequest(null,req ->{},
                 ()->{
                     // validate user
-                    Optional<UserRegistration> optionalUserRegistration = userRegistrationRepository.findById(userId);
+                    Optional<User> optionalUserRegistration = userRepository.findById(userId);
                     if (optionalUserRegistration.isEmpty()) {
                         throw new RuntimeException("User not found with this userId :"+userId);
                     }
@@ -181,7 +175,7 @@ public class ClinicServiceImpl implements ClinicService {
         return ApiExecutionUtils.ApiExecutor.processRequest(null,
                 req ->{},
                 ()->{
-                    Optional<UserRegistration> optionalUserRegistration = userRegistrationRepository.findById(userId);
+                    Optional<User> optionalUserRegistration = userRepository.findById(userId);
                     if (optionalUserRegistration.isEmpty()) {
                         throw new RuntimeException("User not found with this userId :"+userId);
                     }

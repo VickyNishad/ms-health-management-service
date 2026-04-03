@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
-import com.health.domain.model.TokenModel;
+import com.health.models.TokenModel;
 import com.health.dto.TokenResponse;
 import com.health.service.JwtService;
 import com.health.utility.Convertors;

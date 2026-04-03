@@ -4,7 +4,7 @@
 package com.health.service;
 
 
-import com.health.domain.model.TokenModel;
+import com.health.models.TokenModel;
 import com.health.dto.TokenResponse;
 
 /**

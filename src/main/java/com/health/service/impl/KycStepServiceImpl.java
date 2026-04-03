@@ -8,20 +8,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.health.entity.*;
+import com.health.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.health.dto.response.KycStepResponse;
-import com.health.entity.KycStepMaster;
-import com.health.entity.KycStepStatus;
-import com.health.entity.RoleMaster;
-import com.health.entity.UserRegistration;
 import com.health.models.ApiResponse;
 import com.health.repository.KycStepMasterRepository;
 import com.health.repository.KycStepStatusReposotory;
-import com.health.repository.UserRegistrationRepository;
 import com.health.service.KycStepService;
 import com.health.utility.ApiExecutionUtils;
 
@@ -38,13 +35,13 @@ public class KycStepServiceImpl implements KycStepService {
 	private KycStepStatusReposotory kycStepStatusReposotory;
 	
 	@Autowired
-	private UserRegistrationRepository userRegistrationRepository;
+	private UserRepository userRepository;
 
 	@Override
 	public void addStep(Long userId, Long stepId) {
 		// TODO Auto-generated method stub
 
-		Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
+		Optional<User> user = userRepository.findById(userId);
 		if(user.isEmpty()) {
 			throw new RuntimeException("User not found. Please create an account to proceed.");
 		}
@@ -74,12 +71,12 @@ public class KycStepServiceImpl implements KycStepService {
 		
 		ApiResponse<List<KycStepResponse>> success = ApiExecutionUtils.ApiExecutor.processRequest(userId, req -> {
 		}, () -> {
-			Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
+			Optional<User> user = userRepository.findById(userId);
 			if(user.isEmpty()) {
 				throw new RuntimeException("User not found. Please create an account to proceed.");
 			}
 			
-			UserRegistration userData = user.get();
+			User userData = user.get();
 			RoleMaster roleMaster = userData.getRole();
 			Long roleId = roleMaster.getId();
 			

@@ -3,21 +3,14 @@
  */
 package com.health.service.impl;
 
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
-import com.health.domain.model.TokenModel;
-import com.health.domain.model.UserRegistrationModel;
 import com.health.dto.DoctorSignUpRequest;
 import com.health.dto.PatientSignUpRequest;
 import com.health.dto.TokenResponse;
-import com.health.entity.RoleMaster;
-import com.health.entity.UserRegistration;
 import com.health.models.ApiResponse;
 import com.health.service.JwtService;
 import com.health.service.SignUpService;
@@ -29,7 +22,7 @@ import com.health.service.SignUpService;
 public class SignUpServiceImpl implements SignUpService {
 
 //	@Autowired
-//	private UserRegistrationRepository useRepositoryPort;
+//	private UserRepository useRepositoryPort;
 //
 //	@Autowired
 //	private PatientRepository patientRepository;
@@ -70,7 +63,7 @@ public class SignUpServiceImpl implements SignUpService {
 //			Validators.validateRequestedField("name", req.getFullName());
 //			Validators.validateRequestedField("loginType", req.getLoginType().name());
 //		}, () -> {
-//			Optional<UserRegistration> user = useRepositoryPort
+//			Optional<User> user = useRepositoryPort
 //					.findByProviderLoginId(signUpRequest.getProviderLoginId());
 //			if (user.isPresent()) {
 //				// return message
@@ -95,7 +88,7 @@ public class SignUpServiceImpl implements SignUpService {
 //			model.setRole(role.get());
 //			model.setSocialId(null);
 //
-//			UserRegistration userRegistration = useRepositoryPort.save(model);
+//			User userRegistration = useRepositoryPort.save(model);
 //
 //			//
 ////			PatientModel patientModel = new PatientModel();
@@ -126,7 +119,7 @@ public class SignUpServiceImpl implements SignUpService {
 //		// check user Exists or not
 //
 //		ApiResponse<TokenResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(null, null, () -> {
-//			Optional<UserRegistration> user = useRepositoryPort
+//			Optional<User> user = useRepositoryPort
 //					.findByProviderLoginId(signUpRequest.getProviderLoginId());
 //			if (user.isPresent()) {
 //				throw new RuntimeException("You already have an account. Please log in to continue.");
@@ -146,7 +139,7 @@ public class SignUpServiceImpl implements SignUpService {
 //			model.setProviderLoginId(signUpRequest.getProviderLoginId());
 //			model.setRole(role.get());
 //
-//			UserRegistration userRegistration = useRepositoryPort.save(model);
+//			User userRegistration = useRepositoryPort.save(model);
 //
 ////			DoctorModel doctorModel = new DoctorModel();
 ////

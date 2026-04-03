@@ -1,27 +1,60 @@
 /**
  * 
  */
-package com.health.dto.request;
+package com.health.entity;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 
 /**
  * 
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class ProfileDetailsRequest {
 
+@Entity
+@Table(name = "user_profiles")
+public class UserProfile extends BaseEntity {
+
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@OneToOne
+	@JoinColumn(name = "user_id", nullable = false, unique = true)
+	private User user;
+
+	@Column(name = "name")
 	private String name;
+
+	@Column(name = "age")
 	private Integer age;
+
+	@Column(name = "gender")
 	private String gender;
+
+	@Column(name = "date_of_birth")
 	private LocalDate dateOfBirth;
+
+	@Column(name = "email_id")
 	private String emailId;
+
+	@Column(name = "mobile_number")
 	private String mobileNumber;
+
+	@Column(name = "profile_picture")
 	private String profilePicture;
+
+	@Column(name = "is_email_verified")
 	private Boolean isEmailVerified = false;
+
+	@Column(name = "is_mobile_verified")
 	private Boolean isMobileVerified = false;
 
 	public Long getId() {
@@ -30,6 +63,14 @@ public class ProfileDetailsRequest {
 
 	public void setId(Long id) {
 		this.id = id;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	public String getName() {

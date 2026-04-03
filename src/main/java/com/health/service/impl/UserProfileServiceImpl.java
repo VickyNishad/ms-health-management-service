@@ -1,22 +1,19 @@
 /**
- * 
+ *
  */
 package com.health.service.impl;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
 
-import com.health.dto.MessageResponse;
-import com.health.repository.UserRegistrationRepository;
+import com.health.dto.request.UserProfileRequest;
+import com.health.entity.User;
+import com.health.entity.UserProfile;
+import com.health.mappers.UserProfileMapper;
+import com.health.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.health.dto.request.ProfileDetailsRequest;
 import com.health.dto.response.ProfileDetailsResponse;
-import com.health.entity.UserProfileDetails;
-import com.health.entity.UserRegistration;
 import com.health.models.ApiResponse;
 import com.health.repository.UserProfileRepository;
 import com.health.service.KycStepService;
@@ -24,72 +21,79 @@ import com.health.service.UserProfileService;
 import com.health.utility.ApiExecutionUtils;
 
 /**
- * 
+ *
  */
 @Service
 public class UserProfileServiceImpl implements UserProfileService {
-	
-	@Autowired
-	private UserProfileRepository userProfileRepository;
 
-	@Autowired
-	private UserRegistrationRepository userRegistrationRepository;
-	
-	@Autowired
-	private KycStepService kycStepService;
+    @Autowired
+    private UserProfileRepository userProfileRepository;
 
-	@Override
-	public ResponseEntity<ApiResponse<ProfileDetailsResponse>> createNewProfile(UserRegistration user,ProfileDetailsRequest profileDetailsRequest) {
-		// TODO Auto-generated method stub
-	
-		ApiResponse<ProfileDetailsResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(user, req -> {
-		}, () -> {
-			Optional<UserProfileDetails> optionalUserProfile = userProfileRepository.findByUserId(user.getId());
-			ProfileDetailsResponse profileDetailsResponse = new ProfileDetailsResponse();
-			if(optionalUserProfile.isPresent()) {
-			    UserProfileDetails userProfile = optionalUserProfile.get();
-			    // need to set update mandatory data
-			    userProfileRepository.save(userProfile);
-			   // need to return here
-			    return getProfileDetailsResponse(userProfile);
-			}
-			
-			UserProfileDetails userProfileDetails = getProfileDetailsRequest(user, profileDetailsRequest);
-			userProfileRepository.save(userProfileDetails);
-			kycStepService.addStep(user.getId(), 2L);
+    @Autowired
+    private UserRepository userRepository;
 
-			return getProfileDetailsResponse(userProfileDetails);
-			
-		}, ApiResponse::success);
-		return new ResponseEntity<>(success, HttpStatus.OK);
 
-	}
+    private final UserProfileMapper userProfileMapper;
 
-	@Override
-	public ApiResponse<UserProfileDetails> personalDetails(Long userId, UserProfileDetails userProfileDetails) {
+    @Autowired
+    private KycStepService kycStepService;
+
+    public UserProfileServiceImpl(UserProfileMapper userProfileMapper) {
+        this.userProfileMapper = userProfileMapper;
+    }
+
+    @Override
+    public ApiResponse<ProfileDetailsResponse> createNewProfile(User user, UserProfileRequest userProfileRequest) {
+        // TODO Auto-generated method stub
+
+        return ApiExecutionUtils.ApiExecutor.processRequest(user, req -> {
+        }, () -> {
+            Optional<UserProfile> optionalUserProfile = userProfileRepository.findByUserId(user.getId());
+            if (optionalUserProfile.isPresent()) {
+                UserProfile userProfile = optionalUserProfile.get();
+                // need to set update mandatory data
+                userProfileRepository.save(userProfile);
+                // need to return here
+                return userProfileMapper.toResponse(userProfile);
+            }
+
+            UserProfile profile = userProfileMapper.toEntity(userProfileRequest);
+            profile = userProfileRepository.save(profile);
+
+            kycStepService.addStep(user.getId(), 2L);
+
+            return userProfileMapper.toResponse(profile);
+
+        }, ApiResponse::success);
+
+    }
+
+    //	@Override
+    public ApiResponse<UserProfile> personalDetails(Long userId, UserProfile userProfile) {
 
         return ApiExecutionUtils.ApiExecutor.processRequest(
                 null,
-                req -> {},
+                req -> {
+                },
                 () -> {
-                    Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
-                    if(user.isEmpty()) {
+                    Optional<User> user = userRepository.findById(userId);
+                    if (user.isEmpty()) {
                         throw new RuntimeException("User not found. Please create an account to proceed.");
                     }
 
-                    Optional<UserProfileDetails> optionalUserProfileDetails =
+                    Optional<UserProfile> optionalUserProfileDetails =
                             userProfileRepository.findByUserId(userId);
 
-                    UserProfileDetails profile;
+                    UserProfile profile;
                     if (optionalUserProfileDetails.isPresent()) {
                         // UPDATE
                         profile = optionalUserProfileDetails.get();
 
                     } else {
                         // INSERT
-                        profile = userProfileDetails;
+                        profile = userProfile;
                         profile.setUser(user.get());
-                        kycStepService.addStep(userId,3L);
+                        kycStepService.addStep(userId, 3L);
                     }
 
                     return userProfileRepository.save(profile);
@@ -97,121 +101,91 @@ public class UserProfileServiceImpl implements UserProfileService {
                 },
                 ApiResponse::success
         );
-	}
-
-	/**
-	 */
-	@Override
-	public ApiResponse<UserProfileDetails> getUserProfileDetails(Long userId) {
-
-		return ApiExecutionUtils.ApiExecutor.processRequest(
-				null,
-				req -> {},
-				() -> {
-					Optional<UserRegistration> user = userRegistrationRepository.findById(userId);
-					if(user.isEmpty()) {
-						throw new RuntimeException("User not found. Please create an account to proceed.");
-					}
-
-					Optional<UserProfileDetails> optionalUserProfileDetails =
-							userProfileRepository.findByUserId(userId);
-					if (optionalUserProfileDetails.isEmpty()){
-						throw new RuntimeException("User profile not found. Please create an account to proceed.");
-					}
-					UserProfileDetails profile = null;
-                    // UPDATE
-                    profile = optionalUserProfileDetails.get();
-
-                    return profile;
-
-				},
-				ApiResponse::success
-		);
     }
 
-	/**
-	 */
-	@Override
-	public ApiResponse<ProfileDetailsResponse> createNewProfile(Long userId, ProfileDetailsRequest profileDetailsRequest) {
+    @Override
+    public ApiResponse<ProfileDetailsResponse> findUserProfileById(Long userId) {
 
-       return ApiExecutionUtils.ApiExecutor.processRequest(null,
+        return ApiExecutionUtils.ApiExecutor.processRequest(
+                null,
                 req -> {
                 },
                 () -> {
-                    Optional<UserRegistration> optionalUserRegistration = userRegistrationRepository.findById(userId);
+                    Optional<User> user = userRepository.findById(userId);
+                    if (user.isEmpty()) {
+                        throw new RuntimeException("User not found. Please create an account to proceed.");
+                    }
+
+                    Optional<UserProfile> optionalUserProfileDetails =
+                            userProfileRepository.findByUserId(userId);
+                    if (optionalUserProfileDetails.isEmpty()) {
+                        throw new RuntimeException("User profile not found. Please create an account to proceed.");
+                    }
+                    UserProfile profile = null;
+                    // UPDATE
+                    profile = optionalUserProfileDetails.get();
+
+                    return userProfileMapper.toResponse(profile);
+
+                },
+                ApiResponse::success
+        );
+    }
+
+    /**
+     *
+     */
+//	@Override
+    public ApiResponse<ProfileDetailsResponse> createNewProfile(Long userId, UserProfileRequest userProfileRequest) {
+
+        return ApiExecutionUtils.ApiExecutor.processRequest(null,
+                req -> {
+                },
+                () -> {
+                    Optional<User> optionalUserRegistration = userRepository.findById(userId);
                     if (optionalUserRegistration.isEmpty()) {
                         throw new RuntimeException("User not found. Please create an account to proceed.");
                     }
 
-					UserRegistration user = optionalUserRegistration.get();
-					UserProfileDetails userProfileDetails = getProfileDetailsRequest(user, profileDetailsRequest);
+                    User user = optionalUserRegistration.get();
+                    UserProfile userProfile = userProfileMapper.toEntity(userProfileRequest); // getProfileDetailsRequest(user, userProfileRequest);
 
-					Optional<UserProfileDetails> optionalUserProfile = userProfileRepository.findByUserId(userId);
-					if(optionalUserProfile.isPresent()) {
-						userProfileDetails.setId(optionalUserProfile.get().getId());
-					}
-                    userProfileDetails = userProfileRepository.save(userProfileDetails);
-                    return getProfileDetailsResponse(userProfileDetails);
+                    Optional<UserProfile> optionalUserProfile = userProfileRepository.findByUserId(userId);
+                    if (optionalUserProfile.isPresent()) {
+                        userProfile.setId(optionalUserProfile.get().getId());
+                    }
+                    userProfile = userProfileRepository.save(userProfile);
+                    return userProfileMapper.toResponse(userProfile);
                 },
                 ApiResponse::success);
-	}
+    }
 
-	/**
-	 */
-	@Override
-	public ApiResponse<MessageResponse> updateProfile(Long userId, ProfileDetailsRequest profileDetailsRequest) {
-		return ApiExecutionUtils.ApiExecutor.processRequest(null,
-				req -> {
-				},
-				() -> {
-					Optional<UserRegistration> optionalUserRegistration = userRegistrationRepository.findById(userId);
-					if (optionalUserRegistration.isEmpty()) {
-						throw new RuntimeException("User not found. Please create an account to proceed.");
-					}
-					Optional<UserProfileDetails> optionalUserProfile = userProfileRepository.findByUserId(userId);
-					if(optionalUserProfile.isEmpty()) {
-						throw new RuntimeException("User profile not found. Please create an account to proceed.");
-					}
+    /**
+     *
+     */
+    @Override
+    public ApiResponse<ProfileDetailsResponse> updateProfile(Long userId, UserProfileRequest userProfileRequest) {
+        return ApiExecutionUtils.ApiExecutor.processRequest(null,
+                req -> {
+                },
+                () -> {
+                    Optional<User> optionalUser = userRepository.findById(userId);
+                    if (optionalUser.isEmpty()) {
+                        throw new RuntimeException("User not found. Please create an account to proceed.");
+                    }
+                    Optional<UserProfile> profileOptional = userProfileRepository.findByUserId(userId);
+                    if (profileOptional.isEmpty()) {
+                        throw new RuntimeException("User profile not found. Please create an account to proceed.");
+                    }
 
-					UserRegistration user = optionalUserRegistration.get();
-					UserProfileDetails userProfileDetails = getProfileDetailsRequest(user, profileDetailsRequest);
-					userProfileDetails.setId(optionalUserProfile.get().getId());
-					userProfileDetails = userProfileRepository.save(userProfileDetails);
+                    User user = optionalUser.get();
+                    UserProfile userProfile = userProfileMapper.toEntity(userProfileRequest);
+                    userProfile.setId(profileOptional.get().getId());
+                    userProfile = userProfileRepository.save(userProfile);
 
-					return new MessageResponse("Profile updated successfully");
-				},
-				ApiResponse::success);
-	}
-
-	private static UserProfileDetails getProfileDetailsRequest(UserRegistration user,ProfileDetailsRequest profileDetailsRequest) {
-		profileDetailsRequest.setName(profileDetailsRequest.getName());
-		UserProfileDetails userProfileDetails = new UserProfileDetails();
-		userProfileDetails.setName(profileDetailsRequest.getName());
-		userProfileDetails.setMobileNumber(profileDetailsRequest.getMobileNumber());
-		userProfileDetails.setUser(user);
-		userProfileDetails.setEmailId(profileDetailsRequest.getEmailId());
-		userProfileDetails.setGender(profileDetailsRequest.getGender());
-		userProfileDetails.setIsEmailVerified(profileDetailsRequest.getIsEmailVerified());
-		userProfileDetails.setIsMobileVerified(profileDetailsRequest.getIsMobileVerified());
-		userProfileDetails.setAge(profileDetailsRequest.getAge());
-		userProfileDetails.setProfilePicture(profileDetailsRequest.getProfilePicture());
-		userProfileDetails.setCreatedAt(LocalDateTime.now());
-		userProfileDetails.setCreatedBy(user.getId().toString());
-		return userProfileDetails;
-	}
-
-	private static ProfileDetailsResponse getProfileDetailsResponse(UserProfileDetails userProfileDetails) {
-		ProfileDetailsResponse profileDetailsResponse = new ProfileDetailsResponse();
-		profileDetailsResponse.setId(userProfileDetails.getId());
-		profileDetailsResponse.setName(userProfileDetails.getName());
-		profileDetailsResponse.setMobileNumber(userProfileDetails.getMobileNumber());
-		profileDetailsResponse.setEmailId(userProfileDetails.getEmailId());
-		profileDetailsResponse.setGender(userProfileDetails.getGender());
-		profileDetailsResponse.setIsEmailVerified(userProfileDetails.getIsEmailVerified());
-		profileDetailsResponse.setIsMobileVerified(userProfileDetails.getIsMobileVerified());
-		profileDetailsResponse.setAge(userProfileDetails.getAge());
-		profileDetailsResponse.setProfilePicture(userProfileDetails.getProfilePicture());
-		return profileDetailsResponse;
-	}
+                    return userProfileMapper.toResponse(userProfile);
+                },
+                ApiResponse::success);
+    }
 
 }

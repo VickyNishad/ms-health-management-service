@@ -4,12 +4,12 @@
 package com.health.service;
 
 import com.health.dto.MessageResponse;
-import com.health.entity.UserProfileDetails;
+import com.health.dto.request.UserProfileRequest;
+import com.health.entity.UserProfile;
 import org.springframework.http.ResponseEntity;
 
-import com.health.dto.request.ProfileDetailsRequest;
 import com.health.dto.response.ProfileDetailsResponse;
-import com.health.entity.UserRegistration;
+import com.health.entity.User;
 import com.health.models.ApiResponse;
 
 /**
@@ -17,10 +17,8 @@ import com.health.models.ApiResponse;
  */
 public interface UserProfileService {
 	
-	public ResponseEntity<ApiResponse<ProfileDetailsResponse>> createNewProfile(UserRegistration user,ProfileDetailsRequest profileDetailsRequest);
-	public ApiResponse<UserProfileDetails> personalDetails(Long userId,UserProfileDetails userProfileDetails);
-	public ApiResponse<UserProfileDetails> getUserProfileDetails(Long userId);
-	public ApiResponse<ProfileDetailsResponse> createNewProfile(Long userId,ProfileDetailsRequest profileDetailsRequest);
-	public ApiResponse<MessageResponse> updateProfile(Long userId, ProfileDetailsRequest profileDetailsRequest);
+	public ApiResponse<ProfileDetailsResponse> createNewProfile(User user, UserProfileRequest userProfileRequest);
+	public ApiResponse<ProfileDetailsResponse> findUserProfileById(Long userId);
+	public ApiResponse<ProfileDetailsResponse> updateProfile(Long userId, UserProfileRequest userProfileRequest);
 
 }
