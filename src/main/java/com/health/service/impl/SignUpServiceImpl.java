@@ -3,6 +3,14 @@
  */
 package com.health.service.impl;
 
+import com.health.dto.UserRegistrationRequest;
+import com.health.dto.request.CreateUserRequest;
+import com.health.dto.response.AuthResponse;
+import com.health.dto.response.UserResponseDTO;
+import com.health.entity.User;
+import com.health.mappers.AuthMapper;
+import com.health.service.UserService;
+import com.health.utility.ApiExecutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -21,32 +29,46 @@ import com.health.service.SignUpService;
 @Service
 public class SignUpServiceImpl implements SignUpService {
 
-//	@Autowired
-//	private UserRepository useRepositoryPort;
-//
-//	@Autowired
-//	private PatientRepository patientRepository;
-//
-//	@Autowired
-//	private DoctorRepository doctorRepository;
-//
-//	@Autowired
-//	private RoleMasterRepository rolMasterRepositoryPort;
-
 	@Autowired
 	private JwtService jwtService;
 
-	@Override
-	public ResponseEntity<ApiResponse<TokenResponse>> patientSignUp(PatientSignUpRequest signUpRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	@Autowired
+	private UserService userService;
+
+	private final AuthMapper authMapper;
+
+	public SignUpServiceImpl(AuthMapper authMapper) {
+		this.authMapper = authMapper;
 	}
 
 	@Override
-	public ResponseEntity<ApiResponse<TokenResponse>> doctorSignUp(DoctorSignUpRequest signUpRequest) {
-		// TODO Auto-generated method stub
-		return null;
+	public ApiResponse<AuthResponse> signUp(UserRegistrationRequest signUpRequest) {
+		return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+		}, () -> {
+
+			ApiResponse<User> apiResponse = userService.findByMobileNumber(signUpRequest.getProviderLoginId());
+			if (apiResponse.isSuccess()) {
+				throw new RuntimeException("You already have an account. Please log in to continue.");
+			}
+			CreateUserRequest createUserRequest = new CreateUserRequest();
+			createUserRequest.setUserName(signUpRequest.getUserName());
+			createUserRequest.setPassword(signUpRequest.getPassword());
+			createUserRequest.setMobileNumber(apiResponse.getData().getMobileNumber());
+			createUserRequest.setLoginType(signUpRequest.getLoginType());
+			createUserRequest.setRoleId(0);
+			ApiResponse<UserResponseDTO> responseDTOApiResponse = userService.createUser(createUserRequest);
+			if (!responseDTOApiResponse.isSuccess()) {
+				throw new RuntimeException("Failed to sign up with provider " + signUpRequest.getProviderLoginId());
+			}
+			ApiResponse<User> apiUserResponse = userService.findByMobileNumber(signUpRequest.getProviderLoginId());
+			if (!apiUserResponse.isSuccess()) {
+				throw new RuntimeException("Failed to sign up with provider " + signUpRequest.getProviderLoginId());
+			}
+
+			return authMapper.toAuthResponse(apiUserResponse.getData());
+		}, ApiResponse::success);
 	}
+
 
 //	@Override
 //	public ResponseEntity<ApiResponse<TokenResponse>> patientSignUp(PatientSignUpRequest signUpRequest) {

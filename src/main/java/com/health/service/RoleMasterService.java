@@ -15,6 +15,8 @@ import com.health.models.ApiResponse;
  */
 public interface RoleMasterService {
 
-	public ResponseEntity<ApiResponse<List<RoleMaster>>> findAll();
-	public ResponseEntity<ApiResponse<List<RoleMaster>>> findByUserId(Long userId);
+	public ApiResponse<List<RoleMaster>> findAll();
+	public ApiResponse<RoleMaster> findById(Long roleId);
+	public ApiResponse<RoleMaster> findByRole(String role);
+	public ApiResponse<RoleMaster> findByUserId(Long userId);
 }
