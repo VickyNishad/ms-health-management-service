@@ -71,43 +71,11 @@ public class HealthUtils {
     public static boolean matchPassword(String rawPassword, String encodedPassword) {
         return bCryptPasswordEncoder.matches(rawPassword, encodedPassword);
     }
-    
-    
+
 	public static void removeKeyFromMap(Map<String, Object> map,String key) {
 		map.remove(key);
 		System.out.println("Successfully remove "+key+" from map");
 	}
-
-	
-	public static int getIntValue(Object value) {
-        if (value == null) {
-            return 0; 
-        }
-
-        try {
-            if (value instanceof Integer) {
-                return (int) value;
-            } else if (value instanceof String) {
-                return Integer.parseInt((String) value);
-            } else if (value instanceof Number) {
-                return ((Number) value).intValue(); 
-            } else {
-                return Integer.parseInt(value.toString());
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("Unable to convert to int: " + value);
-            return 0; 
-        }
-    }
-    
-    public static String getStringValue(Object value) {
-        if (value == null) {
-            return ""; // 
-        }
-
-        return String.valueOf(value);
-    }
-    
       
     // AES Encryption method
     public static String encrypt(String data, String secretKey) {
@@ -182,6 +150,7 @@ public class HealthUtils {
             String token_data = Convertors.convertObjectToString(object);
             // Encode token using Base64 encoding
             String accessToken = encrypt(token_data, secretKey);
+            assert accessToken != null;
             if (accessToken.length()>495){
                 System.out.println("token_data " +"too long");
             }

@@ -25,8 +25,7 @@ public class Convertors {
         try {
             return objectMapper.convertValue(obj, Map.class);
         } catch (Exception e) {
-        	e.printStackTrace();
-            return null; 
+            return null;
         }
     }
     
@@ -48,38 +47,16 @@ public class Convertors {
     	try {
     		return objectMapper.convertValue(obj, clazz);
         } catch (Exception e) {
-        	e.printStackTrace();
-            return null; 
+            return null;
         }
     }
     
     public static int getIntValue(Object value) {
-        if (value == null) {
-            return 0;
-        }
-
-        try {
-            if (value instanceof Integer) {
-                return (int) value;
-            } else if (value instanceof String) {
-                return Integer.parseInt((String) value);
-            } else if (value instanceof Number) {
-                return ((Number) value).intValue();
-            } else {
-                return Integer.parseInt(value.toString());
-            }
-        } catch (NumberFormatException e) {
-            System.err.println("Unable to convert to int: " + value);
-            return 0;
-        }
+        return HealthUtils.getIntValue(value);
     }
     
     public static String getStringValue(Object value) {
-        if (value == null) {
-            return ""; // 
-        }
-
-        return String.valueOf(value);
+        return HealthUtils.getStringValue(value);
     }
 
 
