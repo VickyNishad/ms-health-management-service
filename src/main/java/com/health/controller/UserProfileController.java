@@ -5,6 +5,7 @@ package com.health.controller;
 
 import com.health.dto.MessageResponse;
 import com.health.dto.request.UserProfileRequest;
+import com.health.dto.response.ProfileDetailsResponse;
 import com.health.entity.UserProfile;
 import com.health.models.ApiResponse;
 import com.health.service.UserProfileService;
@@ -23,12 +24,12 @@ public class UserProfileController {
 	private UserProfileService userProfileService;
 	
 	@GetMapping("/{userId}/profile")
-	public ApiResponse<UserProfile> user(@PathVariable Long userId) {
-		return userProfileService.getUserProfileDetails(userId);
+	public ApiResponse<ProfileDetailsResponse> user(@PathVariable Long userId) {
+		return userProfileService.findUserProfileById(userId);
 	}
 
 	@PostMapping("/update/{userId}/profile")
-	public ApiResponse<MessageResponse> userUpdate(@PathVariable Long userId, @RequestBody UserProfileRequest userProfileRequest) {
+	public ApiResponse<ProfileDetailsResponse> userUpdate(@PathVariable Long userId, @RequestBody UserProfileRequest userProfileRequest) {
 		return userProfileService.updateProfile(userId, userProfileRequest);
 	}
 

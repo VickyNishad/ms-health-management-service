@@ -3,6 +3,8 @@
  */
 package com.health.controller;
 
+import com.health.dto.MessageResponse;
+import com.health.dto.ResetPasswordRequest;
 import com.health.dto.request.*;
 import com.health.dto.response.AuthResponse;
 import com.health.enums.LoginType;
@@ -30,6 +32,9 @@ public class AuthController {
 	@Autowired
 	private SignUpService signUpService;
 
+	@Autowired
+	private ResetPasswordService resetPasswordService;
+
 
 	@GetMapping("/user/exist/{providerLoginId}")
 	public ApiResponse<UserRegisteredResponse> isUserRegistered(@PathVariable String providerLoginId) {
@@ -52,6 +57,11 @@ public class AuthController {
 		authRequest.setPassword(loginRequest.getPassword());
 		authRequest.setLoginType(LoginType.PASSWORD);
 		return authService.authenticate(authRequest);
+	}
+
+	@PostMapping("/user/reset/password")
+	public ApiResponse<MessageResponse> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+		return  resetPasswordService.resetPassword(resetPasswordRequest);
 	}
 
 }

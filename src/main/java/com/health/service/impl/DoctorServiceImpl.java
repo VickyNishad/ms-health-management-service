@@ -13,9 +13,11 @@ import java.util.stream.Collectors;
 
 import com.health.dto.request.AvailabilityRequest;
 import com.health.dto.request.DoctorPersonalDetailsRequest;
+import com.health.dto.request.UserProfileRequest;
 import com.health.dto.response.DoctorClinicAvailabilityDto;
 import com.health.dto.response.DoctorPersonalDetailsDto;
 import com.health.dto.response.MasterSummary;
+import com.health.dto.response.ProfileDetailsResponse;
 import com.health.entity.*;
 import com.health.repository.*;
 import com.health.service.*;
@@ -81,19 +83,25 @@ public class DoctorServiceImpl implements DoctorService {
 				throw new RuntimeException("User not found. Please create an account to proceed.");
 			}
 
-			ApiResponse<UserProfile> apiResponse = userProfileService.getUserProfileDetails(userId);
+			ApiResponse<ProfileDetailsResponse> apiResponse = userProfileService.findUserProfileById(userId);
 			if (!apiResponse.isSuccess()) {
 				throw new RuntimeException("User profile not found. Please create an account to proceed.");
 			}
-			UserProfile userProfile = apiResponse.getData();
-			userProfile.setAge(doctorPersonalDetailsRequest.getAge());
-			userProfile.setGender(doctorPersonalDetailsRequest.getGender());
-			userProfile.setEmailId(doctorPersonalDetailsRequest.getEmailId());
-			userProfile.setUpdatedAt(LocalDateTime.now());
-			userProfile.setUpdatedBy(userId.toString());
 
-			ApiResponse<UserProfile> userProfileDetailsApiResponse = userProfileService.personalDetails(userId, userProfile);
-			System.out.println(userProfileDetailsApiResponse.getMessage());
+			ProfileDetailsResponse profileDetailsResponse = apiResponse.getData();
+			UserProfileRequest userProfileRequest = new UserProfileRequest();
+			userProfileRequest.setAge(doctorPersonalDetailsRequest.getAge());
+			userProfileRequest.setGender(doctorPersonalDetailsRequest.getGender());
+			userProfileRequest.setName(doctorPersonalDetailsRequest.getName());
+
+			userProfileRequest.setProfilePicture(profileDetailsResponse.getProfilePicture());
+			userProfileRequest.setIsEmailVerified(profileDetailsResponse.getIsEmailVerified());
+			userProfileRequest.setDateOfBirth(profileDetailsResponse.getDateOfBirth());
+			userProfileRequest.setMobileNumber(profileDetailsResponse.getMobileNumber());
+			userProfileRequest.setEmailId(profileDetailsResponse.getEmailId());
+
+			ApiResponse<ProfileDetailsResponse> profileDetailsResponseApiResponse = userProfileService.updateProfile(userId, userProfileRequest);
+			System.out.println(profileDetailsResponseApiResponse.getMessage());
 
 			// insert doctor personal details
 
@@ -169,14 +177,14 @@ public class DoctorServiceImpl implements DoctorService {
 					if(user.isEmpty()) {
 						throw new RuntimeException("User not found. Please create an account to proceed.");
 					}
-					ApiResponse<UserProfile> apiResponse = userProfileService.getUserProfileDetails(userId);
+					ApiResponse<ProfileDetailsResponse> apiResponse = userProfileService.findUserProfileById(userId);
 					if (!apiResponse.isSuccess()) {
 						throw new RuntimeException("User profile not found. Please create an account to proceed.");
 					}
-					UserProfile userProfile = apiResponse.getData();
+					ProfileDetailsResponse profileDetailsResponse = apiResponse.getData();
 
 					List<Doctor> doctors = doctorRepository.findByUserId(userId);
-                    return getDoctorPersonalDetailsDto(doctors, userProfile);
+                    return getDoctorPersonalDetailsDto(doctors, profileDetailsResponse);
 				},
 				ApiResponse::success);
 	}
@@ -325,7 +333,7 @@ public class DoctorServiceImpl implements DoctorService {
 	}
 
 	@NonNull
-	private DoctorPersonalDetailsDto getDoctorPersonalDetailsDto(List<Doctor> doctors, UserProfile userProfile) {
+	private DoctorPersonalDetailsDto getDoctorPersonalDetailsDto(List<Doctor> doctors, ProfileDetailsResponse userProfile) {
 		if (doctors.isEmpty()) {
 			throw new RuntimeException("Doctor not found. Please create an account to proceed.");
 		}

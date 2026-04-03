@@ -24,7 +24,7 @@ public class UserProfileMapper {
 
     public ProfileDetailsResponse toResponse(UserProfile userProfile) {
         ProfileDetailsResponse profileDetailsResponse = new ProfileDetailsResponse();
-        profileDetailsResponse.setUserid(userProfile.getId());
+        profileDetailsResponse.setUserId(userProfile.getId());
         profileDetailsResponse.setName(userProfile.getName());
         profileDetailsResponse.setMobileNumber(userProfile.getMobileNumber());
         profileDetailsResponse.setEmailId(userProfile.getEmailId());
