@@ -18,7 +18,7 @@ import com.health.dto.response.UserRegisteredResponse;
  */
 public interface UserService {
 
-	public ResponseEntity<ApiResponse<UserRegisteredResponse>> isUserRegistered(String providerLoginId);
+	ApiResponse<UserRegisteredResponse> isUserRegistered(String providerLoginId);
 	ApiResponse<User> findByMobileNumber(String mobileNumber);
 	ApiResponse<User> findByEmailId(String emailId);
 	ApiResponse<User> findBySocialId(String socialId);

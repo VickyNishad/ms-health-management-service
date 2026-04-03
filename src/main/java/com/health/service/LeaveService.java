@@ -20,9 +20,9 @@ import com.health.entity.DoctorLeave;
  */
 public interface LeaveService {
 
-	public ResponseEntity<ApiResponse<MessageResponse>> createLeaveOrBreak(DoctorLeaveRequest doctorLeaveRequest);
-	public ResponseEntity<ApiResponse<MessageResponse>> updateLeaveOrBreak(Long leaveId,DoctorLeaveRequest doctorLeaveRequest);
-	public ResponseEntity<ApiResponse<MessageResponse>> createUpdateLeaveOrBreak(DoctorLeave existing,DoctorLeaveRequest doctorLeaveRequest);
-	public ResponseEntity<ApiResponse<List<DoctorLeaveResponse>>> getDoctorLeaves(Long doctorId);
+	ApiResponse<MessageResponse> createLeaveOrBreak(DoctorLeaveRequest doctorLeaveRequest);
+	ApiResponse<MessageResponse> updateLeaveOrBreak(Long leaveId,DoctorLeaveRequest doctorLeaveRequest);
+	ApiResponse<MessageResponse> createUpdateLeaveOrBreak(DoctorLeave existing,DoctorLeaveRequest doctorLeaveRequest);
+	ApiResponse<List<DoctorLeaveResponse>> getDoctorLeaves(Long doctorId);
 	
 }

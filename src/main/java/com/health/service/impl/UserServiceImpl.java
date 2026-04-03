@@ -56,10 +56,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResponseEntity<ApiResponse<UserRegisteredResponse>> isUserRegistered(String providerLoginId) {
+    public ApiResponse<UserRegisteredResponse> isUserRegistered(String providerLoginId) {
         // TODO Auto-generated method stub
         UserRegisteredResponse userRegisteredResponse = new UserRegisteredResponse();
-        ApiResponse<UserRegisteredResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(providerLoginId, req -> {
+        return ApiExecutionUtils.ApiExecutor.processRequest(providerLoginId, req -> {
         }, () -> {
             Optional<User> user = userRepository.findByMobileNumber(providerLoginId);
             if (user.isPresent()) {
@@ -80,7 +80,6 @@ public class UserServiceImpl implements UserService {
             }
             return userRegisteredResponse;
         }, ApiResponse::success);
-        return new ResponseEntity<>(success, HttpStatus.OK);
     }
 
 //    @Override

@@ -38,9 +38,8 @@ public class AuthController {
 	private SignUpService signUpService;
 
 
-
 	@GetMapping("/user/exist/{providerLoginId}")
-	public ResponseEntity<ApiResponse<UserRegisteredResponse>> isUserRegistered(@PathVariable String providerLoginId) {
+	public ApiResponse<UserRegisteredResponse> isUserRegistered(@PathVariable String providerLoginId) {
 		return userService.isUserRegistered(providerLoginId);
 	}
 
