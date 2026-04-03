@@ -13,9 +13,10 @@ import com.health.service.RoleMasterService;
 import com.health.service.UserService;
 import com.health.utility.ApiExecutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component("google")
 public class GoogleAuthStrategy implements AuthStrategy {
 
     @Autowired

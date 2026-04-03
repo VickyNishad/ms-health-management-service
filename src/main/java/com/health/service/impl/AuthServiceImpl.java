@@ -7,6 +7,8 @@ import com.health.dto.request.AuthRequest;
 import com.health.dto.response.AuthResponse;
 import com.health.service.AuthStrategy;
 import com.health.service.JwtService;
+import com.health.utility.ApiExecutionUtils;
+import jakarta.security.auth.message.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,11 +32,19 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public ApiResponse<AuthResponse> authenticate(AuthRequest authRequest) {
-        AuthStrategy strategy = factory.getAuthStrategy(authRequest.getLoginType().toValue());
-        ApiResponse<AuthResponse> apiResponse = strategy.authenticate(authRequest);
-        AuthResponse authResponse = apiResponse.getData();
-        authResponse.setActive(true);
-        apiResponse.setData(authResponse);
-        return apiResponse;
+
+        return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+        }, () -> {
+            AuthStrategy strategy = factory.getAuthStrategy(authRequest.getLoginType().toValue().toLowerCase());
+            ApiResponse<AuthResponse> apiResponse = strategy.authenticate(authRequest);
+            if (!apiResponse.isSuccess()) {
+               throw new RuntimeException(apiResponse.getMessage());
+            }
+            AuthResponse authResponse = apiResponse.getData();
+            authResponse.setActive(true);
+            apiResponse.setData(authResponse);
+            return authResponse;
+        }, ApiResponse::success);
+
     }
 }

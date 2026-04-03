@@ -11,7 +11,7 @@ import com.health.utility.ApiExecutionUtils;
 import com.health.utility.HealthUtils;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("password")
 public class PasswordAuthStrategy implements AuthStrategy {
 
     private final UserService userService;

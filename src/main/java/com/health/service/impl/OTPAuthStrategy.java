@@ -15,9 +15,10 @@ import com.health.service.RoleMasterService;
 import com.health.service.UserService;
 import com.health.utility.ApiExecutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-@Service
+@Component("otp")
 public class OTPAuthStrategy implements AuthStrategy {
 
     @Autowired
@@ -38,6 +39,18 @@ public class OTPAuthStrategy implements AuthStrategy {
     @Override
     public ApiResponse<AuthResponse> authenticate(AuthRequest request) {
         return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+            if (request == null) {
+                throw new IllegalArgumentException("request is null");
+            }
+            if (request.getLoginType() == null) {
+                throw new IllegalArgumentException("loginType is null");
+            }
+            if (request.getMobileNumber() == null) {
+                throw new IllegalArgumentException("mobileNumber is null");
+            }
+            if(request.getOtpCode() == null){
+                throw new IllegalArgumentException("OTP code is required");
+            }
         }, () -> {
             User user;
             // Verify otp
