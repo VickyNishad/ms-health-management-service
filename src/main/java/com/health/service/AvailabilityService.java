@@ -12,7 +12,7 @@ import com.health.models.ApiResponse;
 import com.health.dto.AvailabilityResponse;
 import com.health.dto.DoctorAvailabilityRequest;
 import com.health.dto.DoctorAvailabilityUpdateRequest;
-import com.health.dto.MessageResponse;
+import com.health.dto.response.MessageResponse;
 
 
 /**

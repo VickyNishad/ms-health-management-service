@@ -1,19 +1,20 @@
 /**
  * 
  */
-package com.health.dto;
+package com.health.dto.request;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.health.enums.LoginType;
 
+import com.health.enums.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * 
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class UserRegistrationRequest {
+public class SignUpRequest {
 
 	@Schema(description = "name of the user", name = "userName", type = "string", example = "Vatsal")
 	private String userName;
@@ -26,6 +27,8 @@ public class UserRegistrationRequest {
 	
 	@Schema(description = "Select loginType", name = "loginType", type = "string", example = "MANUAL/SOCIAL")
 	private LoginType loginType;
+
+	private Role  role;
 
 	public String getUserName() {
 		return userName;
@@ -59,7 +62,15 @@ public class UserRegistrationRequest {
 		this.loginType = loginType;
 	}
 
-	public UserRegistrationRequest() {
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public SignUpRequest() {
 		super();
 		// TODO Auto-generated constructor stub
 	}

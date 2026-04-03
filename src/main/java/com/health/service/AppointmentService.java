@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 import com.health.dto.AppointmentBookingRequest;
-import com.health.dto.MessageResponse;
+import com.health.dto.response.MessageResponse;
 import com.health.entity.Appointment;
 import com.health.models.ApiResponse;
 

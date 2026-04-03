@@ -3,10 +3,8 @@
  */
 package com.health.controller;
 
-import com.health.dto.MessageResponse;
 import com.health.dto.request.UserProfileRequest;
 import com.health.dto.response.ProfileDetailsResponse;
-import com.health.entity.UserProfile;
 import com.health.models.ApiResponse;
 import com.health.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;

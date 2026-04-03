@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.health.dto.MessageResponse;
+import com.health.dto.response.MessageResponse;
 import com.health.models.ApiResponse;
 import com.health.service.PatientService;
 

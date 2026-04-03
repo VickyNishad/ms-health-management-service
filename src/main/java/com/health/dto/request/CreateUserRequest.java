@@ -17,31 +17,10 @@ public class CreateUserRequest {
 	private String socialId;
 	private LoginType loginType;
 	private String password;
-	private int roleId;
+	private Long roleId;
 	private Object data;
 
 	public CreateUserRequest() {	};
-	public CreateUserRequest(
-			String socialId, LoginType loginType, int roleId, Object data) {
-		super();
-		this.socialId = socialId;
-		this.loginType = loginType;
-		this.roleId = roleId;
-		this.data = data;
-	}
-
-	public CreateUserRequest(String userName, String emailId, String mobileNumber, String empCode,
-	                         String socialId, LoginType loginType, String password, int roleId) {
-		super();
-		this.userName = userName;
-		this.emailId = emailId;
-		this.mobileNumber = mobileNumber;
-		this.empCode = empCode;
-		this.socialId = socialId;
-		this.loginType = loginType;
-		this.password = password;
-		this.roleId = roleId;
-	}
 
 	public Object getData() {
 		return data;
@@ -107,11 +86,11 @@ public class CreateUserRequest {
 		this.password = password;
 	}
 
-	public int getRoleId() {
+	public Long getRoleId() {
 		return roleId;
 	}
 
-	public void setRoleId(int roleId) {
+	public void setRoleId(Long roleId) {
 		this.roleId = roleId;
 	}
 

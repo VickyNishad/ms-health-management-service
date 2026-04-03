@@ -1,6 +1,6 @@
 package com.health.service.impl;
 
-import com.health.dto.MessageResponse;
+import com.health.dto.response.MessageResponse;
 import com.health.dto.request.ClinicRequest;
 import com.health.dto.request.DoctorClinicRequest;
 import com.health.dto.response.ClinicDetailsDto;

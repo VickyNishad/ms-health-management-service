@@ -1,6 +1,6 @@
 package com.health.strategy.impl;
 
-import com.health.dto.MessageResponse;
+import com.health.dto.response.MessageResponse;
 import com.health.dto.request.AuthRequest;
 import com.health.dto.request.CreateUserRequest;
 import com.health.dto.response.AuthResponse;

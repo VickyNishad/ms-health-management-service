@@ -2,7 +2,6 @@ package com.health.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.health.enums.LoginType;
-import com.health.enums.Provider;
 import com.health.enums.Role;
 
 @JsonIgnoreProperties(ignoreUnknown = true)

@@ -11,7 +11,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  */
 public enum LoginType {
 
-	MANUAL, GOOGLE, FACEBOOK, APPLE, OTP, PASSWORD;
+	PASSWORD, GOOGLE, FACEBOOK, APPLE, OTP;
 
 	@JsonCreator
 	public static LoginType fromValue(String value) {

@@ -3,10 +3,7 @@
  */
 package com.health.service;
 
-import com.health.dto.MessageResponse;
 import com.health.dto.request.UserProfileRequest;
-import com.health.entity.UserProfile;
-import org.springframework.http.ResponseEntity;
 
 import com.health.dto.response.ProfileDetailsResponse;
 import com.health.entity.User;

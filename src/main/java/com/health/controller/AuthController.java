@@ -3,8 +3,8 @@
  */
 package com.health.controller;
 
-import com.health.dto.MessageResponse;
-import com.health.dto.ResetPasswordRequest;
+import com.health.dto.response.MessageResponse;
+import com.health.dto.request.ResetPasswordRequest;
 import com.health.dto.request.*;
 import com.health.dto.response.AuthResponse;
 import com.health.enums.LoginType;

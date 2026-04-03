@@ -2,6 +2,7 @@ package com.health.dto;
 
 import java.util.List;
 
+import com.health.dto.request.ClinicRequest;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -49,7 +50,7 @@ public class DoctorProfileRequest {
 
     @NotEmpty(message = "At least one specialization must be provided")
     @Schema(description = "List of specialization IDs", example = "[1,2]")
-    private List<Long> specializtionsId;
+    private List<Long> specializationsId;
 
     @NotEmpty(message = "At least one clinic must be provided")
     @Schema(description = "List of clinics associated with the doctor")
@@ -72,8 +73,8 @@ public class DoctorProfileRequest {
     public void setRegistrationNumber(String registrationNumber) { this.registrationNumber = registrationNumber; }
     public List<Long> getQualificationsId() { return qualificationsId; }
     public void setQualificationsId(List<Long> qualificationsId) { this.qualificationsId = qualificationsId; }
-    public List<Long> getSpecializtionsId() { return specializtionsId; }
-    public void setSpecializtionsId(List<Long> specializtionsId) { this.specializtionsId = specializtionsId; }
+    public List<Long> getSpecializtionsId() { return specializationsId; }
+    public void setSpecializtionsId(List<Long> specializationsId) { this.specializationsId = specializationsId; }
     public List<ClinicRequest> getClinics() { return clinics; }
     public void setClinics(List<ClinicRequest> clinics) { this.clinics = clinics; }
 }

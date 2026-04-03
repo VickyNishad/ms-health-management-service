@@ -7,13 +7,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.health.dto.response.SlotSummary;
-import org.springframework.http.ResponseEntity;
 
 import com.health.models.ApiResponse;
 
-import com.health.dto.MessageResponse;
-import com.health.dto.SlotDTO;
-import com.health.dto.SlotSummaryDTO;
+import com.health.dto.response.MessageResponse;
 
 
 /**

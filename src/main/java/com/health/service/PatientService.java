@@ -7,13 +7,10 @@ import java.util.List;
 
 import com.health.dto.request.PatientRequest;
 import com.health.dto.response.PatientDto;
-import org.springframework.http.ResponseEntity;
 
 import com.health.models.ApiResponse;
 
-import com.health.dto.AddPatientRequest;
-import com.health.dto.MessageResponse;
-import com.health.entity.Patient;
+import com.health.dto.response.MessageResponse;
 
 
 /**

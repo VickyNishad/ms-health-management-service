@@ -5,13 +5,11 @@ package com.health.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.health.models.ApiResponse;
 
 import com.health.dto.DoctorLeaveRequest;
 import com.health.dto.DoctorLeaveResponse;
-import com.health.dto.MessageResponse;
+import com.health.dto.response.MessageResponse;
 import com.health.entity.DoctorLeave;
 
 

@@ -26,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 
-import com.health.dto.MessageResponse;
+import com.health.dto.response.MessageResponse;
 import com.health.models.ApiResponse;
 import com.health.service.SlotService;
 

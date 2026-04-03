@@ -1,6 +1,6 @@
 package com.health.controller;
 
-import com.health.dto.MessageResponse;
+import com.health.dto.response.MessageResponse;
 import com.health.dto.request.AvailabilityRequest;
 import com.health.dto.request.DoctorClinicRequest;
 import com.health.dto.request.DoctorPersonalDetailsRequest;

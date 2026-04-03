@@ -1,6 +1,6 @@
 package com.health.service;
 
-import com.health.dto.ResetPasswordRequest;
+import com.health.dto.request.ResetPasswordRequest;
 import com.health.dto.response.AuthResponse;
 import com.health.models.ApiResponse;
 import com.health.strategy.AuthStrategy;

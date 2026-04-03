@@ -6,17 +6,13 @@ package com.health.service;
 import java.util.List;
 
 import com.health.dto.request.AvailabilityRequest;
-import com.health.dto.request.ClinicRequest;
-import com.health.dto.request.DoctorClinicRequest;
 import com.health.dto.request.DoctorPersonalDetailsRequest;
-import com.health.dto.response.ClinicDetailsDto;
 import com.health.dto.response.DoctorClinicAvailabilityDto;
 import com.health.dto.response.DoctorPersonalDetailsDto;
-import com.health.entity.DoctorClinicAvailability;
 import org.springframework.http.ResponseEntity;
 
 import com.health.models.ApiResponse;
-import com.health.dto.MessageResponse;
+import com.health.dto.response.MessageResponse;
 
 /**
  * 

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.health.dto;
+package com.health.dto.response;
 
 /**
  * 

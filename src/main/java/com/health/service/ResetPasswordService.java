@@ -1,7 +1,7 @@
 package com.health.service;
 
-import com.health.dto.MessageResponse;
-import com.health.dto.ResetPasswordRequest;
+import com.health.dto.response.MessageResponse;
+import com.health.dto.request.ResetPasswordRequest;
 import com.health.models.ApiResponse;
 
 public interface ResetPasswordService {
