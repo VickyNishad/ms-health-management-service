@@ -5,10 +5,10 @@ package com.health.service.impl;
 
 import com.health.dto.request.AuthRequest;
 import com.health.dto.response.AuthResponse;
-import com.health.service.AuthStrategy;
+import com.health.strategy.AuthStrategy;
 import com.health.service.JwtService;
+import com.health.strategy.factory.AuthStrategyFactory;
 import com.health.utility.ApiExecutionUtils;
-import jakarta.security.auth.message.AuthException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

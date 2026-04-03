@@ -26,7 +26,7 @@ import com.health.service.AppointmentService;
  */
 @RestController
 @RequestMapping("/api/v1/appointments")
-public class AppointmentContoller {
+public class AppointmentController {
 
 	@Autowired
 	private AppointmentService appointmentService;

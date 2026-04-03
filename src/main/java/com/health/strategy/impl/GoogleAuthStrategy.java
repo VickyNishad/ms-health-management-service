@@ -1,4 +1,4 @@
-package com.health.service.impl;
+package com.health.strategy.impl;
 
 import com.health.dto.request.AuthRequest;
 import com.health.dto.request.CreateUserRequestDTO;
@@ -8,13 +8,12 @@ import com.health.entity.User;
 import com.health.mappers.AuthMapper;
 import com.health.mappers.UserMapper;
 import com.health.models.ApiResponse;
-import com.health.service.AuthStrategy;
+import com.health.strategy.AuthStrategy;
 import com.health.service.RoleMasterService;
 import com.health.service.UserService;
 import com.health.utility.ApiExecutionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component("google")
 public class GoogleAuthStrategy implements AuthStrategy {

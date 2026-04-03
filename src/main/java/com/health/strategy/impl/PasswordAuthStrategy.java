@@ -1,11 +1,11 @@
-package com.health.service.impl;
+package com.health.strategy.impl;
 
 import com.health.dto.request.AuthRequest;
 import com.health.dto.response.AuthResponse;
 import com.health.entity.User;
 import com.health.mappers.AuthMapper;
 import com.health.models.ApiResponse;
-import com.health.service.AuthStrategy;
+import com.health.strategy.AuthStrategy;
 import com.health.service.UserService;
 import com.health.utility.ApiExecutionUtils;
 import com.health.utility.HealthUtils;

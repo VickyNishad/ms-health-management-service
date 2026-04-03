@@ -1,6 +1,6 @@
-package com.health.service.impl;
+package com.health.strategy.factory;
 
-import com.health.service.AuthStrategy;
+import com.health.strategy.AuthStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.health.service;
+package com.health.strategy;
 
 import com.health.dto.request.AuthRequest;
 import com.health.dto.response.AuthResponse;
