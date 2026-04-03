@@ -80,44 +80,6 @@ public class UserServiceImpl implements UserService {
         }, ApiResponse::success);
     }
 
-//    @Override
-//    public ResponseEntity<ApiResponse<MessageResponse>> resetPassword(ResetPasswordRequest restPasswordRequest) {
-//        // TODO Auto-generated method stub
-//        ApiResponse<MessageResponse> success = ApiExecutionUtils.ApiExecutor.processRequest(restPasswordRequest,
-//                req -> {
-//
-//                    String password = restPasswordRequest.getPassword();
-//                    String encryptPass = HealthUtils.encryptPassword(password);
-//                    String cnfPassword = restPasswordRequest.getConfirmPassword();
-//                    Boolean match = HealthUtils.matchPassword(cnfPassword, encryptPass);
-//
-//                    if (!match) {
-//                        throw new RuntimeException("Passwords do not match. Please try again.");
-//                    }
-//
-//                }, () -> {
-//
-//                    String mobileNumber = restPasswordRequest.getProviderLoginId();
-//                    String password = restPasswordRequest.getPassword();
-//                    String encryptPass = HealthUtils.encryptPassword(password);
-//
-//                    Optional<User> user = userRepository.findByMobileNumber(mobileNumber);
-//                    if (user.isPresent()) {
-//                        // return message
-//                        User userRegistration = user.get();
-//                        userRegistration.setPassword(encryptPass);
-//                        userRegistration.setUpdatedAt(LocalDateTime.now());
-//                        userRegistration.setUpdatedBy(mobileNumber);
-//
-//                        userRepository.save(userRegistration);
-//                        return new MessageResponse("Your password has been reset successfully.");
-//                    } else {
-//                        throw new RuntimeException("We couldn’t find an account associated with this " + restPasswordRequest.getProviderLoginId() + ".");
-//                    }
-//                }, ApiResponse::success);
-//        return new ResponseEntity<ApiResponse<MessageResponse>>(success, HttpStatus.OK);
-//    }
-
 
     @Override
     public ApiResponse<User> findByMobileNumber(String mobileNumber) {
@@ -164,38 +126,38 @@ public class UserServiceImpl implements UserService {
                 ApiResponse::success);
     }
 
-	@Override
-	public ApiResponse<UserResponseDTO> updateUser(Long id,  UpdateUserRequest updateUserRequest) {
-		return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
-				},
-				() -> {
-					Optional<User> optionalUser = userRepository.findById(id);
-					if (optionalUser.isEmpty()) {
-						throw new RuntimeException("User not found");
-					}
-					User user = optionalUser.get();
-					user.setUserName(updateUserRequest.getUserName());
-					user.setEmailId(updateUserRequest.getEmailId());
-					user.setPassword(updateUserRequest.getPassword());
-					user.setUpdatedAt(LocalDateTime.now());
-					user.setUpdatedBy(id.toString());
-					user = userRepository.save(user);
+    @Override
+    public ApiResponse<UserResponseDTO> updateUser(Long id, UpdateUserRequest updateUserRequest) {
+        return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+                },
+                () -> {
+                    Optional<User> optionalUser = userRepository.findById(id);
+                    if (optionalUser.isEmpty()) {
+                        throw new RuntimeException("User not found");
+                    }
+                    User user = optionalUser.get();
+                    user.setUserName(updateUserRequest.getUserName());
+                    user.setEmailId(updateUserRequest.getEmailId());
+                    user.setPassword(updateUserRequest.getPassword());
+                    user.setUpdatedAt(LocalDateTime.now());
+                    user.setUpdatedBy(id.toString());
+                    user = userRepository.save(user);
 
-					return userMapper.toDTO(user);
-				},
-				ApiResponse::success);
-	}
+                    return userMapper.toDTO(user);
+                },
+                ApiResponse::success);
+    }
 
-	@Override
-	public ApiResponse<UserResponseDTO> findUserById(Long id) {
-		return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
-				},
-				() -> {
-					Optional<User> user = userRepository.findById(id);
-					if (user.isEmpty()) {
-						throw new RuntimeException("User not found");
-					}
-					return userMapper.toDTO(user.get());
-				}, ApiResponse::success);
-	}
+    @Override
+    public ApiResponse<UserResponseDTO> findUserById(Long id) {
+        return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+                },
+                () -> {
+                    Optional<User> user = userRepository.findById(id);
+                    if (user.isEmpty()) {
+                        throw new RuntimeException("User not found");
+                    }
+                    return userMapper.toDTO(user.get());
+                }, ApiResponse::success);
+    }
 }
