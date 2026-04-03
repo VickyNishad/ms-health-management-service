@@ -17,5 +17,5 @@ import com.health.models.ApiResponse;
  * 
  */
 public interface AuthService {
-	public ApiResponse<AuthResponse> authenticate(AuthRequest authRequest);
+	ApiResponse<AuthResponse> authenticate(AuthRequest authRequest);
 }
