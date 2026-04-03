@@ -8,7 +8,7 @@ import com.health.dto.response.ClinicDetailsDto;
 import com.health.dto.response.DoctorClinicAvailabilityDto;
 import com.health.dto.response.DoctorPersonalDetailsDto;
 import com.health.dto.response.KycStepResponse;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.service.ClinicService;
 import com.health.service.DoctorService;
 import com.health.service.KycStepService;

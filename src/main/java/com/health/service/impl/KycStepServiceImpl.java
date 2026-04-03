@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.health.dto.response.KycStepResponse;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.repository.KycStepMasterRepository;
 import com.health.repository.KycStepStatusReposotory;
 import com.health.service.KycStepService;

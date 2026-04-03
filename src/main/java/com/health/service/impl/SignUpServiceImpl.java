@@ -10,7 +10,7 @@ import com.health.dto.response.UserResponseDTO;
 import com.health.entity.RoleMaster;
 import com.health.entity.User;
 import com.health.mappers.AuthMapper;
-import com.health.models.TokenModel;
+import com.health.dto.response.TokenModel;
 import com.health.service.RoleMasterService;
 import com.health.service.UserService;
 import com.health.utility.ApiExecutionUtils;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 
 import com.health.dto.TokenResponse;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.service.JwtService;
 import com.health.service.SignUpService;
 

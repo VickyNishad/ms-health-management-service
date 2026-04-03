@@ -1,7 +1,7 @@
 package com.health.service;
 
 import com.health.dto.response.DoctorSearchSummary;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import org.springframework.data.domain.Page;
 
 public interface SearchService {

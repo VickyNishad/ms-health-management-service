@@ -6,7 +6,7 @@ package com.health.service;
 import com.health.dto.request.SignUpRequest;
 import com.health.dto.response.AuthResponse;
 
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 
 /**

@@ -4,7 +4,7 @@ import com.health.dto.response.MessageResponse;
 import com.health.dto.request.ClinicRequest;
 import com.health.dto.response.ClinicDetailsDto;
 import com.health.entity.Clinic;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.service.ClinicService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

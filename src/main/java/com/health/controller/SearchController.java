@@ -1,7 +1,7 @@
 package com.health.controller;
 
 import com.health.dto.response.DoctorSearchSummary;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

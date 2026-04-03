@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.health.dto.response.MessageResponse;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.repository.OTPMasterRepository;
 import com.health.service.OTPService;
 import com.health.utility.ApiExecutionUtils;

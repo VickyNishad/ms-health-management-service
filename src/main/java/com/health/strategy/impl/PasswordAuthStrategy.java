@@ -4,7 +4,7 @@ import com.health.dto.request.AuthRequest;
 import com.health.dto.response.AuthResponse;
 import com.health.entity.User;
 import com.health.mappers.AuthMapper;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.strategy.AuthStrategy;
 import com.health.service.UserService;
 import com.health.utility.ApiExecutionUtils;

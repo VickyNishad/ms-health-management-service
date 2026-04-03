@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.health.models;
+package com.health.dto.response;
 
 /**
  * @param <T>

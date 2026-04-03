@@ -8,16 +8,12 @@ import java.util.List;
 import com.health.dto.response.MasterSummary;
 import com.health.service.MasterService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.health.entity.RoleMaster;
-import com.health.models.ApiResponse;
-import com.health.repository.RoleMasterRepository;
-import com.health.service.RoleMasterService;
+import com.health.dto.response.ApiResponse;
 
 /**
  * 

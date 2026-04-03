@@ -8,7 +8,7 @@ import com.health.dto.response.UserResponseDTO;
 import com.health.entity.User;
 import com.health.mappers.AuthMapper;
 import com.health.mappers.UserMapper;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.strategy.AuthStrategy;
 import com.health.service.OTPService;
 import com.health.service.RoleMasterService;

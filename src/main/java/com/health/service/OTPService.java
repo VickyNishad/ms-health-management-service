@@ -4,7 +4,7 @@
 package com.health.service;
 
 import com.health.dto.response.MessageResponse;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 /**
  * 

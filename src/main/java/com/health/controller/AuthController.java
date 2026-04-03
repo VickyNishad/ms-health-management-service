@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import com.health.dto.response.UserRegisteredResponse;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 /**
  * 

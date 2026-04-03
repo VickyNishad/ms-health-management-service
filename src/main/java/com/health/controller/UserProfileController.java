@@ -5,7 +5,7 @@ package com.health.controller;
 
 import com.health.dto.request.UserProfileRequest;
 import com.health.dto.response.ProfileDetailsResponse;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.service.UserProfileService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;

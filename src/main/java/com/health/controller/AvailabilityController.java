@@ -4,7 +4,7 @@
 package com.health.controller;
 
 import com.health.dto.response.DoctorClinicAvailabilityDto;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.service.DoctorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

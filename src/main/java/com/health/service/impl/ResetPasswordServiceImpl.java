@@ -5,7 +5,7 @@ import com.health.dto.request.ResetPasswordRequest;
 import com.health.dto.request.UpdateUserRequest;
 import com.health.dto.response.UserResponseDTO;
 import com.health.entity.User;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.service.ResetPasswordService;
 import com.health.service.UserService;
 import com.health.utility.ApiExecutionUtils;

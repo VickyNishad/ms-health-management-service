@@ -1,4 +1,4 @@
-package com.health.models;
+package com.health.dto.response;
 
 public class TokenModel {
 

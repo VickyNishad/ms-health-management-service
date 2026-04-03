@@ -2,7 +2,7 @@ package com.health.service.impl;
 
 import com.health.dto.response.DoctorSearchSummary;
 import com.health.entity.DoctorSearchIndex;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.repository.DoctorSearchIndexRepository;
 import com.health.service.SearchService;
 import com.health.utility.ApiExecutionUtils;

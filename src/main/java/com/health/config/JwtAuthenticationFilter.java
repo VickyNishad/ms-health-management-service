@@ -17,7 +17,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.health.exception.AuthenticationFailedException;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.utility.JwtUtils;
 
 import io.jsonwebtoken.ExpiredJwtException;

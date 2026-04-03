@@ -5,7 +5,7 @@ import com.health.dto.request.ClinicRequest;
 import com.health.dto.request.DoctorClinicRequest;
 import com.health.dto.response.ClinicDetailsDto;
 import com.health.entity.Clinic;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 import java.util.List;
 

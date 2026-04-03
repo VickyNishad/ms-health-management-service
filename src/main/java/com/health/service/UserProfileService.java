@@ -7,7 +7,7 @@ import com.health.dto.request.UserProfileRequest;
 
 import com.health.dto.response.ProfileDetailsResponse;
 import com.health.entity.User;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 /**
  * 

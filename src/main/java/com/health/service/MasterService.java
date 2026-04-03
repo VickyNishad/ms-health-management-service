@@ -1,7 +1,7 @@
 package com.health.service;
 
 import com.health.dto.response.MasterSummary;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 import java.util.List;
 

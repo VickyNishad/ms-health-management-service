@@ -20,7 +20,7 @@ import javax.crypto.spec.SecretKeySpec;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.health.models.GenericModel;
+//import com.health.models.GenericModel;
 
 /**
  * 
@@ -141,24 +141,7 @@ public class HealthUtils {
         // Truncate or expand to 128, 192, or 256 bits (16, 24, or 32 bytes)
         return Arrays.copyOf(key, 16); // For AES-128, use 16 bytes (128 bits). For AES-256, use 32 bytes.
     }
-    
-    
-    public static String generate_token(GenericModel<?> genericModel) {
-        try {
-            // Combine device id and mobileNumber and emailId and deviceType a unique UUID with timestamp
-            Object object = genericModel.getRequest();
-            String token_data = Convertors.convertObjectToString(object);
-            // Encode token using Base64 encoding
-            String accessToken = encrypt(token_data, secretKey);
-            assert accessToken != null;
-            if (accessToken.length()>495){
-                System.out.println("token_data " +"too long");
-            }
-            return accessToken;
-        } catch (Exception e) {
-            return null;
-        }
-    }
+
     
     public static String getAuthorizationToken(String authorization){
     	if(Validators.isNullOrEmpty(authorization)) {

@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.health.dto.response.SlotSummary;
 
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 import com.health.dto.response.MessageResponse;
 

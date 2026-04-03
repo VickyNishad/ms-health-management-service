@@ -7,7 +7,7 @@ import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 import com.health.dto.AvailabilityResponse;
 import com.health.dto.DoctorAvailabilityRequest;

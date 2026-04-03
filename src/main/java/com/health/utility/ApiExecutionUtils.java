@@ -60,7 +60,6 @@ package com.health.utility;
  */
 
 
-import java.sql.SQLException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -68,11 +67,10 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 
 public class ApiExecutionUtils {

@@ -11,7 +11,7 @@ import com.health.dto.response.DoctorClinicAvailabilityDto;
 import com.health.dto.response.DoctorPersonalDetailsDto;
 import org.springframework.http.ResponseEntity;
 
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.dto.response.MessageResponse;
 
 /**

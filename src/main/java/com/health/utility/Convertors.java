@@ -50,14 +50,4 @@ public class Convertors {
             return null;
         }
     }
-    
-    public static int getIntValue(Object value) {
-        return HealthUtils.getIntValue(value);
-    }
-    
-    public static String getStringValue(Object value) {
-        return HealthUtils.getStringValue(value);
-    }
-
-
 }

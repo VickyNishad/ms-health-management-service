@@ -5,10 +5,8 @@ package com.health.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.health.entity.RoleMaster;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 /**
  * 

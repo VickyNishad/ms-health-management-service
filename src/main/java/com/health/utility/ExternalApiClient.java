@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 /**
  * Centralized HTTP‐client utility for invoking external APIs in a consistent, reusable way.

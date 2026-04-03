@@ -5,7 +5,7 @@ import com.health.dto.request.ClinicRequest;
 import com.health.dto.request.DoctorClinicRequest;
 import com.health.dto.response.ClinicDetailsDto;
 import com.health.entity.*;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.repository.*;
 import com.health.service.ClinicService;
 import com.health.service.DoctorService;

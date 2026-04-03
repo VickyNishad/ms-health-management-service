@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 /**
  * 

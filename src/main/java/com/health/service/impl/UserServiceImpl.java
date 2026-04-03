@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.health.dto.response.UserRegisteredResponse;
 import com.health.entity.RoleMaster;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.repository.RoleMasterRepository;
 import com.health.utility.ApiExecutionUtils;
 

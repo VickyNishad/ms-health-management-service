@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.health.dto.response.ProfileDetailsResponse;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.repository.UserProfileRepository;
 import com.health.service.KycStepService;
 import com.health.service.UserProfileService;

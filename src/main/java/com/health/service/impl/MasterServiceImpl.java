@@ -4,7 +4,7 @@ import com.health.dto.response.MasterSummary;
 import com.health.entity.QualificationMaster;
 import com.health.entity.RoleMaster;
 import com.health.entity.SpecializationMaster;
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 import com.health.repository.QualificationMasterRepository;
 import com.health.repository.RoleMasterRepository;
 import com.health.repository.SpecializationMasterRepository;

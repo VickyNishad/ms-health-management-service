@@ -5,7 +5,7 @@ package com.health.service;
 
 import java.util.List;
 
-import com.health.models.ApiResponse;
+import com.health.dto.response.ApiResponse;
 
 import com.health.dto.DoctorLeaveRequest;
 import com.health.dto.DoctorLeaveResponse;
