@@ -1,6 +1,6 @@
 package com.health.mappers;
 
-import com.health.dto.request.CreateUserRequestDTO;
+import com.health.dto.request.CreateUserRequest;
 import com.health.dto.response.UserResponseDTO;
 import com.health.entity.User;
 import org.springframework.stereotype.Component;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
 
-    public User toEntity(CreateUserRequestDTO requestDTO) {
+    public User toEntity(CreateUserRequest requestDTO) {
         User user = new User();
 
         user.setMobileNumber(requestDTO.getMobileNumber());

@@ -8,7 +8,7 @@ import com.health.enums.LoginType;
 /**
  * 
  */
-public class CreateUserRequestDTO {
+public class CreateUserRequest {
 
 	private String userName;
 	private String emailId;
@@ -20,8 +20,8 @@ public class CreateUserRequestDTO {
 	private int roleId;
 	private Object data;
 
-	public CreateUserRequestDTO() {	};
-	public CreateUserRequestDTO(
+	public CreateUserRequest() {	};
+	public CreateUserRequest(
 			String socialId, LoginType loginType, int roleId, Object data) {
 		super();
 		this.socialId = socialId;
@@ -30,8 +30,8 @@ public class CreateUserRequestDTO {
 		this.data = data;
 	}
 
-	public CreateUserRequestDTO(String userName, String emailId, String mobileNumber, String empCode,
-	                            String socialId, LoginType loginType, String password, int roleId) {
+	public CreateUserRequest(String userName, String emailId, String mobileNumber, String empCode,
+	                         String socialId, LoginType loginType, String password, int roleId) {
 		super();
 		this.userName = userName;
 		this.emailId = emailId;

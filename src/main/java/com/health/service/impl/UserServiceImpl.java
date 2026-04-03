@@ -6,7 +6,7 @@ package com.health.service.impl;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import com.health.dto.request.CreateUserRequestDTO;
+import com.health.dto.request.CreateUserRequest;
 import com.health.dto.request.UpdateUserRequest;
 import com.health.dto.response.UserResponseDTO;
 import com.health.entity.User;
@@ -14,8 +14,6 @@ import com.health.mappers.UserMapper;
 import com.health.repository.UserRepository;
 import com.health.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
@@ -155,11 +153,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ApiResponse<UserResponseDTO> createUser(CreateUserRequestDTO createUserRequestDTO) {
+    public ApiResponse<UserResponseDTO> createUser(CreateUserRequest createUserRequest) {
         return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
                 },
                 () -> {
-                    User user = userMapper.toEntity(createUserRequestDTO);
+                    User user = userMapper.toEntity(createUserRequest);
                     user = userRepository.save(user);
                     return userMapper.toDTO(user);
                 },

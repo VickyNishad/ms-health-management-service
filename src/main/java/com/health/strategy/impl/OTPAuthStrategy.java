@@ -2,7 +2,7 @@ package com.health.strategy.impl;
 
 import com.health.dto.MessageResponse;
 import com.health.dto.request.AuthRequest;
-import com.health.dto.request.CreateUserRequestDTO;
+import com.health.dto.request.CreateUserRequest;
 import com.health.dto.response.AuthResponse;
 import com.health.dto.response.UserResponseDTO;
 import com.health.entity.User;
@@ -64,17 +64,17 @@ public class OTPAuthStrategy implements AuthStrategy {
             if (!apiUserResponse.isSuccess()) {
                 // Get RoleId from Role Master
                 // Register
-                CreateUserRequestDTO createUserRequestDTO = new CreateUserRequestDTO();
-                createUserRequestDTO.setSocialId(request.getSocialId());
-                createUserRequestDTO.setPassword(request.getPassword());
-                createUserRequestDTO.setUserName(request.getFirstName());
-                createUserRequestDTO.setLoginType(request.getLoginType());
-                ApiResponse<UserResponseDTO> userApiResponse = userService.createUser(createUserRequestDTO);
+                CreateUserRequest createUserRequest = new CreateUserRequest();
+                createUserRequest.setSocialId(request.getSocialId());
+                createUserRequest.setPassword(request.getPassword());
+                createUserRequest.setUserName(request.getFirstName());
+                createUserRequest.setLoginType(request.getLoginType());
+                ApiResponse<UserResponseDTO> userApiResponse = userService.createUser(createUserRequest);
                 if (!userApiResponse.isSuccess()) {
                     throw new RuntimeException(userApiResponse.getMessage());
                 }
 
-                user = userMapper.toEntity(createUserRequestDTO);
+                user = userMapper.toEntity(createUserRequest);
                 user.setId(userApiResponse.getData().getId());
 
             } else {

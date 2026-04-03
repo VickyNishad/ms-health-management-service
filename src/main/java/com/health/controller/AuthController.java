@@ -59,6 +59,14 @@ public class AuthController {
 		return authService.authenticate(authRequest);
 	}
 
+	@PostMapping("/user/social/login")
+	public ApiResponse<AuthResponse> socialLogin(@RequestBody SocialAuthRequest socialAuthRequest) {
+		AuthRequest authRequest = new AuthRequest();
+		authRequest.setSocialId(socialAuthRequest.getSocialId());
+		authRequest.setLoginType(socialAuthRequest.getLoginType());
+		return authService.authenticate(authRequest);
+	}
+
 	@PostMapping("/user/reset/password")
 	public ApiResponse<MessageResponse> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
 		return  resetPasswordService.resetPassword(resetPasswordRequest);

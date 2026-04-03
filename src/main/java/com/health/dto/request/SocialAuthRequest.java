@@ -1,16 +1,25 @@
 package com.health.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.health.enums.LoginType;
 import com.health.enums.Provider;
 import com.health.enums.Role;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class SocialAuthRequest {
 
+    private LoginType loginType;
     private String socialId;
-    private Provider provider;
     private Role role;
     private Object data;
+
+    public void setLoginType(LoginType loginType) {
+        this.loginType = loginType;
+    }
+
+    public LoginType getLoginType() {
+        return loginType;
+    }
 
     public Object getData() {
         return data;
@@ -26,13 +35,6 @@ public class SocialAuthRequest {
 
     public void setSocialId(String socialId) {
         this.socialId = socialId;
-    }
-
-    public void setProvider(Provider provider) {
-        this.provider = provider;
-    }
-    public Provider getProvider() {
-        return provider;
     }
 
     public Role getRole() {
