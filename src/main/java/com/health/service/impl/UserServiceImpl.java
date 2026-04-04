@@ -16,7 +16,6 @@ import com.health.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import com.health.dto.response.UserRegisteredResponse;
 import com.health.entity.RoleMaster;
 import com.health.dto.response.ApiResponse;
@@ -116,8 +115,23 @@ public class UserServiceImpl implements UserService {
                     }
                     User user = userMapper.toEntity(createUserRequest);
                     user.setRole(apiResponse.getData());
-                    user = userRepository.save(user);
+                    ApiResponse<User> apiUserRes = createUser(user);
+
+                    if (!apiUserRes.isSuccess()) {
+                        throw new RuntimeException(apiUserRes.getMessage());
+                    }
                     return userMapper.toDTO(user);
+                },
+                ApiResponse::success);
+    }
+
+    @Override
+    public ApiResponse<User> createUser(User user) {
+        return ApiExecutionUtils.ApiExecutor.processRequest(user, req -> {
+            // Validate all request parameters
+                },
+                () -> {
+                    return userRepository.save(user);
                 },
                 ApiResponse::success);
     }

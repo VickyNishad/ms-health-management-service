@@ -27,6 +27,8 @@ public interface UserService {
 
     ApiResponse<UserResponseDTO> createUser(CreateUserRequest createUserRequest);
 
+    ApiResponse<User> createUser(User user);
+
     ApiResponse<UserResponseDTO> updateUser(Long id, UpdateUserRequest updateUserRequest);
 
     ApiResponse<UserResponseDTO> findUserById(Long id);
