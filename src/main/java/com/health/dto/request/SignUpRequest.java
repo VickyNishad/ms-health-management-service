@@ -22,7 +22,7 @@ public class SignUpRequest {
 	@Schema(description = "providerLoginId of the user", name = "providerLoginId", type = "string", example = "9876543210 / E001")
 	private String providerLoginId;
 	
-	@Schema(description = "password of the user", name = "password", type = "string", example = "Exmple@123 / 1234 / 0000")
+	@Schema(description = "password of the user", name = "password", type = "string", example = "Example@123 / 1234 / 0000")
 	private String password;
 	
 	@Schema(description = "Select loginType", name = "loginType", type = "string", example = "MANUAL/SOCIAL")

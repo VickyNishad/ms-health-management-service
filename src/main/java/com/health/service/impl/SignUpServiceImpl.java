@@ -47,6 +47,7 @@ public class SignUpServiceImpl implements SignUpService {
     @Override
     public ApiResponse<AuthResponse> signUp(SignUpRequest signUpRequest) {
         return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+
         }, () -> {
 
             ApiResponse<User> apiResponse = userService.findByMobileNumber(signUpRequest.getProviderLoginId());
@@ -58,12 +59,13 @@ public class SignUpServiceImpl implements SignUpService {
             if (!roleMasterApiResponse.isSuccess()) {
                 throw new RuntimeException(roleMasterApiResponse.getMessage());
             }
+
             RoleMaster roleMaster = roleMasterApiResponse.getData();
 
             CreateUserRequest createUserRequest = new CreateUserRequest();
             createUserRequest.setUserName(signUpRequest.getUserName());
             createUserRequest.setPassword(signUpRequest.getPassword());
-            createUserRequest.setMobileNumber(apiResponse.getData().getMobileNumber());
+            createUserRequest.setMobileNumber(signUpRequest.getProviderLoginId());
             createUserRequest.setLoginType(signUpRequest.getLoginType());
             createUserRequest.setRoleId(roleMaster.getId());
 
@@ -71,6 +73,7 @@ public class SignUpServiceImpl implements SignUpService {
             if (!responseDTOApiResponse.isSuccess()) {
                 throw new RuntimeException("Failed to sign up with provider " + signUpRequest.getProviderLoginId());
             }
+
             ApiResponse<User> apiUserResponse = userService.findByMobileNumber(signUpRequest.getProviderLoginId());
             if (!apiUserResponse.isSuccess()) {
                 throw new RuntimeException("Failed to sign up with provider " + signUpRequest.getProviderLoginId());
@@ -85,7 +88,9 @@ public class SignUpServiceImpl implements SignUpService {
             TokenResponse tokenResponse = jwtService.generateToken(tokenModel);
             AuthResponse authResponse = authMapper.toAuthResponse(apiUserResponse.getData());
             authResponse.setToken(tokenResponse);
+
             return authResponse;
+
         }, ApiResponse::success);
     }
 
