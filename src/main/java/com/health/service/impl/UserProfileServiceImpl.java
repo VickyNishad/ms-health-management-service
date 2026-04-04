@@ -32,7 +32,6 @@ public class UserProfileServiceImpl implements UserProfileService {
     @Autowired
     private UserRepository userRepository;
 
-
     private final UserProfileMapper userProfileMapper;
 
     @Autowired
@@ -40,67 +39,6 @@ public class UserProfileServiceImpl implements UserProfileService {
 
     public UserProfileServiceImpl(UserProfileMapper userProfileMapper) {
         this.userProfileMapper = userProfileMapper;
-    }
-
-    @Override
-    public ApiResponse<ProfileDetailsResponse> createNewProfile(User user, UserProfileRequest userProfileRequest) {
-        // TODO Auto-generated method stub
-
-        return ApiExecutionUtils.ApiExecutor.processRequest(user, req -> {
-        }, () -> {
-            Optional<UserProfile> optionalUserProfile = userProfileRepository.findByUserId(user.getId());
-            if (optionalUserProfile.isPresent()) {
-                UserProfile userProfile = optionalUserProfile.get();
-                // need to set update mandatory data
-                userProfileRepository.save(userProfile);
-                // need to return here
-                return userProfileMapper.toResponse(userProfile);
-            }
-
-            UserProfile profile = userProfileMapper.toEntity(userProfileRequest);
-            profile = userProfileRepository.save(profile);
-
-            kycStepService.addStep(user.getId(), 2L);
-
-            return userProfileMapper.toResponse(profile);
-
-        }, ApiResponse::success);
-
-    }
-
-    //	@Override
-    public ApiResponse<UserProfile> personalDetails(Long userId, UserProfile userProfile) {
-
-        return ApiExecutionUtils.ApiExecutor.processRequest(
-                null,
-                req -> {
-                },
-                () -> {
-                    Optional<User> user = userRepository.findById(userId);
-                    if (user.isEmpty()) {
-                        throw new RuntimeException("User not found. Please create an account to proceed.");
-                    }
-
-                    Optional<UserProfile> optionalUserProfileDetails =
-                            userProfileRepository.findByUserId(userId);
-
-                    UserProfile profile;
-                    if (optionalUserProfileDetails.isPresent()) {
-                        // UPDATE
-                        profile = optionalUserProfileDetails.get();
-
-                    } else {
-                        // INSERT
-                        profile = userProfile;
-                        profile.setUser(user.get());
-                        kycStepService.addStep(userId, 3L);
-                    }
-
-                    return userProfileRepository.save(profile);
-
-                },
-                ApiResponse::success
-        );
     }
 
     @Override
@@ -119,7 +57,7 @@ public class UserProfileServiceImpl implements UserProfileService {
                     Optional<UserProfile> optionalUserProfileDetails =
                             userProfileRepository.findByUserId(userId);
                     if (optionalUserProfileDetails.isEmpty()) {
-                        throw new RuntimeException("User profile not found. Please create an account to proceed.");
+                        throw new RuntimeException("User profile not found. Please create user profile to proceed.");
                     }
                     UserProfile profile = null;
                     // UPDATE
@@ -135,7 +73,7 @@ public class UserProfileServiceImpl implements UserProfileService {
     /**
      *
      */
-//	@Override
+    @Override
     public ApiResponse<ProfileDetailsResponse> createNewProfile(Long userId, UserProfileRequest userProfileRequest) {
 
         return ApiExecutionUtils.ApiExecutor.processRequest(null,
@@ -148,12 +86,15 @@ public class UserProfileServiceImpl implements UserProfileService {
                     }
 
                     User user = optionalUserRegistration.get();
-                    UserProfile userProfile = userProfileMapper.toEntity(userProfileRequest); // getProfileDetailsRequest(user, userProfileRequest);
+                    UserProfile userProfile = userProfileMapper.toEntity(userProfileRequest);
 
                     Optional<UserProfile> optionalUserProfile = userProfileRepository.findByUserId(userId);
                     if (optionalUserProfile.isPresent()) {
                         userProfile.setId(optionalUserProfile.get().getId());
+                    } else {
+                        userProfile.setUser(user);
                     }
+
                     userProfile = userProfileRepository.save(userProfile);
                     return userProfileMapper.toResponse(userProfile);
                 },

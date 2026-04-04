@@ -55,19 +55,19 @@ public class SignUpServiceImpl implements SignUpService {
                 throw new RuntimeException("You already have an account. Please log in to continue.");
             }
 
-            ApiResponse<RoleMaster> roleMasterApiResponse = roleMasterService.findByRole(signUpRequest.getRole().toValue());
-            if (!roleMasterApiResponse.isSuccess()) {
-                throw new RuntimeException(roleMasterApiResponse.getMessage());
-            }
-
-            RoleMaster roleMaster = roleMasterApiResponse.getData();
+//            ApiResponse<RoleMaster> roleMasterApiResponse = roleMasterService.findByRole(signUpRequest.getRole().toValue());
+//            if (!roleMasterApiResponse.isSuccess()) {
+//                throw new RuntimeException(roleMasterApiResponse.getMessage());
+//            }
+//
+//            RoleMaster roleMaster = roleMasterApiResponse.getData();
 
             CreateUserRequest createUserRequest = new CreateUserRequest();
             createUserRequest.setUserName(signUpRequest.getUserName());
             createUserRequest.setPassword(signUpRequest.getPassword());
             createUserRequest.setMobileNumber(signUpRequest.getProviderLoginId());
             createUserRequest.setLoginType(signUpRequest.getLoginType());
-            createUserRequest.setRoleId(roleMaster.getId());
+            createUserRequest.setRole(signUpRequest.getRole());
 
             ApiResponse<UserResponseDTO> responseDTOApiResponse = userService.createUser(createUserRequest);
             if (!responseDTOApiResponse.isSuccess()) {

@@ -50,6 +50,8 @@ public class GoogleAuthStrategy implements AuthStrategy {
                         createUserRequest.setPassword(request.getPassword());
                         createUserRequest.setUserName(request.getFirstName());
                         createUserRequest.setLoginType(request.getLoginType());
+                        createUserRequest.setRole(request.getRole());
+
                         ApiResponse<UserResponseDTO> userApiResponse = userService.createUser(createUserRequest);
                         if (!userApiResponse.isSuccess()) {
                             throw new RuntimeException(userApiResponse.getMessage());

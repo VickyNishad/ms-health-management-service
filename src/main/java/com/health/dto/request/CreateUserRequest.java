@@ -4,6 +4,7 @@
 package com.health.dto.request;
 
 import com.health.enums.LoginType;
+import com.health.enums.Role;
 
 /**
  * 
@@ -17,7 +18,7 @@ public class CreateUserRequest {
 	private String socialId;
 	private LoginType loginType;
 	private String password;
-	private Long roleId;
+	private Role role;
 	private Object data;
 
 	public CreateUserRequest() {	};
@@ -86,12 +87,11 @@ public class CreateUserRequest {
 		this.password = password;
 	}
 
-	public Long getRoleId() {
-		return roleId;
+	public void setRole(Role role) {
+		this.role = role;
 	}
 
-	public void setRoleId(Long roleId) {
-		this.roleId = roleId;
+	public Role getRole() {
+		return role;
 	}
-
 }

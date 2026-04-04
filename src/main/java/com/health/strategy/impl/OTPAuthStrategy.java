@@ -69,7 +69,7 @@ public class OTPAuthStrategy implements AuthStrategy {
                 createUserRequest.setPassword(request.getPassword());
                 createUserRequest.setUserName(request.getFirstName());
                 createUserRequest.setLoginType(request.getLoginType());
-                createUserRequest.setRoleId(1L);
+                createUserRequest.setRole(null);
 
                 ApiResponse<UserResponseDTO> userApiResponse = userService.createUser(createUserRequest);
                 if (!userApiResponse.isSuccess()) {

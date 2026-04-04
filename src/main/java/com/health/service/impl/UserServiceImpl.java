@@ -32,6 +32,9 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
+    private RoleMasterService roleMasterService;
+
+    @Autowired
     private KycStepService kycStepService;
 
     private final UserMapper userMapper;
@@ -103,10 +106,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ApiResponse<UserResponseDTO> createUser(CreateUserRequest createUserRequest) {
-        return ApiExecutionUtils.ApiExecutor.processRequest(null, req -> {
+        return ApiExecutionUtils.ApiExecutor.processRequest(createUserRequest, req -> {
+            // Validate all request parameters
                 },
                 () -> {
+                    ApiResponse<RoleMaster> apiResponse = roleMasterService.findByRole(createUserRequest.getRole().toValue());
+                    if (!apiResponse.isSuccess()) {
+                        throw new RuntimeException(apiResponse.getMessage());
+                    }
                     User user = userMapper.toEntity(createUserRequest);
+                    user.setRole(apiResponse.getData());
                     user = userRepository.save(user);
                     return userMapper.toDTO(user);
                 },
